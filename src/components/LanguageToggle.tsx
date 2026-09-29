@@ -12,7 +12,7 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({ className = "", 
 
   return (
     <div className={`lang-toggle-wrap ${className}`} role="group" aria-label="Language Selector">
-      <Globe size={14} className="lang-globe-icon" aria-hidden="true" />
+      <Globe size={13} className="lang-globe-icon" aria-hidden="true" />
       <div className="lang-segmented-control">
         <button
           type="button"
@@ -21,9 +21,16 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({ className = "", 
           aria-pressed={language === "en"}
           title="Switch to English"
         >
-          {compact ? "EN" : "English"}
+          {compact ? (
+            "EN"
+          ) : (
+            <>
+              <span className="lang-text-desktop">English</span>
+              <span className="lang-text-mobile">EN</span>
+            </>
+          )}
         </button>
-        <span className="lang-divider" aria-hidden="true">|</span>
+        <span className="lang-divider" aria-hidden="true">/</span>
         <button
           type="button"
           onClick={() => setLanguage("ms")}
@@ -31,7 +38,14 @@ export const LanguageToggle: React.FC<LanguageToggleProps> = ({ className = "", 
           aria-pressed={language === "ms"}
           title="Tukar ke Bahasa Melayu"
         >
-          {compact ? "BM" : "Bahasa Melayu"}
+          {compact ? (
+            "BM"
+          ) : (
+            <>
+              <span className="lang-text-desktop">Bahasa Melayu</span>
+              <span className="lang-text-mobile">BM</span>
+            </>
+          )}
         </button>
       </div>
     </div>

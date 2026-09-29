@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Navigation, Phone } from "lucide-react";
+import { Menu, Navigation, Phone, Clock, MapPin } from "lucide-react";
 import { businessData } from "../data/business";
 import { MobileNav } from "./MobileNav";
 import { LanguageToggle } from "./LanguageToggle";
@@ -26,64 +26,95 @@ export const Header: React.FC = () => {
   return (
     <>
       <header className={`header ${isScrolled ? "header-scrolled" : ""}`}>
-        <div className="container header-container">
-          {/* Brand Logo & Wordmark */}
-          <a href="#hero" className="brand-wordmark-wrap" aria-label="SKL Waste Kedai Hardware Home">
-            <img 
-              src="/logo.png" 
-              alt="SKL Hardware Logo" 
-              className="header-brand-logo"
-            />
-            <div className="brand-wordmark-text">
-              <span className="brand-title">{businessData.name}</span>
-              <span className="brand-category-badge">{businessData.subtitle}</span>
+        {/* Top Utility Bar: Verified Store Hours, Location & Language Switcher */}
+        <div className="header-top-bar">
+          <div className="container header-top-container">
+            <div className="top-bar-left">
+              <span className="top-status-badge">
+                <span className="status-dot-pulse" aria-hidden="true" />
+                <Clock size={13} className="top-icon" aria-hidden="true" />
+                <span className="top-status-text">{t.nav.openStatus}</span>
+              </span>
+              <span className="top-bar-sep" aria-hidden="true">·</span>
+              <span className="top-location-text">
+                <MapPin size={13} className="top-icon" aria-hidden="true" />
+                <span>Bandar Seri Coalfields</span>
+              </span>
             </div>
-          </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="desktop-nav" aria-label="Main Navigation">
-            <a href="#about" className="nav-link">{t.nav.about}</a>
-            <a href="#hardware" className="nav-link">{t.nav.hardware}</a>
-            <a href="#gallery" className="nav-link">{t.nav.gallery}</a>
-            <a href="#location" className="nav-link">{t.nav.location}</a>
-            <a href="#contact" className="nav-link">{t.nav.contact}</a>
-          </nav>
+            <div className="top-bar-right">
+              <a 
+                href={`tel:${businessData.phone.tel}`}
+                className="top-phone-link phone-number"
+                title={`Call ${businessData.phone.display}`}
+              >
+                <Phone size={13} aria-hidden="true" />
+                <span>{businessData.phone.display}</span>
+              </a>
+              <span className="top-bar-sep top-bar-sep-lang" aria-hidden="true">|</span>
+              <LanguageToggle />
+            </div>
+          </div>
+        </div>
 
-          {/* Right Header Controls: Language Switcher & Action Buttons */}
-          <div className="header-actions">
-            {/* Prominent Language Switcher at Top */}
-            <LanguageToggle />
-
-            {/* Quick Call Button */}
-            <a 
-              href={`tel:${businessData.phone.tel}`} 
-              className="btn btn-secondary btn-sm header-phone-btn phone-number"
-              title={`Call ${businessData.phone.display}`}
-            >
-              <Phone size={14} strokeWidth={2} />
-              <span>{businessData.phone.display}</span>
+        {/* Main Navigation Bar */}
+        <div className="header-main-bar">
+          <div className="container header-container">
+            {/* Brand Logo & Wordmark */}
+            <a href="#hero" className="brand-wordmark-wrap" aria-label="SKL Waste Kedai Hardware Home">
+              <img 
+                src="/logo.png" 
+                alt="SKL Hardware Logo" 
+                className="header-brand-logo"
+              />
+              <div className="brand-wordmark-text">
+                <span className="brand-title">{businessData.name}</span>
+                <span className="brand-category-badge">{businessData.subtitle}</span>
+              </div>
             </a>
 
-            {/* Get Directions Action Button */}
-            <a 
-              href={businessData.googleProfile.directionsUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn btn-primary btn-sm header-directions-btn"
-            >
-              <Navigation size={14} strokeWidth={2} />
-              <span>{t.nav.getDirections}</span>
-            </a>
+            {/* Desktop Navigation Links */}
+            <nav className="desktop-nav" aria-label="Main Navigation">
+              <a href="#about" className="nav-link">{t.nav.about}</a>
+              <a href="#hardware" className="nav-link">{t.nav.hardware}</a>
+              <a href="#gallery" className="nav-link">{t.nav.gallery}</a>
+              <a href="#location" className="nav-link">{t.nav.location}</a>
+              <a href="#contact" className="nav-link">{t.nav.contact}</a>
+            </nav>
 
-            {/* Mobile Menu Hamburger Toggle */}
-            <button 
-              className="mobile-menu-toggle"
-              onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open navigation menu"
-              aria-expanded={isMobileMenuOpen}
-            >
-              <Menu size={22} strokeWidth={2} />
-            </button>
+            {/* Right Header Action Buttons */}
+            <div className="header-actions">
+              {/* Quick Call Button */}
+              <a 
+                href={`tel:${businessData.phone.tel}`} 
+                className="btn btn-secondary btn-sm header-phone-btn phone-number"
+                title={`Call ${businessData.phone.display}`}
+              >
+                <Phone size={14} strokeWidth={2} />
+                <span>{businessData.phone.display}</span>
+              </a>
+
+              {/* Get Directions Action Button */}
+              <a 
+                href={businessData.googleProfile.directionsUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn btn-primary btn-sm header-directions-btn"
+              >
+                <Navigation size={14} strokeWidth={2} />
+                <span>{t.nav.getDirections}</span>
+              </a>
+
+              {/* Mobile Menu Hamburger Toggle */}
+              <button 
+                className="mobile-menu-toggle"
+                onClick={() => setIsMobileMenuOpen(true)}
+                aria-label="Open navigation menu"
+                aria-expanded={isMobileMenuOpen}
+              >
+                <Menu size={22} strokeWidth={2} />
+              </button>
+            </div>
           </div>
         </div>
       </header>
