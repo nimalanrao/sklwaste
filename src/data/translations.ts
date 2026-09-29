@@ -4,6 +4,7 @@ export interface Translations {
   nav: {
     home: string;
     about: string;
+    catalogue: string;
     hardware: string;
     gallery: string;
     location: string;
@@ -137,6 +138,28 @@ export interface Translations {
     loadingText: string;
     subtitle: string;
   };
+  catalogue: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    allFilter: string;
+    bricksFilter: string;
+    blocksFilter: string;
+    paversFilter: string;
+    ventFilter: string;
+    inStock: string;
+    enquireWhatsapp: string;
+    viewSpecs: string;
+    specTitle: string;
+    appTitle: string;
+    unitLabel: string;
+    brandLabel: string;
+    siteDeliveryNotice: string;
+    bulkQuoteAction: string;
+    backToHome: string;
+    noResults: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -144,6 +167,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       home: "Home",
       about: "About",
+      catalogue: "Catalogue",
       hardware: "Hardware",
       gallery: "Gallery",
       location: "Location & Hours",
@@ -346,11 +370,34 @@ export const translations: Record<Language, Translations> = {
       loadingText: "SKL HARDWARE",
       subtitle: "Bandar Seri Coalfields, Selangor",
     },
+    catalogue: {
+      badge: "Official Inventory & Trade Supply",
+      title: "Building Materials, Bricks & Pavers",
+      subtitle: "Verified trade catalogue for building contractors, bricklayers, landscapers, and residential renovation projects in Bandar Seri Coalfields & Greater Selangor.",
+      searchPlaceholder: "Search bricks, interlocking pavers, hollow blocks, AAC...",
+      allFilter: "All Products",
+      bricksFilter: "Clay & Sand Bricks",
+      blocksFilter: "Concrete & AAC Blocks",
+      paversFilter: "Interlocking Pavers",
+      ventFilter: "Ventilation Blocks",
+      inStock: "In Stock · Ready for Delivery / Self-Pickup",
+      enquireWhatsapp: "Enquire via WhatsApp",
+      viewSpecs: "View Specifications",
+      specTitle: "Technical Specifications",
+      appTitle: "Recommended Application",
+      unitLabel: "Supply Unit",
+      brandLabel: "Manufacturer / Brand",
+      siteDeliveryNotice: "Lorry delivery available for site orders across Bandar Seri Coalfields, Sungai Buloh, Puncak Alam, and Shah Alam. Contact our logistics line directly.",
+      bulkQuoteAction: "Request Bulk Pallet Quotation",
+      backToHome: "Back to Home",
+      noResults: "No products found matching your search. Please contact us directly for special order items.",
+    },
   },
   ms: {
     nav: {
       home: "Laman Utama",
       about: "Tentang Kami",
+      catalogue: "Katalog",
       hardware: "Barangan Hardware",
       gallery: "Galeri",
       location: "Lokasi & Waktu",
@@ -552,6 +599,28 @@ export const translations: Record<Language, Translations> = {
     loading: {
       loadingText: "SKL HARDWARE",
       subtitle: "Bandar Seri Coalfields, Selangor",
+    },
+    catalogue: {
+      badge: "Inventori Rasmi & Bekalan Kontraktor",
+      title: "Bahan Binaan, Batu Bata & Paver",
+      subtitle: "Katalog barangan binaan tulen untuk kontraktor, tukang rumah, landskap, dan ubah suai kediaman di Bandar Seri Coalfields & seluruh Selangor.",
+      searchPlaceholder: "Cari batu merah, batu pasir, uni paver, hollow block...",
+      allFilter: "Semua Barangan",
+      bricksFilter: "Batu Bata & Batu Pasir",
+      blocksFilter: "Blok Konkrit & AAC",
+      paversFilter: "Batu Paver Lantai",
+      ventFilter: "Batu Angin (Ventilation)",
+      inStock: "Ada Stok · Sedia untuk Ambil / Hantar",
+      enquireWhatsapp: "Tanya Melalui WhatsApp",
+      viewSpecs: "Lihat Spesifikasi",
+      specTitle: "Spesifikasi Teknikal",
+      appTitle: "Kegunaan Disyorkan",
+      unitLabel: "Unit Bekalan",
+      brandLabel: "Pengilang / Jenama",
+      siteDeliveryNotice: "Penghantaran lori disediakan untuk pesanan ke tapak projek di Bandar Seri Coalfields, Sungai Buloh, Puncak Alam, dan Shah Alam. Hubungi talian logistik kami.",
+      bulkQuoteAction: "Dapatkan Sebut Harga Pukal",
+      backToHome: "Kembali ke Laman Utama",
+      noResults: "Tiada barangan ditemui untuk carian anda. Sila hubungi kami untuk tempahan khas.",
     },
   },
 };

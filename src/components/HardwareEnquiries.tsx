@@ -1,9 +1,13 @@
 import React from "react";
-import { Phone, Check, ArrowRight, HelpCircle } from "lucide-react";
+import { Phone, Check, ArrowRight, HelpCircle, Layers } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
 
-export const HardwareEnquiries: React.FC = () => {
+interface HardwareEnquiriesProps {
+  onOpenCatalogue?: () => void;
+}
+
+export const HardwareEnquiries: React.FC<HardwareEnquiriesProps> = ({ onOpenCatalogue }) => {
   const { t } = useLanguage();
 
   return (
@@ -18,6 +22,30 @@ export const HardwareEnquiries: React.FC = () => {
           <p className="section-desc">
             {t.hardware.desc}
           </p>
+        </div>
+
+        {/* Featured Building Materials Catalogue Callout */}
+        <div className="catalogue-promo-banner">
+          <div className="catalogue-promo-content">
+            <div className="catalogue-promo-tag">
+              <Layers size={14} />
+              <span>Full Product Inventory</span>
+            </div>
+            <h3 className="catalogue-promo-title">
+              Brick, Block & Paver Online Catalogue
+            </h3>
+            <p className="catalogue-promo-desc">
+              Browse 15+ verified building materials: PBM Batu Angin, Uni Paver, Grass Pavers, AAC Lightweight Blocks, Sand Bricks & Common Bricks with exact dimensions and technical specs.
+            </p>
+          </div>
+          <button 
+            type="button"
+            onClick={onOpenCatalogue}
+            className="btn btn-primary btn-lg catalogue-promo-btn"
+          >
+            <span>Browse Full Catalogue (15 Items)</span>
+            <ArrowRight size={18} />
+          </button>
         </div>
 
         {/* Central Direct Phone Call Banner with Brand Green & Blue */}
@@ -93,8 +121,9 @@ export const HardwareEnquiries: React.FC = () => {
 
         {/* Inventory Notice Note */}
         <div className="inventory-notice-card">
-          <p>
-            <strong>{t.hardware.customerNoticeTitle}</strong> {t.hardware.customerNotice} <a href={`tel:${businessData.phone.tel}`} className="text-link phone-number">{businessData.phone.display}</a>.
+          <h4 className="inventory-notice-title">{t.hardware.customerNoticeTitle}</h4>
+          <p className="inventory-notice-text">
+            {t.hardware.customerNotice}
           </p>
         </div>
       </div>

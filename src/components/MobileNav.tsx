@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { X, Phone, Navigation, Clock, MapPin, ChevronRight } from "lucide-react";
+import { X, Phone, Navigation, ChevronRight, Layers } from "lucide-react";
 import { businessData } from "../data/business";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "../context/useLanguage";
@@ -7,9 +7,10 @@ import { useLanguage } from "../context/useLanguage";
 interface MobileNavProps {
   isOpen: boolean;
   onClose: () => void;
+  onNavigate?: (view: "home" | "catalogue", hash?: string) => void;
 }
 
-export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose, onNavigate }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { t } = useLanguage();
@@ -38,8 +39,18 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (e: React.MouseEvent, view: "home" | "catalogue", hash?: string) => {
+    e.preventDefault();
     onClose();
+    if (onNavigate) {
+      onNavigate(view, hash);
+    } else {
+      if (view === "catalogue") {
+        window.location.hash = "#catalogue";
+      } else if (hash) {
+        window.location.hash = hash;
+      }
+    }
   };
 
   return (
@@ -94,27 +105,63 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
 
         {/* Navigation Links */}
         <nav className="mobile-nav-links" aria-label="Mobile Navigation Links">
-          <a href="#hero" onClick={handleLinkClick} className="mobile-nav-link">
+          <a 
+            href="#hero" 
+            onClick={(e) => handleLinkClick(e, "home", "#hero")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.home}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
-          <a href="#about" onClick={handleLinkClick} className="mobile-nav-link">
+          <a 
+            href="#about" 
+            onClick={(e) => handleLinkClick(e, "home", "#about")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.about}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
-          <a href="#hardware" onClick={handleLinkClick} className="mobile-nav-link">
+          {/* New Catalogue Link */}
+          <a 
+            href="#catalogue" 
+            onClick={(e) => handleLinkClick(e, "catalogue")} 
+            className="mobile-nav-link mobile-nav-catalogue-link"
+          >
+            <span className="mobile-nav-cat-label">
+              <Layers size={16} className="mobile-nav-cat-icon" />
+              <strong>{t.nav.catalogue}</strong>
+            </span>
+            <span className="mobile-nav-cat-badge">15 Items</span>
+          </a>
+          <a 
+            href="#hardware" 
+            onClick={(e) => handleLinkClick(e, "home", "#hardware")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.hardware}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
-          <a href="#gallery" onClick={handleLinkClick} className="mobile-nav-link">
+          <a 
+            href="#gallery" 
+            onClick={(e) => handleLinkClick(e, "home", "#gallery")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.gallery}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
-          <a href="#location" onClick={handleLinkClick} className="mobile-nav-link">
+          <a 
+            href="#location" 
+            onClick={(e) => handleLinkClick(e, "home", "#location")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.location}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
-          <a href="#contact" onClick={handleLinkClick} className="mobile-nav-link">
+          <a 
+            href="#contact" 
+            onClick={(e) => handleLinkClick(e, "home", "#contact")} 
+            className="mobile-nav-link"
+          >
             <span>{t.nav.contact}</span>
             <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
@@ -123,36 +170,22 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         {/* Primary Action Buttons */}
         <div className="mobile-nav-actions">
           <a 
-            href={businessData.googleProfile.directionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary"
-            style={{ width: "100%" }}
-            onClick={handleLinkClick}
+            href={`tel:${businessData.phone.tel}`} 
+            className="btn btn-secondary w-full mobile-action-btn phone-number"
           >
-            <Navigation size={18} strokeWidth={2} />
-            {t.nav.getDirections}
+            <Phone size={16} strokeWidth={2} />
+            <span>Call {businessData.phone.display}</span>
           </a>
-          <a 
-            href={`tel:${businessData.phone.tel}`}
-            className="btn btn-secondary"
-            style={{ width: "100%" }}
-          >
-            <Phone size={18} strokeWidth={2} />
-            {t.nav.callStore} ({businessData.phone.display})
-          </a>
-        </div>
 
-        {/* Store Metadata info */}
-        <div className="mobile-nav-footer">
-          <div className="mobile-nav-footer-item">
-            <MapPin size={16} className="mobile-nav-footer-icon" />
-            <span>{businessData.address.area}, Selangor</span>
-          </div>
-          <div className="mobile-nav-footer-item">
-            <Clock size={16} className="mobile-nav-footer-icon" />
-            <span>Daily until {businessData.hours.closingTime}</span>
-          </div>
+          <a 
+            href={businessData.googleProfile.directionsUrl} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn btn-primary w-full mobile-action-btn"
+          >
+            <Navigation size={16} strokeWidth={2} />
+            <span>{t.nav.getDirections}</span>
+          </a>
         </div>
       </div>
     </div>

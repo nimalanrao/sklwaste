@@ -5,7 +5,12 @@ import { MobileNav } from "./MobileNav";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "../context/useLanguage";
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  currentView?: "home" | "catalogue";
+  onNavigate?: (view: "home" | "catalogue", hash?: string) => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
@@ -22,6 +27,19 @@ export const Header: React.FC = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNav = (e: React.MouseEvent, view: "home" | "catalogue", hash?: string) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(view, hash);
+    } else {
+      if (view === "catalogue") {
+        window.location.hash = "#catalogue";
+      } else if (hash) {
+        window.location.hash = hash;
+      }
+    }
+  };
 
   return (
     <>
@@ -61,7 +79,12 @@ export const Header: React.FC = () => {
         <div className="header-main-bar">
           <div className="container header-container">
             {/* Brand Logo & Wordmark */}
-            <a href="#hero" className="brand-wordmark-wrap" aria-label="SKL Waste Kedai Hardware Home">
+            <a 
+              href="#hero" 
+              onClick={(e) => handleNav(e, "home", "#hero")}
+              className="brand-wordmark-wrap" 
+              aria-label="SKL Waste Kedai Hardware Home"
+            >
               <img 
                 src="/logo.png" 
                 alt="SKL Hardware Logo" 
@@ -75,11 +98,49 @@ export const Header: React.FC = () => {
 
             {/* Desktop Navigation Links */}
             <nav className="desktop-nav" aria-label="Main Navigation">
-              <a href="#about" className="nav-link">{t.nav.about}</a>
-              <a href="#hardware" className="nav-link">{t.nav.hardware}</a>
-              <a href="#gallery" className="nav-link">{t.nav.gallery}</a>
-              <a href="#location" className="nav-link">{t.nav.location}</a>
-              <a href="#contact" className="nav-link">{t.nav.contact}</a>
+              <a 
+                href="#about" 
+                onClick={(e) => handleNav(e, "home", "#about")}
+                className="nav-link"
+              >
+                {t.nav.about}
+              </a>
+              <a 
+                href="#catalogue" 
+                onClick={(e) => handleNav(e, "catalogue")}
+                className={`nav-link ${currentView === "catalogue" ? "nav-link-active" : ""}`}
+              >
+                <span>{t.nav.catalogue}</span>
+                <span className="nav-badge-count">15</span>
+              </a>
+              <a 
+                href="#hardware" 
+                onClick={(e) => handleNav(e, "home", "#hardware")}
+                className="nav-link"
+              >
+                {t.nav.hardware}
+              </a>
+              <a 
+                href="#gallery" 
+                onClick={(e) => handleNav(e, "home", "#gallery")}
+                className="nav-link"
+              >
+                {t.nav.gallery}
+              </a>
+              <a 
+                href="#location" 
+                onClick={(e) => handleNav(e, "home", "#location")}
+                className="nav-link"
+              >
+                {t.nav.location}
+              </a>
+              <a 
+                href="#contact" 
+                onClick={(e) => handleNav(e, "home", "#contact")}
+                className="nav-link"
+              >
+                {t.nav.contact}
+              </a>
             </nav>
 
             {/* Right Header Action Buttons */}
@@ -122,7 +183,8 @@ export const Header: React.FC = () => {
       {/* Accessible Mobile Navigation Drawer */}
       <MobileNav 
         isOpen={isMobileMenuOpen} 
-        onClose={() => setIsMobileMenuOpen(false)} 
+        onClose={() => setIsMobileMenuOpen(false)}
+        onNavigate={onNavigate}
       />
     </>
   );

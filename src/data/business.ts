@@ -15,6 +15,7 @@ export interface BusinessConfig {
   phone: {
     display: string;
     tel: string;
+    whatsapp: string;
   };
   hours: {
     status: string;
@@ -66,6 +67,7 @@ export const businessData: BusinessConfig = {
   phone: {
     display: "019-914 4743",
     tel: "+60199144743",
+    whatsapp: "60199144743",
   },
   hours: {
     status: "Open",
