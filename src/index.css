@@ -1,14 +1,25 @@
 /* ==========================================================================
    SKL WASTE SDN BHD (KEDAI HARDWARE) — CORE DESIGN SYSTEM
-   Strict White Theme / Light Mode | Apple-Inspired Clean Craft
+   Strict White Theme / Light Mode | Logo Color Harmonization (Green, Blue, White)
    ========================================================================== */
 
 :root {
-  /* Color Palette — Refined Neutral & Industrial Blue Accent */
+  /* Official Brand Colors from Logo */
+  --logo-green: #236526;          /* Roof / House green */
+  --logo-green-hover: #1b4f1e;
+  --logo-green-light: #f0fdf4;
+  --logo-green-border: #bbf7d0;
+
+  --logo-blue: #164e84;           /* Cupped hands & SKL text navy/blue */
+  --logo-blue-hover: #0f3963;
+  --logo-blue-light: #eff6ff;
+  --logo-blue-border: #bfdbfe;
+
+  /* Color Palette — Clean White Canvas & Tiered Light Surfaces */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-tertiary: #f1f5f9;
-  --bg-accent-subtle: #f0f6ff;
+  --bg-accent-subtle: #f0fdf4;
   
   --surface-card: #ffffff;
   --surface-card-hover: #ffffff;
@@ -23,19 +34,24 @@
   --border-hairline: rgba(15, 23, 42, 0.07);
   --border-subtle: rgba(15, 23, 42, 0.12);
   --border-strong: rgba(15, 23, 42, 0.22);
-  --border-focus: #0f172a;
+  --border-focus: var(--logo-blue);
 
-  /* Intentional Hardware Brand Accent */
-  --accent-primary: #1e3a8a;      /* Slate Industrial Blue */
-  --accent-hover: #172554;
-  --accent-light: #eff6ff;
-  --accent-border: #bfdbfe;
+  /* Primary Accent: Logo Blue; Secondary Accent: Logo Green */
+  --accent-primary: var(--logo-blue);
+  --accent-hover: var(--logo-blue-hover);
+  --accent-light: var(--logo-blue-light);
+  --accent-border: var(--logo-blue-border);
+
+  --accent-green: var(--logo-green);
+  --accent-green-hover: var(--logo-green-hover);
+  --accent-green-light: var(--logo-green-light);
+  --accent-green-border: var(--logo-green-border);
 
   /* Status Colors */
-  --status-open-text: #065f46;
-  --status-open-bg: #ecfdf5;
-  --status-open-border: #a7f3d0;
-  --status-dot: #10b981;
+  --status-open-text: #166534;
+  --status-open-bg: #f0fdf4;
+  --status-open-border: #bbf7d0;
+  --status-dot: #22c55e;
 
   /* Rating Star Color */
   --star-fill: #f59e0b;
@@ -161,7 +177,7 @@ img {
 
 /* Accessible Focus Outlines */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--logo-blue);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
@@ -212,9 +228,9 @@ img {
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--accent-primary);
-  background-color: var(--accent-light);
-  border: 1px solid var(--accent-border);
+  color: var(--logo-green);
+  background-color: var(--logo-green-light);
+  border: 1px solid var(--logo-green-border);
   padding: 4px 10px;
   border-radius: var(--radius-full);
   margin-bottom: var(--space-3);
@@ -262,25 +278,27 @@ img {
   transform: scale(0.97);
 }
 
+/* Primary Button: Logo Blue */
 .btn-primary {
-  background-color: var(--text-primary);
+  background-color: var(--logo-blue);
   color: var(--text-inverse);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 1px 3px rgba(22, 78, 132, 0.25);
 }
 
 .btn-primary:hover {
-  background-color: #1e293b;
+  background-color: var(--logo-blue-hover);
   color: var(--text-inverse);
 }
 
+/* Accent Button: Logo Green */
 .btn-accent {
-  background-color: var(--accent-primary);
+  background-color: var(--logo-green);
   color: var(--text-inverse);
-  box-shadow: 0 1px 3px rgba(30, 58, 138, 0.2);
+  box-shadow: 0 1px 3px rgba(35, 101, 38, 0.25);
 }
 
 .btn-accent:hover {
-  background-color: var(--accent-hover);
+  background-color: var(--logo-green-hover);
   color: var(--text-inverse);
 }
 
@@ -374,34 +392,6 @@ img {
 .img-contained {
   outline: 1px solid rgba(0, 0, 0, 0.08);
   outline-offset: -1px;
-}
-
-/* ==========================================================================
-   TOAST NOTIFICATION (COPY CONFIRMATION)
-   ========================================================================== */
-
-.toast-container {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-.toast {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  background-color: var(--text-primary);
-  color: var(--text-inverse);
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-  box-shadow: var(--shadow-modal);
-  transform: translateY(0);
-  transition: transform var(--duration-fast) var(--ease-apple), opacity var(--duration-fast) ease-out;
-  pointer-events: auto;
 }
 
 /* ==========================================================================

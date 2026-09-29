@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { MapPin, Navigation, Copy, Check, Phone, ExternalLink, Clock } from "lucide-react";
 import { businessData } from "../data/business";
+import { useLanguage } from "../context/useLanguage";
 
 export const LocationSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
+  const { t } = useLanguage();
 
   const handleCopyAddress = async () => {
     try {
@@ -11,7 +13,6 @@ export const LocationSection: React.FC = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback for older browsers or restricted permissions
       const textarea = document.createElement("textarea");
       textarea.value = businessData.address.full;
       document.body.appendChild(textarea);
@@ -28,12 +29,12 @@ export const LocationSection: React.FC = () => {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <span className="eyebrow">LOCATION & STORE ACCESS</span>
+          <span className="eyebrow">{t.location.eyebrow}</span>
           <h2 id="location-title" className="section-title">
-            Visit Us in Bandar Seri Coalfields
+            {t.location.title}
           </h2>
           <p className="section-desc">
-            Conveniently positioned along Jalan Kuala Selangor with direct roadside accessibility for picking up hardware materials.
+            {t.location.desc}
           </p>
         </div>
 
@@ -52,7 +53,7 @@ export const LocationSection: React.FC = () => {
 
             {/* Address Box */}
             <div className="location-address-box">
-              <span className="address-label">Storefront Address:</span>
+              <span className="address-label">{t.location.storefrontLabel}</span>
               <address className="address-content">
                 <strong>{businessData.address.area}</strong><br />
                 {businessData.address.street}<br />
@@ -69,18 +70,18 @@ export const LocationSection: React.FC = () => {
             <div className="location-hours-box">
               <div className="location-hours-header">
                 <Clock size={16} strokeWidth={2} />
-                <span className="location-hours-title">Operating Schedule</span>
+                <span className="location-hours-title">{t.location.hoursHeader}</span>
               </div>
               <p className="location-hours-text">
                 <strong className="badge-open">
                   <span className="badge-open-dot"></span>
-                  {businessData.hours.status} · Closes at {businessData.hours.closingTime}
+                  {t.nav.openStatus}
                 </strong>
               </p>
-              <span className="location-hours-notice">{businessData.hours.notice}</span>
+              <span className="location-hours-notice">{t.location.hoursNotice}</span>
             </div>
 
-            {/* Interactive Location Action Buttons */}
+            {/* Interactive Location Action Buttons with Logo-Inspired Styling */}
             <div className="location-buttons-grid">
               <a 
                 href={businessData.googleProfile.directionsUrl}
@@ -89,7 +90,7 @@ export const LocationSection: React.FC = () => {
                 className="btn btn-primary"
               >
                 <Navigation size={17} strokeWidth={2} />
-                <span>Get Directions</span>
+                <span>{t.location.getDirections}</span>
               </a>
 
               <a 
@@ -99,7 +100,7 @@ export const LocationSection: React.FC = () => {
                 className="btn btn-secondary"
               >
                 <ExternalLink size={17} strokeWidth={2} />
-                <span>Open in Google Maps</span>
+                <span>{t.location.openInGoogle}</span>
               </a>
 
               <button 
@@ -111,12 +112,12 @@ export const LocationSection: React.FC = () => {
                 {copied ? (
                   <>
                     <Check size={17} strokeWidth={2.5} className="check-success-icon" />
-                    <span>Address Copied!</span>
+                    <span>{t.location.addressCopied}</span>
                   </>
                 ) : (
                   <>
                     <Copy size={17} strokeWidth={2} />
-                    <span>Copy Address</span>
+                    <span>{t.location.copyAddress}</span>
                   </>
                 )}
               </button>
@@ -126,12 +127,12 @@ export const LocationSection: React.FC = () => {
                 className="btn btn-secondary"
               >
                 <Phone size={17} strokeWidth={2} />
-                <span>Call Store</span>
+                <span>{t.location.callStore}</span>
               </a>
             </div>
 
             <div aria-live="polite" className="sr-only">
-              {copied ? "Address copied to clipboard successfully." : ""}
+              {copied ? t.location.addressCopied : ""}
             </div>
           </div>
 
@@ -156,7 +157,7 @@ export const LocationSection: React.FC = () => {
               <div className="map-footer-info">
                 <MapPin size={16} className="map-footer-pin" />
                 <span className="map-footer-text">
-                  Jln Kuala Selangor, Bandar Seri Coalfields
+                  {t.location.mapFooterText}
                 </span>
               </div>
 
@@ -166,7 +167,7 @@ export const LocationSection: React.FC = () => {
                 rel="noopener noreferrer"
                 className="map-open-link"
               >
-                <span>Navigate</span>
+                <span>{t.location.navigate}</span>
                 <Navigation size={14} strokeWidth={2} />
               </a>
             </div>

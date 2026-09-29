@@ -1,10 +1,176 @@
 /* ==========================================================================
    SKL WASTE HARDWARE — COMPONENT STYLES
-   Crafted Vanilla CSS | Responsive Precision across all Breakpoints
+   Bilingual Support | Logo Integration (Green & Blue) | Loading Animation
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. HEADER & NAVIGATION
+   0. BRAND LOADING SCREEN ANIMATION
+   -------------------------------------------------------------------------- */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 380ms var(--ease-out), visibility 380ms var(--ease-out);
+}
+
+.loading-fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 360px;
+  animation: loadingContentIn 400ms var(--ease-apple);
+}
+
+@keyframes loadingContentIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-logo-wrapper {
+  width: 110px;
+  height: 110px;
+  margin-bottom: var(--space-4);
+  filter: drop-shadow(0 4px 12px rgba(22, 78, 132, 0.12));
+  animation: logoPulse 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes logoPulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.03);
+  }
+}
+
+.loading-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.loading-brand-text {
+  margin-bottom: var(--space-5);
+}
+
+.loading-brand-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.loading-brand-badge {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--logo-green);
+  margin-bottom: 4px;
+}
+
+.loading-brand-location {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.loading-progress-container {
+  width: 220px;
+  height: 4px;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.loading-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--logo-green) 0%, var(--logo-blue) 100%);
+  border-radius: var(--radius-full);
+  transition: width 140ms ease-out;
+}
+
+.loading-percentage {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   1. LANGUAGE SELECTOR (TOP ENGLISH / MALAY TOGGLE)
+   -------------------------------------------------------------------------- */
+.lang-toggle-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 6px;
+  border-radius: var(--radius-full);
+}
+
+.lang-globe-icon {
+  color: var(--logo-blue);
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+.lang-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lang-btn {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 3px 7px;
+  border-radius: var(--radius-full);
+  transition: 
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    font-weight var(--duration-fast);
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+}
+
+.lang-btn-active {
+  background-color: #ffffff;
+  color: var(--logo-blue);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.lang-divider {
+  font-size: 0.6875rem;
+  color: var(--border-subtle);
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. HEADER & WORDMARK WITH LOGO
    -------------------------------------------------------------------------- */
 .header {
   position: sticky;
@@ -12,7 +178,7 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.96);
   transition: 
     background-color var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out),
@@ -21,48 +187,52 @@
 }
 
 .header-scrolled {
-  background-color: rgba(255, 255, 255, 0.88);
+  background-color: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-hairline);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
 .header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  height: 74px;
 }
 
-/* Typographic Wordmark */
-.brand-wordmark {
+/* Brand Wordmark with Official Logo */
+.brand-wordmark-wrap {
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   user-select: none;
 }
 
+.header-brand-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brand-wordmark-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .brand-title {
-  font-size: 1.1875rem;
+  font-size: 1.0625rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
-.brand-divider {
-  color: var(--text-muted);
-  font-weight: 300;
-  font-size: 0.9rem;
-}
-
-.brand-category {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--accent-primary);
-  background-color: var(--accent-light);
-  padding: 2px 7px;
-  border-radius: var(--radius-xs);
+.brand-category-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--logo-green);
   letter-spacing: -0.01em;
 }
 
@@ -70,7 +240,7 @@
 .desktop-nav {
   display: none;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .nav-link {
@@ -92,7 +262,7 @@
   left: 0;
   width: 0%;
   height: 2px;
-  background-color: var(--accent-primary);
+  background: linear-gradient(90deg, var(--logo-green) 0%, var(--logo-blue) 100%);
   transition: width var(--duration-fast) var(--ease-out);
 }
 
@@ -118,8 +288,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   border: 1px solid var(--border-hairline);
@@ -132,23 +302,18 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. MOBILE NAVIGATION DRAWER
+   3. MOBILE NAVIGATION DRAWER
    -------------------------------------------------------------------------- */
 .mobile-nav-backdrop {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background-color: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   justify-content: flex-end;
   animation: fadeIn var(--duration-fast) ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .mobile-nav-panel {
@@ -158,15 +323,10 @@
   background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
-  padding: var(--space-6);
+  padding: var(--space-5);
   box-shadow: -4px 0 24px rgba(15, 23, 42, 0.12);
   animation: slideIn var(--duration-normal) var(--ease-apple);
   overflow-y: auto;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
 }
 
 .mobile-nav-header {
@@ -179,27 +339,37 @@
 
 .mobile-nav-brand {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-nav-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .mobile-nav-brand-title {
-  font-size: 1.125rem;
+  display: block;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .mobile-nav-brand-subtitle {
-  font-size: 0.8125rem;
-  color: var(--accent-primary);
-  font-weight: 500;
+  display: block;
+  font-size: 0.75rem;
+  color: var(--logo-green);
+  font-weight: 600;
 }
 
 .mobile-nav-close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   border: 1px solid var(--border-hairline);
@@ -210,24 +380,37 @@
   color: var(--text-primary);
 }
 
+.mobile-nav-lang-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.mobile-lang-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .mobile-nav-status {
-  padding-top: var(--space-4);
-  padding-bottom: var(--space-4);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
 }
 
 .mobile-nav-links {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  margin-top: var(--space-2);
 }
 
 .mobile-nav-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
-  font-size: 1rem;
+  padding: 11px 12px;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--text-primary);
   border-radius: var(--radius-sm);
@@ -237,7 +420,7 @@
 .mobile-nav-link:hover,
 .mobile-nav-link:active {
   background-color: var(--bg-secondary);
-  color: var(--accent-primary);
+  color: var(--logo-blue);
 }
 
 .mobile-nav-chevron {
@@ -249,11 +432,11 @@
   flex-direction: column;
   gap: var(--space-3);
   margin-top: auto;
-  padding-top: var(--space-8);
+  padding-top: var(--space-6);
 }
 
 .mobile-nav-footer {
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-hairline);
   display: flex;
@@ -270,12 +453,12 @@
 }
 
 .mobile-nav-footer-icon {
-  color: var(--text-secondary);
+  color: var(--logo-blue);
   flex-shrink: 0;
 }
 
 /* --------------------------------------------------------------------------
-   3. HERO SECTION
+   4. HERO SECTION WITH OFFICIAL LOGO PLAQUE
    -------------------------------------------------------------------------- */
 .hero-section {
   padding-top: clamp(2.5rem, 5vw, 4.5rem);
@@ -353,7 +536,7 @@
 }
 
 .trust-pill:hover {
-  border-color: var(--text-muted);
+  border-color: var(--logo-blue);
   transform: translateY(-1px);
 }
 
@@ -397,10 +580,10 @@
 }
 
 .trust-pill-icon {
-  color: var(--text-muted);
+  color: var(--logo-green);
 }
 
-/* Hero Visual Column */
+/* Hero Visual Column & Official Logo Plaque */
 .hero-visual {
   position: relative;
 }
@@ -430,13 +613,38 @@
   transform: scale(1.02);
 }
 
+/* Official Logo Plaque Overlay in Hero Image */
+.hero-logo-plaque {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 68px;
+  height: 68px;
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-plaque-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .hero-image-caption {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: var(--space-4);
-  background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.75) 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.8) 100%);
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -448,7 +656,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #93c5fd;
+  color: #86efac; /* Mint green */
 }
 
 .caption-text {
@@ -508,7 +716,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   4. QUICK INFO SECTION
+   5. QUICK INFO SECTION WITH DUAL BRAND ICONS
    -------------------------------------------------------------------------- */
 .quick-info-section {
   padding-top: var(--space-6);
@@ -553,8 +761,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-primary);
   flex-shrink: 0;
+}
+
+.quick-info-icon-green {
+  color: var(--logo-green);
+  border-color: var(--logo-green-border);
+  background-color: var(--logo-green-light);
+}
+
+.quick-info-icon-blue {
+  color: var(--logo-blue);
+  border-color: var(--logo-blue-border);
+  background-color: var(--logo-blue-light);
 }
 
 .quick-info-body {
@@ -591,11 +810,11 @@
 .quick-info-link:hover .quick-info-arrow {
   transform: translate(2px, -2px);
   opacity: 1;
-  color: var(--accent-primary);
+  color: var(--logo-blue);
 }
 
 /* --------------------------------------------------------------------------
-   5. ABOUT SECTION
+   6. ABOUT SECTION
    -------------------------------------------------------------------------- */
 .about-grid {
   display: grid;
@@ -652,12 +871,22 @@
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
-  background-color: var(--accent-light);
-  color: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.about-icon-green {
+  background-color: var(--logo-green-light);
+  color: var(--logo-green);
+  border: 1px solid var(--logo-green-border);
+}
+
+.about-icon-blue {
+  background-color: var(--logo-blue-light);
+  color: var(--logo-blue);
+  border: 1px solid var(--logo-blue-border);
 }
 
 .about-feature-content {
@@ -679,11 +908,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   6. HARDWARE & ENQUIRIES SECTION
+   7. HARDWARE & ENQUIRIES SECTION
    -------------------------------------------------------------------------- */
 .enquiry-banner {
-  background-color: var(--accent-light);
-  border: 1px solid var(--accent-border);
+  background: linear-gradient(135deg, var(--logo-blue-light) 0%, var(--logo-green-light) 100%);
+  border: 1px solid var(--logo-blue-border);
   border-radius: var(--radius-lg);
   padding: clamp(1.5rem, 3.5vw, 2.25rem);
   margin-bottom: clamp(2.5rem, 5vw, 4rem);
@@ -698,7 +927,7 @@
 .enquiry-banner-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--accent-primary);
+  color: var(--logo-blue);
   margin-bottom: 4px;
 }
 
@@ -765,7 +994,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--accent-primary);
+  color: var(--logo-green);
   margin-bottom: 2px;
 }
 
@@ -817,7 +1046,7 @@
 }
 
 .tag-check-icon {
-  color: var(--accent-primary);
+  color: var(--logo-green);
 }
 
 .category-card-footer {
@@ -831,13 +1060,13 @@
   gap: 6px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--accent-primary);
+  color: var(--logo-blue);
   transition: gap var(--duration-fast) var(--ease-out);
 }
 
 .category-enquire-link:hover {
   gap: 10px;
-  color: var(--accent-hover);
+  color: var(--logo-blue-hover);
 }
 
 .inventory-notice-card {
@@ -852,14 +1081,14 @@
 }
 
 .text-link {
-  color: var(--accent-primary);
+  color: var(--logo-blue);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 /* --------------------------------------------------------------------------
-   7. GALLERY & LIGHTBOX
+   8. GALLERY & LIGHTBOX
    -------------------------------------------------------------------------- */
 .gallery-grid {
   display: grid;
@@ -885,7 +1114,7 @@
 .gallery-item-card:focus-visible {
   transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
-  border-color: var(--border-subtle);
+  border-color: var(--logo-blue-border);
 }
 
 .gallery-thumbnail-wrap {
@@ -945,7 +1174,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--accent-primary);
+  color: var(--logo-green);
   margin-bottom: 2px;
 }
 
@@ -1022,8 +1251,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--accent-primary);
-  background-color: var(--accent-light);
+  color: var(--logo-blue);
+  background-color: var(--logo-blue-light);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
 }
@@ -1123,7 +1352,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   8. REVIEWS & REPUTATION SECTION
+   9. REVIEWS & REPUTATION SECTION
    -------------------------------------------------------------------------- */
 .reviews-card {
   background-color: var(--surface-card);
@@ -1219,12 +1448,12 @@
   gap: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--accent-primary);
+  color: var(--logo-green);
   margin-bottom: var(--space-2);
 }
 
 .verification-icon {
-  color: var(--accent-primary);
+  color: var(--logo-green);
 }
 
 .verification-desc {
@@ -1259,7 +1488,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   9. LOCATION & MAPS SECTION
+   10. LOCATION & MAPS SECTION
    -------------------------------------------------------------------------- */
 .location-grid {
   display: grid;
@@ -1284,8 +1513,9 @@
   width: 44px;
   height: 44px;
   border-radius: var(--radius-md);
-  background-color: var(--accent-light);
-  color: var(--accent-primary);
+  background-color: var(--logo-blue-light);
+  color: var(--logo-blue);
+  border: 1px solid var(--logo-blue-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1297,7 +1527,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--accent-primary);
+  color: var(--logo-green);
 }
 
 .location-name {
@@ -1433,7 +1663,7 @@
 }
 
 .map-footer-pin {
-  color: var(--accent-primary);
+  color: var(--logo-blue);
   flex-shrink: 0;
 }
 
@@ -1449,15 +1679,15 @@
   gap: 5px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--accent-primary);
+  color: var(--logo-blue);
 }
 
 .map-open-link:hover {
-  color: var(--accent-hover);
+  color: var(--logo-blue-hover);
 }
 
 /* --------------------------------------------------------------------------
-   10. CONTACT SECTION
+   11. CONTACT SECTION WITH LOGO ACCENTS
    -------------------------------------------------------------------------- */
 .contact-box {
   background-color: var(--bg-secondary);
@@ -1494,12 +1724,22 @@
   width: 50px;
   height: 50px;
   border-radius: var(--radius-md);
-  background-color: var(--accent-light);
-  color: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: var(--space-4);
+}
+
+.contact-icon-green {
+  background-color: var(--logo-green-light);
+  color: var(--logo-green);
+  border: 1px solid var(--logo-green-border);
+}
+
+.contact-icon-blue {
+  background-color: var(--logo-blue-light);
+  color: var(--logo-blue);
+  border: 1px solid var(--logo-blue-border);
 }
 
 .contact-info-title {
@@ -1532,7 +1772,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   11. FOOTER
+   12. FOOTER WITH LOGO
    -------------------------------------------------------------------------- */
 .footer {
   background-color: #ffffff;
@@ -1555,21 +1795,31 @@
 
 .footer-wordmark {
   display: inline-flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 12px;
   margin-bottom: var(--space-3);
 }
 
+.footer-brand-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .footer-brand-title {
-  font-size: 1.1875rem;
+  display: block;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .footer-brand-badge {
+  display: block;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--accent-primary);
+  color: var(--logo-green);
 }
 
 .footer-desc {
@@ -1589,7 +1839,7 @@
 }
 
 .footer-pin-icon {
-  color: var(--text-secondary);
+  color: var(--logo-green);
 }
 
 .footer-col-heading {
@@ -1615,7 +1865,7 @@
 }
 
 .footer-nav-link:hover {
-  color: var(--text-primary);
+  color: var(--logo-blue);
 }
 
 .footer-contact-items {
@@ -1635,18 +1885,19 @@
 }
 
 .footer-contact-item:hover {
-  color: var(--accent-primary);
+  color: var(--logo-blue);
 }
 
 .footer-item-icon {
-  color: var(--accent-primary);
+  color: var(--logo-blue);
   flex-shrink: 0;
 }
 
 .footer-hours-pill {
   font-size: 0.75rem;
-  color: var(--text-muted);
-  background-color: var(--bg-secondary);
+  color: var(--logo-green);
+  background-color: var(--logo-green-light);
+  border: 1px solid var(--logo-green-border);
   padding: 6px 10px;
   border-radius: var(--radius-sm);
   display: inline-block;
@@ -1677,7 +1928,7 @@
 }
 
 .footer-back-to-top:hover {
-  color: var(--text-primary);
+  color: var(--logo-blue);
 }
 
 /* Screen Reader Utility */
@@ -1694,7 +1945,7 @@
 }
 
 /* ==========================================================================
-   RESPONSIVE BREAKPOINTS (Fluid Engineering)
+   RESPONSIVE BREAKPOINTS
    ========================================================================== */
 
 /* Tablet & Above (>= 768px) */

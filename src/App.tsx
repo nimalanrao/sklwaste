@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
+import { LanguageProvider } from "./context/LanguageContext";
+import { LoadingScreen } from "./components/LoadingScreen";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { QuickInfo } from "./components/QuickInfo";
@@ -11,13 +13,18 @@ import { LocationSection } from "./components/LocationSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
 
-export const App: React.FC = () => {
+export const AppContent: React.FC = () => {
+  const [loadingComplete, setLoadingComplete] = useState(false);
+
   return (
     <div className="app-root">
-      {/* 1. Header & Navigation */}
+      {/* 0. Brand Loading Screen Animation */}
+      <LoadingScreen onComplete={() => setLoadingComplete(true)} />
+
+      {/* 1. Header & Navigation (with Top English / Malay Switcher) */}
       <Header />
 
-      <main id="main-content">
+      <main id="main-content" className={loadingComplete ? "main-content-loaded" : ""}>
         {/* 2. Hero Section */}
         <Hero />
 
@@ -46,6 +53,14 @@ export const App: React.FC = () => {
       {/* 10. Footer */}
       <Footer />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 };
 

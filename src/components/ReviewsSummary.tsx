@@ -1,8 +1,11 @@
 import React from "react";
 import { Star, ExternalLink, ShieldCheck, MapPin } from "lucide-react";
 import { businessData } from "../data/business";
+import { useLanguage } from "../context/useLanguage";
 
 export const ReviewsSummary: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="section" aria-labelledby="reputation-title">
       <div className="container">
@@ -10,9 +13,9 @@ export const ReviewsSummary: React.FC = () => {
           <div className="reviews-grid">
             {/* Left: Overall Rating Hero */}
             <div className="reviews-score-col">
-              <span className="eyebrow" style={{ alignSelf: "flex-start" }}>REPUTATION</span>
+              <span className="eyebrow" style={{ alignSelf: "flex-start" }}>{t.reviews.eyebrow}</span>
               <h2 id="reputation-title" className="reviews-title">
-                Google Business Profile Rating
+                {t.reviews.title}
               </h2>
               <div className="reviews-score-hero">
                 <span className="reviews-huge-num tabular-nums">
@@ -31,12 +34,12 @@ export const ReviewsSummary: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <span className="reviews-out-of">out of 5.0 rating</span>
+                  <span className="reviews-out-of">{t.reviews.ratingOutOf}</span>
                 </div>
               </div>
 
               <p className="reviews-count-text">
-                Based on <strong className="tabular-nums">{businessData.googleProfile.reviewCount} customer reviews</strong> submitted on Google Maps.
+                {t.reviews.countText}
               </p>
             </div>
 
@@ -45,14 +48,14 @@ export const ReviewsSummary: React.FC = () => {
               <div className="reputation-verification-box">
                 <div className="verification-badge">
                   <ShieldCheck size={18} className="verification-icon" />
-                  <span>Public Listing Data</span>
+                  <span>{t.reviews.badgeTitle}</span>
                 </div>
                 <p className="verification-desc">
-                  This score is recorded directly from the official Google Business Profile for <strong>{businessData.fullName}</strong> in Bandar Seri Coalfields, Selangor.
+                  {t.reviews.badgeDesc}
                 </p>
                 <div className="verification-place-meta">
                   <MapPin size={15} />
-                  <span>Place ID: {businessData.googleProfile.placeId}</span>
+                  <span>{t.reviews.placeIdLabel} {businessData.googleProfile.placeId}</span>
                 </div>
               </div>
 
@@ -63,11 +66,11 @@ export const ReviewsSummary: React.FC = () => {
                   rel="noopener noreferrer"
                   className="btn btn-primary reviews-google-btn"
                 >
-                  <span>View Reviews on Google Maps</span>
+                  <span>{t.reviews.viewOnGoogle}</span>
                   <ExternalLink size={16} strokeWidth={2} />
                 </a>
                 <span className="reviews-disclaimer">
-                  We respect authentic customer feedback. Review text and profile details are maintained and verified directly on Google.
+                  {t.reviews.disclaimer}
                 </span>
               </div>
             </div>

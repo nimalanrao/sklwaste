@@ -1,10 +1,12 @@
 import React from "react";
 import { Phone, MapPin, Navigation, ArrowUp } from "lucide-react";
 import { businessData } from "../data/business";
+import { useLanguage } from "../context/useLanguage";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const Footer: React.FC = () => {
+  const { t } = useLanguage();
 
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -15,14 +17,21 @@ export const Footer: React.FC = () => {
       <div className="container">
         {/* Main Footer Row */}
         <div className="footer-top-grid">
-          {/* Brand & Category Column */}
+          {/* Brand & Category Column with Logo */}
           <div className="footer-brand-col">
             <a href="#hero" className="footer-wordmark">
-              <span className="footer-brand-title">{businessData.fullName}</span>
-              <span className="footer-brand-badge">{businessData.subtitle}</span>
+              <img 
+                src="/logo.png" 
+                alt="SKL Hardware Logo" 
+                className="footer-brand-logo" 
+              />
+              <div>
+                <span className="footer-brand-title">{businessData.fullName}</span>
+                <span className="footer-brand-badge">{businessData.subtitle}</span>
+              </div>
             </a>
             <p className="footer-desc">
-              Your local hardware store in Bandar Seri Coalfields, Selangor. Supplying everyday tools, plumbing parts, fasteners, and maintenance supplies.
+              {t.footer.tagline}
             </p>
             <div className="footer-location-line">
               <MapPin size={16} className="footer-pin-icon" />
@@ -32,20 +41,20 @@ export const Footer: React.FC = () => {
 
           {/* Quick Navigation Links */}
           <div className="footer-nav-col">
-            <h4 className="footer-col-heading">Store Navigation</h4>
+            <h4 className="footer-col-heading">{t.footer.navigationHeading}</h4>
             <ul className="footer-links-list">
-              <li><a href="#hero" className="footer-nav-link">Home</a></li>
-              <li><a href="#about" className="footer-nav-link">About Store</a></li>
-              <li><a href="#hardware" className="footer-nav-link">Hardware Supplies</a></li>
-              <li><a href="#gallery" className="footer-nav-link">Product Gallery</a></li>
-              <li><a href="#location" className="footer-nav-link">Location & Schedule</a></li>
-              <li><a href="#contact" className="footer-nav-link">Contact</a></li>
+              <li><a href="#hero" className="footer-nav-link">{t.nav.home}</a></li>
+              <li><a href="#about" className="footer-nav-link">{t.nav.about}</a></li>
+              <li><a href="#hardware" className="footer-nav-link">{t.nav.hardware}</a></li>
+              <li><a href="#gallery" className="footer-nav-link">{t.nav.gallery}</a></li>
+              <li><a href="#location" className="footer-nav-link">{t.nav.location}</a></li>
+              <li><a href="#contact" className="footer-nav-link">{t.nav.contact}</a></li>
             </ul>
           </div>
 
           {/* Direct Access & Contact Column */}
           <div className="footer-contact-col">
-            <h4 className="footer-col-heading">Customer Assistance</h4>
+            <h4 className="footer-col-heading">{t.footer.assistanceHeading}</h4>
             <div className="footer-contact-items">
               <a 
                 href={`tel:${businessData.phone.tel}`}
@@ -62,12 +71,12 @@ export const Footer: React.FC = () => {
                 className="footer-contact-item"
               >
                 <Navigation size={16} className="footer-item-icon" />
-                <span>Get Driving Directions</span>
+                <span>{t.footer.directionsAction}</span>
               </a>
             </div>
 
             <div className="footer-hours-pill">
-              <span>Verified Hours: Open until {businessData.hours.closingTime}</span>
+              <span>{t.footer.verifiedHoursText}</span>
             </div>
           </div>
         </div>
@@ -75,7 +84,7 @@ export const Footer: React.FC = () => {
         {/* Bottom Copyright & Back to Top Bar */}
         <div className="footer-bottom-bar">
           <p className="footer-copyright">
-            &copy; {CURRENT_YEAR} {businessData.fullName} ({businessData.subtitle}). All rights reserved.
+            &copy; {CURRENT_YEAR} {businessData.fullName} ({businessData.subtitle}). {t.footer.copyright}
           </p>
 
           <button 
@@ -84,7 +93,7 @@ export const Footer: React.FC = () => {
             className="footer-back-to-top"
             aria-label="Back to top of page"
           >
-            <span>Back to top</span>
+            <span>{t.footer.backToTop}</span>
             <ArrowUp size={15} strokeWidth={2} />
           </button>
         </div>
