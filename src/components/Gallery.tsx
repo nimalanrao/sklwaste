@@ -3,6 +3,7 @@ import { Maximize2, Image as ImageIcon } from "lucide-react";
 import { galleryItems } from "../data/business";
 import { GalleryLightbox } from "./GalleryLightbox";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 export const Gallery: React.FC = () => {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
@@ -60,7 +61,7 @@ export const Gallery: React.FC = () => {
             >
               <div className="gallery-thumbnail-wrap">
                 <img 
-                  src={item.imageUrl} 
+                  src={assetUrl(item.imageUrl)} 
                   alt={item.alt}
                   className="gallery-img img-contained"
                   loading="lazy"

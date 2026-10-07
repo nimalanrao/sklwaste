@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -67,7 +68,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         {/* Brand Logo with Apple-inspired Subtle Scale */}
         <div className="loading-logo-wrapper">
           <img 
-            src="/logo.png" 
+            src={assetUrl("/logo.png")} 
             alt="SKL Hardware Logo" 
             className="loading-logo-img"
           />

@@ -2,6 +2,7 @@ import React from "react";
 import { Phone, MapPin, Navigation, ArrowUp } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -21,7 +22,7 @@ export const Footer: React.FC = () => {
           <div className="footer-brand-col">
             <a href="#hero" className="footer-wordmark">
               <img 
-                src="/logo.png" 
+                src={assetUrl("/logo.png")} 
                 alt="SKL Hardware Logo" 
                 className="footer-brand-logo" 
               />

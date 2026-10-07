@@ -4,6 +4,7 @@ import { businessData } from "../data/business";
 import { MobileNav } from "./MobileNav";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 interface HeaderProps {
   currentView?: "home" | "catalogue";
@@ -55,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
               aria-label="SKL Waste Kedai Hardware Home"
             >
               <img 
-                src="/logo.png" 
+                src={assetUrl("/logo.png")} 
                 alt="SKL Hardware Logo" 
                 className="header-brand-logo"
               />

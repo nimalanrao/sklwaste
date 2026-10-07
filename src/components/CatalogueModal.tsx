@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { CatalogueProduct } from "../data/catalogue";
 import { businessData } from "../data/business";
+import { assetUrl } from "../utils/asset";
 
 interface CatalogueModalProps {
   product: CatalogueProduct | null;
@@ -126,13 +127,14 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 aria-label={`Besarkan imej ${product.title}`}
               >
                 <img 
-                  src={product.localImage} 
+                  src={assetUrl(product.localImage)} 
                   alt={product.title} 
                   className="apple-modal-product-img"
                   onError={(e) => {
                     const target = e.currentTarget;
-                    if (target.src !== product.fallbackImage) {
-                      target.src = product.fallbackImage;
+                    const fb = assetUrl(product.fallbackImage);
+                    if (target.src !== fb) {
+                      target.src = fb;
                     }
                   }}
                 />
@@ -365,7 +367,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
               title={zoomScale > 1 ? "Klik untuk kembali ke saiz normal (100%)" : "Klik untuk zum masuk 2x"}
             >
               <img 
-                src={product.localImage} 
+                src={assetUrl(product.localImage)} 
                 alt={product.title} 
                 className="apple-lightbox-img"
                 style={{
@@ -373,8 +375,9 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 }}
                 onError={(e) => {
                   const target = e.currentTarget;
-                  if (target.src !== product.fallbackImage) {
-                    target.src = product.fallbackImage;
+                  const fb = assetUrl(product.fallbackImage);
+                  if (target.src !== fb) {
+                    target.src = fb;
                   }
                 }}
               />

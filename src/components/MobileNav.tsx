@@ -3,6 +3,7 @@ import { X, Phone, Navigation, ChevronRight, Layers } from "lucide-react";
 import { businessData } from "../data/business";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -70,7 +71,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose, onNavigat
         <div className="mobile-nav-header">
           <div className="mobile-nav-brand">
             <img 
-              src="/logo.png" 
+              src={assetUrl("/logo.png")} 
               alt="SKL Hardware Logo" 
               className="mobile-nav-logo-img" 
             />

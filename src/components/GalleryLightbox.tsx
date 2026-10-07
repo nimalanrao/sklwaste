@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryItem } from "../data/business";
+import { assetUrl } from "../utils/asset";
 
 interface GalleryLightboxProps {
   items: GalleryItem[];
@@ -112,7 +113,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
 
           <div className="lightbox-image-wrapper">
             <img 
-              src={currentItem.imageUrl} 
+              src={assetUrl(currentItem.imageUrl)} 
               alt={currentItem.alt}
               className="lightbox-active-img"
             />

@@ -23,6 +23,7 @@ import { masterProducts, SIDEBAR_CATEGORIES } from "../data/catalogue";
 import type { MasterProduct } from "../data/catalogue";
 import { CatalogueModal } from "./CatalogueModal";
 import { businessData } from "../data/business";
+import { assetUrl } from "../utils/asset";
 
 interface CataloguePageProps {
   onBackToHome: () => void;
@@ -497,14 +498,15 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                       aria-label={`Lihat maklumat ${p.title}`}
                     >
                       <img 
-                        src={p.localImage} 
+                        src={assetUrl(p.localImage)} 
                         alt={p.title} 
                         className="portal-card-img"
                         loading="lazy"
                         onError={(e) => {
                           const target = e.currentTarget;
-                          if (target.src !== p.fallbackImage) {
-                            target.src = p.fallbackImage;
+                          const fb = assetUrl(p.fallbackImage);
+                          if (target.src !== fb) {
+                            target.src = fb;
                           }
                         }}
                       />
