@@ -13,11 +13,17 @@ import {
   Wrench,
   ZoomIn,
   ZoomOut,
-  Maximize2
+  Maximize2,
+  Plus,
+  Minus,
+  ShoppingBag,
+  ArrowRight
 } from "lucide-react";
 import type { CatalogueProduct } from "../data/catalogue";
 import { businessData } from "../data/business";
 import { assetUrl } from "../utils/asset";
+import { useCart } from "../context/CartContext";
+import { useDragToDismiss } from "../hooks/useDragToDismiss";
 
 interface CatalogueModalProps {
   product: CatalogueProduct | null;
@@ -27,19 +33,37 @@ interface CatalogueModalProps {
 export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose }) => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [zoomScale, setZoomScale] = useState(1);
+  const [modalQty, setModalQty] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
-  const handleZoomIn = () => setZoomScale(prev => Math.min(3, +(prev + 0.5).toFixed(1)));
-  const handleZoomOut = () => setZoomScale(prev => Math.max(1, +(prev - 0.5).toFixed(1)));
+  const { addToCart, getItemQuantity, openCheckout, totalCount } = useCart();
+
+  const { sheetRef, handleProps, contentProps, isDragging } = useDragToDismiss({
+    isOpen: Boolean(product && !isLightboxOpen),
+    onClose,
+    threshold: 85,
+  });
+
+  const handleZoomIn = () => setZoomScale(prev => Math.min(2.5, +(prev + 0.4).toFixed(1)));
+  const handleZoomOut = () => setZoomScale(prev => Math.max(1, +(prev - 0.4).toFixed(1)));
   const handleZoomReset = () => setZoomScale(1);
 
   const toggleZoom = () => {
-    setZoomScale(prev => (prev === 1 ? 2 : 1));
+    setZoomScale(prev => (prev === 1 ? 1.8 : 1));
   };
 
   const handleCloseLightbox = () => {
     setIsLightboxOpen(false);
     setZoomScale(1);
   };
+
+  // Reset quantity when new product opens
+  useEffect(() => {
+    if (product) {
+      setModalQty(1);
+      setJustAdded(false);
+    }
+  }, [product]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -75,6 +99,14 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
 
   if (!product) return null;
 
+  const inCartQty = getItemQuantity(product.id);
+
+  const handleAddToCart = () => {
+    addToCart(product, modalQty);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2400);
+  };
+
   const whatsappMessage = encodeURIComponent(
     `Hello SKL Waste, saya ingin semak sebut harga dan stok untuk: ${product.title} (${product.unit || 'Lori / Guni / Pail'})`
   );
@@ -90,9 +122,20 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
         aria-labelledby="apple-modal-title"
       >
         <div 
-          className="apple-modal-sheet" 
+          ref={sheetRef}
+          className={`apple-modal-sheet ${isDragging ? "apple-modal-dragging" : ""}`} 
           onClick={(e) => e.stopPropagation()}
+          {...contentProps}
         >
+          {/* Apple Tactile Drag-Down Handle Bar for Mobile & Desktop */}
+          <div 
+            className="sheet-drag-handle-zone" 
+            {...handleProps}
+            title="Tarik ke bawah untuk tutup"
+          >
+            <div className="sheet-drag-pill" />
+          </div>
+
           {/* Apple Circular Dismiss Button */}
           <button 
             type="button"
@@ -107,7 +150,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
           <div className="apple-modal-layout">
             {/* Left Column: Visual Showcase & Trust Badges */}
             <div className="apple-modal-stage-col">
-              {/* Clickable Image Card with Zoom Hint */}
+              {/* Clickable Image Card with Zoom Hint (Strictly contained, no overflow!) */}
               <div 
                 className="apple-modal-image-card apple-modal-image-card-clickable"
                 onClick={() => {
@@ -142,7 +185,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 {/* Floating Apple Zoom Hint Pill */}
                 <div className="apple-modal-zoom-hint">
                   <ZoomIn size={13} strokeWidth={2.4} />
-                  <span>Klik untuk besarkan</span>
+                  <span>Besarkan</span>
                 </div>
               </div>
               
@@ -161,7 +204,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   <span className="apple-trust-dot">•</span>
                   <div className="apple-trust-item">
                     <Truck size={14} className="apple-trust-icon-blue" />
-                    <span>Penghantaran Lori Disediakan</span>
+                    <span>Penghantaran Siang & Malam</span>
                   </div>
                 </div>
               </div>
@@ -178,6 +221,11 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   </span>
                   {product.brand && product.brand !== "SKL Hardware" && (
                     <span className="apple-brand-pill">{product.brand}</span>
+                  )}
+                  {inCartQty > 0 && (
+                    <span className="apple-incart-badge">
+                      {inCartQty} dalam senarai
+                    </span>
                   )}
                 </div>
 
@@ -213,49 +261,107 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 </div>
               </div>
 
-              {/* Apple Inset Grouped Card (Unified Details Container) */}
+              {/* Inset Grouped Card (Unified Details Container) */}
               <div className="apple-inset-grouped-container">
-                {/* Row 1: Technical Overview */}
                 {product.description && (
                   <div className="apple-inset-row">
                     <div className="apple-row-icon-squircle apple-squircle-blue">
                       <FileText size={15} strokeWidth={2} />
                     </div>
                     <div className="apple-row-content">
-                      <h3 className="apple-row-heading">Penerangan & Ciri Teknikal</h3>
+                      <h3 className="apple-row-heading">Penerangan Ringkas</h3>
                       <p className="apple-row-text">{product.description}</p>
                     </div>
                   </div>
                 )}
 
-                {/* Row 2: Site Application */}
                 {product.application && (
                   <div className="apple-inset-row">
                     <div className="apple-row-icon-squircle apple-squircle-amber">
                       <Package size={15} strokeWidth={2} />
                     </div>
                     <div className="apple-row-content">
-                      <h3 className="apple-row-heading">Aplikasi & Penggunaan di Tapak</h3>
+                      <h3 className="apple-row-heading">Aplikasi di Tapak Binaan</h3>
                       <p className="apple-row-text">{product.application}</p>
                     </div>
                   </div>
                 )}
 
-                {/* Row 3: SKL Guarantee & Logistics Commitment */}
                 <div className="apple-inset-row apple-row-guarantee">
                   <div className="apple-row-icon-squircle apple-squircle-green">
                     <ShieldCheck size={15} strokeWidth={2} />
                   </div>
                   <div className="apple-row-content">
-                    <h3 className="apple-row-heading apple-heading-green">Jaminan Pembekal & Logistik SKL Waste</h3>
+                    <h3 className="apple-row-heading apple-heading-green">Logistik SKL Waste</h3>
                     <p className="apple-row-text">
-                      Khidmat penghantaran lori (tipper / kargo) terus ke tapak binaan di Bandar Seri Coalfields, Sungai Buloh, Puncak Alam, Ijok, Kundang & Shah Alam.
+                      Lori tipper & kargo sedia dihantar waktu siang atau syif malam 24/7 ke Bandar Seri Coalfields, Sungai Buloh & Puncak Alam.
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Actions Bar */}
+              {/* Order Cart Action Panel Inside Modal */}
+              <div className="apple-modal-cart-panel">
+                <div className="apple-cart-stepper-row">
+                  <span className="apple-cart-stepper-label">Pilih Kuantiti:</span>
+                  <div className="checkout-stepper">
+                    <button 
+                      type="button"
+                      onClick={() => setModalQty(prev => Math.max(1, prev - 1))}
+                      className="checkout-stepper-btn"
+                      aria-label="Kurangkan kuantiti"
+                    >
+                      <Minus size={13} strokeWidth={2.5} />
+                    </button>
+                    <span className="checkout-stepper-value tabular-nums">{modalQty}</span>
+                    <button 
+                      type="button"
+                      onClick={() => setModalQty(prev => prev + 1)}
+                      className="checkout-stepper-btn"
+                      aria-label="Tambah kuantiti"
+                    >
+                      <Plus size={13} strokeWidth={2.5} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="apple-modal-cart-buttons">
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    className={`apple-modal-add-btn ${justAdded ? "btn-just-added" : ""}`}
+                  >
+                    {justAdded ? (
+                      <>
+                        <CheckCircle2 size={17} strokeWidth={2.4} />
+                        <span>Dimasukkan ke Senarai!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Plus size={17} strokeWidth={2.4} />
+                        <span>Tambah ke Senarai Pesanan</span>
+                      </>
+                    )}
+                  </button>
+
+                  {totalCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        openCheckout();
+                      }}
+                      className="apple-modal-view-cart-btn"
+                    >
+                      <ShoppingBag size={16} strokeWidth={2.2} />
+                      <span>Lihat Senarai ({totalCount})</span>
+                      <ArrowRight size={14} strokeWidth={2.2} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Secondary Instant WhatsApp & Direct Call */}
               <div className="apple-modal-actions">
                 <a 
                   href={whatsappUrl}
@@ -264,7 +370,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   className="apple-btn-whatsapp"
                 >
                   <MessageCircle size={17} strokeWidth={2.4} />
-                  <span>Tanya Sebut Harga (WhatsApp)</span>
+                  <span>Tanya WhatsApp (019-914 4743)</span>
                 </a>
 
                 <a 
@@ -276,16 +382,12 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   <span>{businessData.phone.display}</span>
                 </a>
               </div>
-
-              <p className="apple-modal-micro-note">
-                Pesanan boleh dibuat secara terus atau melalui penghantaran lori. Hubungi juruteknik kami untuk sebut harga pukal.
-              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Apple Full-Scale Interactive Image Lightbox Modal */}
+      {/* Apple Full-Scale Interactive Image Lightbox Modal (Contained, no horizontal scroll leak!) */}
       {isLightboxOpen && (
         <div 
           className="apple-lightbox-backdrop"
@@ -305,14 +407,13 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
             </div>
 
             <div className="apple-lightbox-controls">
-              {/* Zoom Segmented Controls */}
               <div className="apple-lightbox-zoom-bar">
                 <button 
                   type="button" 
                   onClick={handleZoomOut}
                   disabled={zoomScale <= 1}
                   className="apple-lightbox-btn"
-                  title="Kecilkan (Zoom Out) [-]"
+                  title="Kecilkan [-]"
                   aria-label="Kecilkan imej"
                 >
                   <ZoomOut size={16} strokeWidth={2.2} />
@@ -321,28 +422,27 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   type="button" 
                   onClick={handleZoomReset}
                   className="apple-lightbox-btn apple-lightbox-scale-indicator"
-                  title="Set semula ke 100% [0]"
+                  title="Set semula ke 100%"
                 >
                   {Math.round(zoomScale * 100)}%
                 </button>
                 <button 
                   type="button" 
                   onClick={handleZoomIn}
-                  disabled={zoomScale >= 3}
+                  disabled={zoomScale >= 2.5}
                   className="apple-lightbox-btn"
-                  title="Besarkan (Zoom In) [+]"
+                  title="Besarkan [+]"
                   aria-label="Besarkan imej"
                 >
                   <ZoomIn size={16} strokeWidth={2.2} />
                 </button>
               </div>
 
-              {/* Close Lightbox Button */}
               <button 
                 type="button" 
                 onClick={handleCloseLightbox}
                 className="apple-lightbox-close-btn"
-                title="Tutup Paparan Besar (Esc)"
+                title="Tutup (Esc)"
                 aria-label="Tutup paparan imej besar"
               >
                 <X size={18} strokeWidth={2.4} />
@@ -350,7 +450,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
             </div>
           </header>
 
-          {/* Lightbox Center Viewport */}
+          {/* Lightbox Center Viewport - Strictly Contained, No Horizontal Overflow */}
           <div 
             className="apple-lightbox-stage"
             onClick={handleCloseLightbox}
@@ -364,7 +464,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
               style={{
                 cursor: zoomScale > 1 ? "zoom-out" : "zoom-in"
               }}
-              title={zoomScale > 1 ? "Klik untuk kembali ke saiz normal (100%)" : "Klik untuk zum masuk 2x"}
+              title={zoomScale > 1 ? "Klik untuk kembali ke 100%" : "Klik untuk zum masuk"}
             >
               <img 
                 src={assetUrl(product.localImage)} 
@@ -391,7 +491,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
           >
             <span className="apple-lightbox-hint-pill">
               <Maximize2 size={12} strokeWidth={2} />
-              <span>Klik imej untuk {zoomScale > 1 ? "kembali ke 100%" : "zum masuk 2x"} • Tekan Esc untuk keluar</span>
+              <span>Ketik imej untuk {zoomScale > 1 ? "kembali ke saiz asal" : "zum masuk"} • Tekan luar atau Esc untuk tutup</span>
             </span>
           </footer>
         </div>

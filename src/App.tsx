@@ -12,6 +12,8 @@ import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
 import { CataloguePage } from "./components/CataloguePage";
 import { MobileFloatingBar } from "./components/MobileFloatingBar";
+import { CartProvider } from "./context/CartContext";
+import { CheckoutSheet } from "./components/CheckoutSheet";
 
 export const AppContent: React.FC = () => {
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -167,6 +169,9 @@ export const AppContent: React.FC = () => {
       {/* 9. Footer */}
       <Footer />
 
+      {/* 9.5 Dedicated Cart & Checkout Bottom Sheet (Drag-to-dismiss) */}
+      <CheckoutSheet />
+
       {/* 10. Apple-Quality Floating Quick Action Dock on Mobile */}
       <MobileFloatingBar 
         currentView={currentView}
@@ -179,7 +184,9 @@ export const AppContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <LanguageProvider>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </LanguageProvider>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryItem } from "../data/business";
+import { assetUrl } from "../utils/asset";
+import { useDragToDismiss } from "../hooks/useDragToDismiss";
 
 interface GalleryLightboxProps {
   items: GalleryItem[];
@@ -20,12 +22,17 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerElementRef = useRef<HTMLElement | null>(null);
 
+  const { sheetRef, handleProps, contentProps, isDragging } = useDragToDismiss({
+    isOpen,
+    onClose,
+    threshold: 80,
+  });
+
   // Store trigger element to restore focus on close
   useEffect(() => {
     if (isOpen) {
       triggerElementRef.current = document.activeElement as HTMLElement;
       document.body.style.overflow = "hidden";
-      // Focus close button on mount
       setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 50);
@@ -47,7 +54,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
     onSelectIndex((currentIndex + 1) % items.length);
   }, [currentIndex, items.length, onSelectIndex]);
 
-  // Keyboard navigation: Escape to close, Left/Right arrows to cycle
+  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
 
@@ -78,9 +85,20 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
       aria-label="Image Preview Gallery"
     >
       <div 
-        className="lightbox-container"
+        ref={sheetRef}
+        className={`lightbox-container ${isDragging ? "lightbox-dragging" : ""}`}
         onClick={(e) => e.stopPropagation()}
+        {...contentProps}
       >
+        {/* Apple Tactile Drag-Down Handle Bar */}
+        <div 
+          className="sheet-drag-handle-zone" 
+          {...handleProps}
+          title="Tarik ke bawah untuk tutup"
+        >
+          <div className="sheet-drag-pill" />
+        </div>
+
         {/* Top Control Bar with Glassmorphic styling */}
         <div className="lightbox-top-bar">
           <div className="lightbox-meta">
@@ -100,7 +118,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
           </button>
         </div>
 
-        {/* Central Stage */}
+        {/* Central Stage - Strictly Contained, Never Scroll Horizontally */}
         <div className="lightbox-stage">
           <button 
             className="lightbox-nav-btn lightbox-prev"
@@ -112,7 +130,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({
 
           <div className="lightbox-image-wrapper">
             <img 
-              src={currentItem.imageUrl} 
+              src={assetUrl(currentItem.imageUrl)} 
               alt={currentItem.alt}
               className="lightbox-active-img"
             />

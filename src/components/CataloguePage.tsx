@@ -17,11 +17,15 @@ import {
   Eye,
   SlidersHorizontal,
   Check,
-  Workflow
+  Workflow,
+  ShoppingBag,
+  Plus,
+  Minus
 } from "lucide-react";
 import { masterProducts, SIDEBAR_CATEGORIES } from "../data/catalogue";
 import type { MasterProduct } from "../data/catalogue";
 import { CatalogueModal } from "./CatalogueModal";
+import { useCart } from "../context/CartContext";
 import { businessData } from "../data/business";
 import { assetUrl } from "../utils/asset";
 
@@ -30,6 +34,7 @@ interface CataloguePageProps {
 }
 
 export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) => {
+  const { addToCart, updateQuantity, getItemQuantity, totalCount, openCheckout } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>("BUILDING MATERIALS");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -209,6 +214,17 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
           </button>
 
           <div className="portal-direct-contact">
+            <button 
+              type="button" 
+              onClick={openCheckout}
+              className="portal-top-cart-btn"
+              aria-label="Buka Senarai Tempahan"
+            >
+              <ShoppingBag size={15} strokeWidth={2.2} />
+              <span>Senarai Tempahan</span>
+              {totalCount > 0 && <span className="portal-top-cart-badge tabular-nums">{totalCount}</span>}
+            </button>
+
             <a 
               href={`https://wa.me/${businessData.phone.whatsapp}?text=${encodeURIComponent("Hello SKL Waste, saya nak buat pertanyaan tentang produk / bahan binaan.")}`}
               target="_blank" 
@@ -545,18 +561,66 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                         <p className="portal-card-spec" title={p.spec}>{p.spec}</p>
                       )}
 
-                      {/* WhatsApp Us Action Button */}
+                      {/* Dynamic Cart & Action Buttons */}
                       <div className="portal-card-action">
-                        <a 
-                          href={waUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="portal-card-wa-btn"
-                          title="Tanya melalui WhatsApp"
-                        >
-                          <MessageCircle size={15} className="portal-card-wa-icon" />
-                          <span>WhatsApp Kami</span>
-                        </a>
+                        {getItemQuantity(p.id) === 0 ? (
+                          <div className="portal-card-action-row">
+                            <button
+                              type="button"
+                              onClick={() => addToCart(p, 1)}
+                              className="portal-card-add-btn"
+                              title="Tambah ke Senarai Tempahan"
+                            >
+                              <Plus size={14} strokeWidth={2.4} />
+                              <span>Tambah</span>
+                            </button>
+
+                            <a 
+                              href={waUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="portal-card-wa-icon-btn"
+                              title="Tanya terus melalui WhatsApp"
+                              aria-label={`WhatsApp ${p.title}`}
+                            >
+                              <MessageCircle size={15} strokeWidth={2.2} />
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="portal-card-action-row portal-card-stepper-row">
+                            <div className="portal-card-stepper">
+                              <button 
+                                type="button"
+                                onClick={() => updateQuantity(p.id, getItemQuantity(p.id) - 1)}
+                                className="portal-card-step-btn"
+                                aria-label="Kurangkan kuantiti"
+                              >
+                                <Minus size={12} strokeWidth={2.5} />
+                              </button>
+                              <span className="portal-card-step-val tabular-nums">
+                                {getItemQuantity(p.id)}
+                              </span>
+                              <button 
+                                type="button"
+                                onClick={() => updateQuantity(p.id, getItemQuantity(p.id) + 1)}
+                                className="portal-card-step-btn"
+                                aria-label="Tambah kuantiti"
+                              >
+                                <Plus size={12} strokeWidth={2.5} />
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={openCheckout}
+                              className="portal-card-incart-btn"
+                              title="Buka Senarai Tempahan"
+                            >
+                              <ShoppingBag size={13} strokeWidth={2.2} />
+                              <span>Semak</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </article>
@@ -617,6 +681,34 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
           )}
         </main>
       </div>
+
+      {/* Floating Order / Checkout Dock on Catalogue View */}
+      {totalCount > 0 && (
+        <aside className="portal-floating-cart-dock" aria-label="Akses Pantas Senarai Tempahan">
+          <button
+            type="button"
+            onClick={openCheckout}
+            className="portal-cart-dock-btn"
+          >
+            <div className="dock-left-content">
+              <div className="dock-cart-badge-icon">
+                <ShoppingBag size={18} strokeWidth={2.2} />
+                <span className="dock-pill-number tabular-nums">{totalCount}</span>
+              </div>
+              <div className="dock-label-group">
+                <span className="dock-label-main">Senarai Tempahan</span>
+                <span className="dock-label-sub tabular-nums">
+                  {totalCount} item dipilih • Penghantaran Siang & Malam
+                </span>
+              </div>
+            </div>
+            <div className="dock-right-action">
+              <span>Checkout WhatsApp</span>
+              <ChevronRight size={17} strokeWidth={2.4} />
+            </div>
+          </button>
+        </aside>
+      )}
 
       {/* Lightbox / Full Spec & Description Modal */}
       <CatalogueModal 
