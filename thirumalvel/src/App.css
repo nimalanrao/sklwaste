@@ -542,14 +542,17 @@
 .hero-section-ambient {
   position: relative;
   overflow: hidden;
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - 64px);
+  min-height: calc(100dvh - 64px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: clamp(3rem, 6vh, 4.75rem);
-  padding-bottom: clamp(3rem, 6vh, 4.75rem);
+  padding-top: clamp(2rem, 5vh, 4rem);
+  padding-bottom: clamp(2rem, 5vh, 4rem);
   background-color: #ffffff;
-  border-bottom: 1px solid #eef2f6;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  box-sizing: border-box;
 }
 
 /* Background Photo Layer with High Clarity & Subtle Saturation */
@@ -2846,39 +2849,69 @@
     height: 36px;
   }
 
-  /* Hero section adjustments — tight, no massive blank voids */
+  /* ==========================================================================
+     HERO SECTION ON MOBILE — STRICTLY ONE FULL VIEWPORT SCREEN (NO INTRUSION)
+     ========================================================================== */
   .hero-section-ambient {
-    min-height: auto !important;
-    padding-top: 24px !important;
-    padding-bottom: 20px !important;
+    min-height: calc(100dvh - 52px) !important;
+    min-height: calc(100vh - 52px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-top: clamp(14px, 2.5vh, 24px) !important;
+    padding-bottom: clamp(14px, 2.5vh, 24px) !important;
+    box-sizing: border-box !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+
+  .hero-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-content-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: auto 0;
+    width: 100%;
   }
 
   .hero-badge-wrap {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .hero-status-pill {
-    padding: 4px 10px;
-    font-size: 0.725rem;
+    padding: 5px 12px;
+    font-size: 0.75rem;
   }
 
   .hero-title {
-    font-size: clamp(1.65rem, 6.2vw, 2.15rem);
+    font-size: clamp(1.75rem, 6.4vw, 2.25rem);
     line-height: 1.15;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .hero-subtitle {
-    font-size: 0.875rem;
-    line-height: 1.45;
-    margin-bottom: 14px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    max-width: 360px;
   }
 
   .hero-action-buttons {
     flex-direction: column;
     width: 100%;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 9px;
+    margin-bottom: 14px;
   }
 
   .hero-btn-day,
@@ -2886,44 +2919,91 @@
     width: 100%;
     justify-content: center;
     min-height: 44px;
-    padding: 10px 16px;
+    padding: 11px 16px;
     font-size: 0.875rem;
-    border-radius: 10px;
+    border-radius: 12px;
   }
 
   .hero-trust-row {
-    gap: 6px;
-    margin-bottom: 0 !important;
+    gap: 6px 8px;
+    margin-bottom: 8px !important;
   }
 
   .hero-trust-chip {
     font-size: 0.725rem;
-    padding: 5px 10px;
+    padding: 5px 11px;
   }
 
   .hero-scroll-cue {
-    display: none !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 10px;
   }
 
-  /* Quick Info section compact on mobile */
+  .hero-scroll-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #0071e3;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 113, 227, 0.2);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ==========================================================================
+     CLEAN SECTION SEPARATION ACROSS THE PAGE (TIERED BACKGROUNDS & BORDERS)
+     ========================================================================== */
+  .section {
+    padding-top: clamp(40px, 8vh, 58px) !important;
+    padding-bottom: clamp(40px, 8vh, 58px) !important;
+  }
+
+  .section-header {
+    margin-bottom: clamp(20px, 4vh, 32px) !important;
+  }
+
+  /* Section 2: Store Shifts & Direct Contact (Tier: Light Slate) */
+  .shifts-section {
+    padding-top: clamp(42px, 8vh, 60px) !important;
+    padding-bottom: clamp(42px, 8vh, 60px) !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+
+  .shifts-section-grid {
+    gap: 14px;
+  }
+
+  /* Section 3: Quick Info (Tier: Crisp White) */
   .quick-info-section {
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
+    padding-top: clamp(36px, 7vh, 52px) !important;
+    padding-bottom: clamp(36px, 7vh, 52px) !important;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
   }
 
   .quick-info-grid {
-    gap: 8px;
+    gap: 10px;
   }
 
   .quick-info-item {
-    padding: 10px 12px;
-    gap: 10px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    gap: 12px;
+    border-radius: 14px;
+    background-color: #f8fafc;
   }
 
   .quick-info-icon-wrap {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
   }
 
   .quick-info-label {
@@ -2938,14 +3018,23 @@
     font-size: 0.6875rem;
   }
 
-  /* Shifts section card spacing */
-  .shifts-section {
-    padding-top: 22px !important;
-    padding-bottom: 22px !important;
+  /* Section 4: About Section (Tier: Light Slate) */
+  #about.section {
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
   }
 
-  .shifts-section-grid {
-    gap: 12px;
+  /* Section 5: Location & Reviews Section (Tier: Crisp White) */
+  #location.section {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+
+  /* Section 6: Contact & Storefront Assistance (Tier: Light Slate) */
+  #contact.section {
+    background-color: #f8fafc !important;
+    padding-bottom: calc(clamp(80px, 14vh, 110px) + env(safe-area-inset-bottom, 0px)) !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
   }
 
   .shift-section-card {
