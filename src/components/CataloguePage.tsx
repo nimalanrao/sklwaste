@@ -195,7 +195,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
   };
 
   return (
-    <div className="product-portal-layout">
+    <div className="product-portal-layout main-view-transition">
       {/* Top Banner Bar - Apple Translucent Frosted Header */}
       <header className="portal-top-bar">
         <div className="portal-container portal-top-content">
@@ -488,7 +488,11 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 const waUrl = `https://wa.me/${businessData.phone.whatsapp}?text=${whatsappMsg}`;
 
                 return (
-                  <article key={`product-card-${p.id}-${index}`} className="portal-card">
+                  <article 
+                    key={`product-card-${p.id}-${index}`} 
+                    className="portal-card portal-card-animated"
+                    style={{ animationDelay: `${(index % 10) * 35}ms` }}
+                  >
                     {/* Clean Framed Image with Hover Quick View Popup */}
                     <div 
                       className="portal-card-media"

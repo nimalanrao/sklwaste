@@ -1,6 +1,6 @@
 /* ==========================================================================
-   THIRUMAL VEL ENTERPRISE — COMPONENT STYLES
-   Bilingual Support | Brand Integration (Green & Blue) | Loading Animation
+   SKL WASTE HARDWARE — COMPONENT STYLES
+   Bilingual Support | Logo Integration (Green & Blue) | Loading Animation
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -344,25 +344,44 @@
   position: fixed;
   inset: 0;
   z-index: 200;
-  background-color: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background-color: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
   display: flex;
   justify-content: flex-end;
-  animation: fadeIn var(--duration-fast) ease-out;
+  animation: mobileNavBackdropFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mobileNavBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .mobile-nav-panel {
   width: 100%;
   max-width: 360px;
   height: 100%;
-  background-color: var(--bg-primary);
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   padding: var(--space-5);
-  box-shadow: -4px 0 24px rgba(15, 23, 42, 0.12);
-  animation: slideIn var(--duration-normal) var(--ease-apple);
+  box-shadow: -8px 0 32px rgba(15, 23, 42, 0.16);
+  animation: mobileNavPanelSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
   overflow-y: auto;
+  border-left: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+@keyframes mobileNavPanelSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 .mobile-nav-header {
@@ -445,18 +464,46 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 11px 12px;
+  padding: 12px 14px;
   font-size: 0.9375rem;
   font-weight: 500;
   color: var(--text-primary);
   border-radius: var(--radius-sm);
-  transition: background-color var(--duration-fast) var(--ease-out);
+  transition: 
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+  animation: mobileNavLinkFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.mobile-nav-link:hover,
+@keyframes mobileNavLinkFadeIn {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translate3d(12px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.mobile-nav-link:nth-child(1) { animation-delay: 40ms; }
+.mobile-nav-link:nth-child(2) { animation-delay: 70ms; }
+.mobile-nav-link:nth-child(3) { animation-delay: 100ms; }
+.mobile-nav-link:nth-child(4) { animation-delay: 130ms; }
+.mobile-nav-link:nth-child(5) { animation-delay: 160ms; }
+
+.mobile-nav-link:hover {
+  background-color: var(--bg-secondary);
+  color: var(--logo-blue);
+}
+
 .mobile-nav-link:active {
   background-color: var(--bg-secondary);
   color: var(--logo-blue);
+  transform: scale(0.97);
 }
 
 .mobile-nav-chevron {
@@ -634,10 +681,10 @@
 
 /* Bold, Highly Legible Title */
 .hero-title {
-  font-size: clamp(2.35rem, 5.2vw, 4.25rem);
+  font-size: clamp(1.85rem, 5.8vw, 4.25rem);
   font-weight: 800;
   letter-spacing: -0.035em;
-  line-height: 1.08;
+  line-height: 1.1;
   color: #0f172a;
   margin: 0 0 1.25rem 0;
   text-wrap: balance;
@@ -646,7 +693,7 @@
 
 /* Tight, Concrete Subtitle */
 .hero-subtitle {
-  font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+  font-size: clamp(0.9375rem, 3vw, 1.25rem);
   color: #334155;
   line-height: 1.6;
   max-width: 640px;
@@ -1314,11 +1361,17 @@
   gap: var(--space-3);
 }
 
+@media (min-width: 480px) {
+  .quick-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .quick-info-item {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
+  gap: clamp(10px, 3vw, var(--space-4));
+  padding: clamp(12px, 3vw, var(--space-4));
   border-radius: var(--radius-md);
   border: 1px solid var(--border-hairline);
   background-color: var(--bg-secondary);
@@ -1326,7 +1379,12 @@
   transition: 
     background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.quick-info-item:active {
+  transform: scale(0.98);
 }
 
 .quick-info-link:hover {
@@ -2751,24 +2809,201 @@
   }
 }
 
-/* Small Mobile (<= 375px) */
+/* ==========================================================================
+   ULTRA-RESPONSIVE MOBILE FLUIDITY (Screens <= 520px & <= 375px)
+   Apple-grade ergonomics, zero overflow, perfect thumb-reach touch targets
+   ========================================================================== */
+@media (max-width: 520px) {
+  /* Header ergonomics */
+  .header-container {
+    height: 58px;
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 8px;
+  }
+
+  .header-brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-title {
+    font-size: 0.9375rem;
+  }
+
+  .brand-category-badge {
+    font-size: 0.6875rem;
+  }
+
+  .mobile-menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Hero section adjustments */
+  .hero-section {
+    padding-top: clamp(75px, 12vh, 100px);
+    padding-bottom: clamp(36px, 6vh, 50px);
+  }
+
+  .hero-title {
+    font-size: clamp(1.75rem, 6.4vw, 2.35rem);
+    line-height: 1.15;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-action-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .hero-btn-day,
+  .hero-btn-night {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 0.9375rem;
+  }
+
+  /* Shifts section card spacing */
+  .shifts-section-grid {
+    gap: 14px;
+  }
+
+  .shift-section-card {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+
+  .shift-card-person-name {
+    font-size: 1.125rem;
+  }
+
+  .shift-card-actions .btn {
+    min-height: 46px;
+  }
+
+  /* About section mobile stacking */
+  .about-editorial .about-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .about-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  .about-feature-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  /* Location section mobile optimizations */
+  .location-unified-card {
+    border-radius: 16px;
+  }
+
+  .location-info-panel {
+    padding: 18px 14px;
+    gap: 18px;
+  }
+
+  .location-store-name {
+    font-size: 1.1875rem;
+  }
+
+  .location-actions-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .location-action-btn {
+    padding: 10px 10px;
+    font-size: 0.8125rem;
+    min-height: 44px;
+  }
+
+  .location-map-panel {
+    min-height: 260px;
+    height: 260px;
+  }
+
+  .location-map-embed {
+    min-height: 260px;
+    height: 260px;
+  }
+
+  /* Contact section cards */
+  .contact-box {
+    padding: 20px 14px;
+    border-radius: 18px;
+  }
+
+  .contact-details-grid {
+    gap: 14px;
+  }
+
+  .contact-info-card {
+    padding: 18px 14px;
+  }
+
+  .contact-action-btn {
+    min-height: 46px;
+    width: 100%;
+  }
+
+  /* Section padding tightening on mobile to eliminate dead scroll space */
+  .section {
+    padding-top: clamp(2.5rem, 6vw, 3.5rem);
+    padding-bottom: clamp(2.5rem, 6vw, 3.5rem);
+  }
+
+  .section-title {
+    font-size: clamp(1.4rem, 5.5vw, 1.85rem);
+  }
+
+  .section-header {
+    margin-bottom: 1.75rem;
+  }
+}
+
+/* Extra Small Phones (<= 375px e.g. iPhone SE) */
 @media (max-width: 375px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.65rem;
   }
 
-  .hero-actions .btn {
-    width: 100%;
+  .brand-title {
+    font-size: 0.875rem;
   }
 
-  .trust-pill {
-    width: 100%;
-    justify-content: center;
+  .brand-category-badge {
+    font-size: 0.625rem;
   }
 
-  .trust-pill-static {
-    width: 100%;
-    justify-content: center;
+  .location-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shift-dual-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-product-grid {
+    gap: 8px;
+  }
+
+  .portal-card {
+    padding: 8px 6px;
   }
 }
 
@@ -3465,10 +3700,12 @@
 @keyframes appleModalSpring {
   from {
     opacity: 0;
+    filter: blur(14px);
     transform: scale(0.92) translateY(24px);
   }
   to {
     opacity: 1;
+    filter: blur(0px);
     transform: scale(1) translateY(0);
   }
 }
@@ -3485,6 +3722,32 @@
     0 32px 80px -16px rgba(15, 23, 42, 0.22),
     0 0 0 1px rgba(15, 23, 42, 0.06);
   animation: appleModalSpring 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 640px) {
+  .apple-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .apple-modal-sheet {
+    border-radius: 24px 24px 0 0;
+    max-height: 88vh;
+    animation: appleModalSlideUpMobile 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes appleModalSlideUpMobile {
+    from {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0px);
+      transform: translateY(0);
+    }
+  }
 }
 
 .apple-modal-close-btn {
@@ -3630,10 +3893,12 @@
 @keyframes appleLightboxFadeIn {
   from {
     opacity: 0;
+    filter: blur(12px);
     transform: scale(0.985);
   }
   to {
     opacity: 1;
+    filter: blur(0px);
     transform: scale(1);
   }
 }
@@ -4798,8 +5063,8 @@
 /* Product Grid (Responsive columns with minmax(0, 1fr) to prevent track expansion) */
 .portal-product-grid {
   display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   width: 100%;
   min-width: 0;
 }
@@ -5144,40 +5409,219 @@
 
 /* ==========================================================================
    ULTRA-OPTIMIZED SCROLL BLUR-FADE REVEAL ANIMATIONS
-   Clean, hardware-accelerated optical blur, 0 AI slop
+   Hardware-accelerated optical blur, 60fps/120fps mobile performance
    ========================================================================== */
 .scroll-reveal {
   opacity: 0;
-  filter: blur(14px);
-  transform: translateY(22px);
+  filter: blur(12px);
+  transform: translate3d(0, 20px, 0);
   transition: 
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, filter, transform;
 }
 
 .scroll-reveal.is-revealed {
   opacity: 1;
   filter: blur(0px);
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Crucial GPU memory release: Drops filter & compositing layer once animation finishes */
+.scroll-reveal.is-revealed-done {
+  filter: none !important;
+  will-change: auto !important;
+  transform: none !important;
 }
 
 /* Stagger delays for card grids */
-.reveal-delay-1 {
-  transition-delay: 90ms;
+.reveal-delay-1 { transition-delay: 60ms; }
+.reveal-delay-2 { transition-delay: 120ms; }
+.reveal-delay-3 { transition-delay: 180ms; }
+.reveal-delay-4 { transition-delay: 240ms; }
+.reveal-delay-5 { transition-delay: 300ms; }
+.reveal-delay-6 { transition-delay: 360ms; }
+
+/* Main Content Page View Cross-Fade with Subtle Blur */
+.main-view-transition {
+  animation: mainViewBlurFade 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.reveal-delay-2 {
-  transition-delay: 180ms;
+@keyframes mainViewBlurFade {
+  0% {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: scale(1);
+  }
 }
 
-.reveal-delay-3 {
-  transition-delay: 270ms;
+/* Product Cards Staggered Blur-Fade Entrance */
+@keyframes productCardBlurFade {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(0, 16px, 0);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-.reveal-delay-4 {
-  transition-delay: 360ms;
+.portal-card-animated {
+  animation: productCardBlurFade 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ==========================================================================
+   APPLE-STYLE MOBILE FLOATING DOCK (STICKY QUICK-ACTION PILL)
+   Visible only on mobile devices (< 768px)
+   ========================================================================== */
+.mobile-floating-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Extra bottom padding on main so content is never obscured by the floating bar */
+  body {
+    padding-bottom: 74px;
+  }
+
+  .mobile-floating-bar {
+    display: block;
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom, 12px));
+    left: 14px;
+    right: 14px;
+    margin: 0 auto;
+    max-width: 440px;
+    z-index: 99;
+    pointer-events: none; /* allows clicking through edges */
+    animation: mobileDockFloatIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+
+  @keyframes mobileDockFloatIn {
+    0% {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translate3d(0, 24px, 0) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0px);
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  .mobile-floating-bar-inner {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 9999px;
+    box-shadow: 
+      0 12px 32px -4px rgba(15, 23, 42, 0.16),
+      0 4px 12px rgba(15, 23, 42, 0.06),
+      0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    padding: 6px 8px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    align-items: center;
+  }
+
+  .mobile-float-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #475569;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    transition: 
+      background-color 0.14s ease,
+      color 0.14s ease,
+      transform 0.14s cubic-bezier(0.2, 0, 0, 1);
+    min-height: 48px;
+    user-select: none;
+  }
+
+  .mobile-float-item:active {
+    transform: scale(0.93);
+    background-color: rgba(15, 23, 42, 0.05);
+  }
+
+  .mobile-float-icon-wrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.14s ease;
+  }
+
+  .icon-boss {
+    color: #16a34a;
+    background-color: #f0fdf4;
+  }
+
+  .icon-night {
+    color: #7c3aed;
+    background-color: #f5f3ff;
+  }
+
+  .icon-cat {
+    color: #2563eb;
+    background-color: #eff6ff;
+  }
+
+  .icon-directions {
+    color: #0284c7;
+    background-color: #f0f9ff;
+  }
+
+  .mobile-float-badge-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 7px;
+    height: 7px;
+    background-color: #22c55e;
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+  }
+
+  .mobile-float-active {
+    color: #2563eb;
+  }
+
+  .mobile-float-active .icon-cat {
+    background-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+  }
+
+  .mobile-float-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5187,7 +5631,13 @@
     transform: none !important;
     transition: none !important;
   }
+  .mobile-floating-bar,
+  .main-view-transition,
+  .portal-card-animated {
+    animation: none !important;
+  }
 }
+
 
 
 

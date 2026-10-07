@@ -11,6 +11,7 @@ import { LocationSection } from "./components/LocationSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
 import { CataloguePage } from "./components/CataloguePage";
+import { MobileFloatingBar } from "./components/MobileFloatingBar";
 
 export const AppContent: React.FC = () => {
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -36,29 +37,67 @@ export const AppContent: React.FC = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  // Ultra-optimized scroll blur-fade animation observer (GPU accelerated, 0 AI slop)
+  // Ultra-optimized scroll blur-fade animation observer (GPU accelerated, 60fps/120fps mobile)
   useEffect(() => {
-    const elements = document.querySelectorAll(".scroll-reveal");
-    if (!elements.length) return;
+    let currentObserver: IntersectionObserver | null = null;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        rootMargin: "0px 0px -40px 0px",
-        threshold: 0.1,
+    const observeElements = () => {
+      const elements = document.querySelectorAll(".scroll-reveal:not(.is-revealed)");
+      if (!elements.length) return;
+
+      if (currentObserver) {
+        currentObserver.disconnect();
       }
-    );
 
-    elements.forEach((el) => observer.observe(el));
+      currentObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const target = entry.target as HTMLElement;
+              target.classList.add("is-revealed");
+              
+              // Ultra-optimization: Drop GPU blur filter once transition finishes to keep 120Hz scrolling crisp
+              const handleDone = () => {
+                target.classList.add("is-revealed-done");
+                target.removeEventListener("transitionend", handleDone);
+              };
+              target.addEventListener("transitionend", handleDone);
+              setTimeout(() => target.classList.add("is-revealed-done"), 850);
 
-    return () => observer.disconnect();
+              currentObserver?.unobserve(target);
+            }
+          });
+        },
+        {
+          rootMargin: "0px 0px -30px 0px",
+          threshold: 0.08,
+        }
+      );
+
+      elements.forEach((el) => currentObserver?.observe(el));
+    };
+
+    // Initial check
+    observeElements();
+
+    // Small delay to ensure any rendered DOM elements are observed
+    const t = setTimeout(observeElements, 100);
+
+    // Watch for dynamic DOM changes (e.g. Catalogue filters, search)
+    const mutationObs = new MutationObserver(() => {
+      observeElements();
+    });
+
+    const mainEl = document.getElementById("main-content");
+    if (mainEl) {
+      mutationObs.observe(mainEl, { childList: true, subtree: true });
+    }
+
+    return () => {
+      clearTimeout(t);
+      currentObserver?.disconnect();
+      mutationObs.disconnect();
+    };
   }, [currentView, loadingComplete]);
 
   const navigateTo = (view: "home" | "catalogue", hash?: string) => {
@@ -127,6 +166,12 @@ export const AppContent: React.FC = () => {
 
       {/* 9. Footer */}
       <Footer />
+
+      {/* 10. Apple-Quality Floating Quick Action Dock on Mobile */}
+      <MobileFloatingBar 
+        currentView={currentView}
+        onNavigate={navigateTo}
+      />
     </div>
   );
 };
