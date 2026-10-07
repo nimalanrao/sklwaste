@@ -178,28 +178,23 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.42);
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-  box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
-    0 4px 20px -2px rgba(15, 23, 42, 0.03);
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   transition: 
     background-color var(--duration-normal) var(--ease-out),
-    backdrop-filter var(--duration-normal) var(--ease-out),
     border-color var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .header-scrolled {
-  background-color: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(32px) saturate(210%);
-  -webkit-backdrop-filter: blur(32px) saturate(210%);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
-  box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-    0 8px 30px -4px rgba(15, 23, 42, 0.06);
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
 }
 
 .header-main-bar {
@@ -2816,163 +2811,354 @@
 @media (max-width: 520px) {
   /* Header ergonomics */
   .header-container {
-    height: 58px;
+    height: 52px;
     padding-left: 12px;
     padding-right: 12px;
     gap: 8px;
   }
 
   .header-brand-logo {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
   }
 
   .brand-title {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .brand-category-badge {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
   }
 
   .mobile-menu-toggle {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
   }
 
-  /* Hero section adjustments */
-  .hero-section {
-    padding-top: clamp(75px, 12vh, 100px);
-    padding-bottom: clamp(36px, 6vh, 50px);
+  /* Hero section adjustments — tight, no massive blank voids */
+  .hero-section-ambient {
+    min-height: auto !important;
+    padding-top: 24px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .hero-badge-wrap {
+    margin-bottom: 8px;
+  }
+
+  .hero-status-pill {
+    padding: 4px 10px;
+    font-size: 0.725rem;
   }
 
   .hero-title {
-    font-size: clamp(1.75rem, 6.4vw, 2.35rem);
+    font-size: clamp(1.65rem, 6.2vw, 2.15rem);
     line-height: 1.15;
+    margin-bottom: 8px;
   }
 
   .hero-subtitle {
-    font-size: 0.9375rem;
-    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    margin-bottom: 14px;
   }
 
   .hero-action-buttons {
     flex-direction: column;
     width: 100%;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .hero-btn-day,
   .hero-btn-night {
     width: 100%;
     justify-content: center;
-    min-height: 48px;
-    font-size: 0.9375rem;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+  }
+
+  .hero-trust-row {
+    gap: 6px;
+    margin-bottom: 0 !important;
+  }
+
+  .hero-trust-chip {
+    font-size: 0.725rem;
+    padding: 5px 10px;
+  }
+
+  .hero-scroll-cue {
+    display: none !important;
+  }
+
+  /* Quick Info section compact on mobile */
+  .quick-info-section {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  .quick-info-grid {
+    gap: 8px;
+  }
+
+  .quick-info-item {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+
+  .quick-info-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .quick-info-label {
+    font-size: 0.6875rem;
+  }
+
+  .quick-info-val {
+    font-size: 0.875rem;
+  }
+
+  .quick-info-sub {
+    font-size: 0.6875rem;
   }
 
   /* Shifts section card spacing */
+  .shifts-section {
+    padding-top: 22px !important;
+    padding-bottom: 22px !important;
+  }
+
   .shifts-section-grid {
-    gap: 14px;
+    gap: 12px;
   }
 
   .shift-section-card {
-    padding: 16px 14px;
-    border-radius: 16px;
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .shift-card-top {
+    margin-bottom: 8px;
+  }
+
+  .shift-card-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .shift-card-person {
+    margin-bottom: 6px;
   }
 
   .shift-card-person-name {
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
+  }
+
+  .shift-card-desc {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    margin-bottom: 12px;
   }
 
   .shift-card-actions .btn {
-    min-height: 46px;
+    min-height: 42px;
+    font-size: 0.875rem;
+  }
+
+  .shifts-section-footer {
+    margin-top: 12px;
+    font-size: 0.75rem;
   }
 
   /* About section mobile stacking */
+  .about-editorial {
+    margin-bottom: 16px;
+  }
+
+  .about-lead {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
   .about-editorial .about-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
+    margin-top: 14px;
   }
 
   .about-actions .btn {
     width: 100%;
     justify-content: center;
-    min-height: 46px;
+    min-height: 42px;
+    font-size: 0.875rem;
+  }
+
+  .about-features-container {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
   }
 
   .about-feature-card {
-    padding: 14px 12px;
-    gap: 12px;
+    padding: 12px 10px;
+    border-radius: 12px;
+    gap: 10px;
+  }
+
+  .about-feature-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .about-feature-title {
+    font-size: 0.875rem;
+    margin-bottom: 2px;
+  }
+
+  .about-feature-desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 
   /* Location section mobile optimizations */
   .location-unified-card {
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
   .location-info-panel {
-    padding: 18px 14px;
-    gap: 18px;
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  .location-store-header {
+    padding-bottom: 10px;
   }
 
   .location-store-name {
-    font-size: 1.1875rem;
+    font-size: 1.0625rem;
+  }
+
+  .location-details-list {
+    gap: 12px;
+  }
+
+  .location-detail-item {
+    gap: 10px;
+  }
+
+  .location-detail-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .location-detail-title {
+    font-size: 0.725rem;
+  }
+
+  .location-detail-text {
+    font-size: 0.8125rem;
+  }
+
+  .location-detail-subtext {
+    font-size: 0.725rem;
   }
 
   .location-actions-grid {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    padding-top: 4px;
   }
 
   .location-action-btn {
-    padding: 10px 10px;
-    font-size: 0.8125rem;
-    min-height: 44px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    min-height: 42px;
+    border-radius: 10px;
   }
 
   .location-map-panel {
-    min-height: 260px;
-    height: 260px;
+    min-height: 220px;
+    height: 220px;
   }
 
   .location-map-embed {
-    min-height: 260px;
-    height: 260px;
+    min-height: 220px;
+    height: 220px;
   }
 
   /* Contact section cards */
   .contact-box {
-    padding: 20px 14px;
-    border-radius: 18px;
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+
+  .contact-header {
+    margin-bottom: 14px;
   }
 
   .contact-details-grid {
-    gap: 14px;
+    gap: 12px;
   }
 
   .contact-info-card {
-    padding: 18px 14px;
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .contact-icon-wrapper {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 8px;
+  }
+
+  .contact-info-title {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+
+  .contact-info-desc {
+    font-size: 0.78rem;
+    margin-bottom: 8px;
+  }
+
+  .contact-timing-row {
+    font-size: 0.75rem;
+    margin-bottom: 10px;
   }
 
   .contact-action-btn {
-    min-height: 46px;
+    min-height: 42px;
+    font-size: 0.8125rem;
     width: 100%;
   }
 
   /* Section padding tightening on mobile to eliminate dead scroll space */
   .section {
-    padding-top: clamp(2.5rem, 6vw, 3.5rem);
-    padding-bottom: clamp(2.5rem, 6vw, 3.5rem);
+    padding-top: 22px;
+    padding-bottom: 22px;
   }
 
   .section-title {
-    font-size: clamp(1.4rem, 5.5vw, 1.85rem);
+    font-size: clamp(1.35rem, 5.2vw, 1.65rem);
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 0.875rem;
+    line-height: 1.45;
   }
 
   .section-header {
-    margin-bottom: 1.75rem;
+    margin-bottom: 16px;
   }
 }
 

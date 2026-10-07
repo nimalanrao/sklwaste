@@ -1,6 +1,6 @@
 /* ==========================================================================
-   THIRUMAL VEL ENTERPRISE (KEDAI HARDWARE) — CORE DESIGN SYSTEM
-   Strict White Theme / Light Mode | Brand Color Harmonization (Green, Blue, White)
+   SKL WASTE SDN BHD (KEDAI HARDWARE) — CORE DESIGN SYSTEM
+   Strict White Theme / Light Mode | Logo Color Harmonization (Green, Blue, White)
    ========================================================================== */
 
 :root {
@@ -96,8 +96,8 @@
 
   /* Layout Constraints */
   --content-max-width: 1180px;
-  --gutter: clamp(1rem, 3.5vw, 2.25rem);
-  --section-py: clamp(3.5rem, 6.5vw, 6rem);
+  --gutter: clamp(0.875rem, 3vw, 2rem);
+  --section-py: clamp(1.75rem, 4vw, 3.75rem);
 }
 
 /* ==========================================================================
@@ -108,6 +108,12 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, input, select, textarea, [role="button"] {
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation;
 }
 
 html {

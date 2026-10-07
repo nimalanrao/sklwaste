@@ -19,9 +19,6 @@ export const About: React.FC = () => {
             <p className="about-lead">
               {t.about.lead}
             </p>
-            <p className="about-body">
-              {t.about.body}
-            </p>
 
             <div className="about-actions">
               <a 
