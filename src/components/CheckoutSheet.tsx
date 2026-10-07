@@ -434,7 +434,7 @@ Dihantar terus melalui Katalog SKL Waste.`;
                 className="checkout-btn-primary"
               >
                 <MessageCircle size={18} strokeWidth={2.4} />
-                <span>Hantar ke WhatsApp (Saravanan: 019-914 4743)</span>
+                <span>Hantar Tempahan (019-914 4743)</span>
               </button>
 
               <button 

@@ -2850,39 +2850,40 @@
   }
 
   /* ==========================================================================
-     HERO SECTION ON MOBILE — STRICTLY ONE FULL VIEWPORT SCREEN (NO INTRUSION)
+     HERO SECTION ON MOBILE — DEAD-CENTER IN 100DVH (NEVER PINNED TO TOP)
      ========================================================================== */
   .hero-section-ambient {
     min-height: calc(100dvh - 52px) !important;
     min-height: calc(100vh - 52px) !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
+    justify-content: center !important;
     align-items: center !important;
-    padding-top: clamp(14px, 2.5vh, 24px) !important;
-    padding-bottom: clamp(14px, 2.5vh, 24px) !important;
+    padding-top: clamp(12px, 2.5vh, 20px) !important;
+    padding-bottom: clamp(12px, 2.5vh, 20px) !important;
     box-sizing: border-box !important;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
   }
 
   .hero-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: auto 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .hero-content-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: auto 0;
-    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: auto 0 !important;
+    width: 100% !important;
+    text-align: center !important;
   }
 
   .hero-badge-wrap {
@@ -2892,6 +2893,7 @@
   .hero-status-pill {
     padding: 5px 12px;
     font-size: 0.75rem;
+    white-space: nowrap;
   }
 
   .hero-title {
@@ -2922,24 +2924,27 @@
     padding: 11px 16px;
     font-size: 0.875rem;
     border-radius: 12px;
+    white-space: nowrap !important;
   }
 
   .hero-trust-row {
     gap: 6px 8px;
     margin-bottom: 8px !important;
+    justify-content: center !important;
   }
 
   .hero-trust-chip {
     font-size: 0.725rem;
     padding: 5px 11px;
+    white-space: nowrap !important;
   }
 
   .hero-scroll-cue {
     display: flex !important;
-    justify-content: center;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 10px;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-top: 14px !important;
+    padding-top: 0 !important;
   }
 
   .hero-scroll-link {
@@ -4815,6 +4820,61 @@
   transform: scale(0.97);
 }
 
+@media (max-width: 600px) {
+  .portal-top-bar {
+    padding: 8px 0;
+  }
+  .portal-top-content {
+    gap: 8px;
+    padding: 0 12px;
+  }
+  .portal-back-home-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    white-space: nowrap !important;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .portal-direct-contact {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .portal-top-cart-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    white-space: nowrap !important;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .portal-top-wa-link {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    white-space: nowrap !important;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .portal-floating-cart-dock {
+    width: calc(100% - 20px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
+  }
+  .portal-cart-dock-btn {
+    padding: 8px 12px !important;
+  }
+  .dock-label-main {
+    font-size: 0.8125rem !important;
+    white-space: nowrap !important;
+  }
+  .dock-label-sub {
+    font-size: 0.6875rem !important;
+    white-space: nowrap !important;
+  }
+  .dock-right-action {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+  }
+}
+
 /* Horizontal Apple Pill Segment Bar for Mobile & Tablet */
 .portal-mobile-pills-bar {
   display: none;
@@ -6015,136 +6075,113 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* 2. Product Card Action Row (Add Button & Mini-Stepper) */
-.portal-card-action-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* 2. Product Card Action Row (Full-width Add Button & Full-width Stepper — Zero Break Lines) */
+.portal-card-action {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
   width: 100%;
 }
 
 .portal-card-add-btn {
-  flex: 1;
+  width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   background-color: #0f172a;
   color: #ffffff;
-  padding: 9px 12px;
-  border-radius: 11px;
+  padding: 8px 12px;
+  border-radius: 10px;
   font-size: 0.8125rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
+  white-space: nowrap !important;
+  text-decoration: none;
+  min-height: 36px;
+  box-sizing: border-box;
   transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .portal-card-add-btn:hover {
   background-color: #1e293b;
+  transform: translateY(-1px);
 }
 
 .portal-card-add-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
-.portal-card-wa-icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  background-color: #f1f5f9;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: all 0.16s ease;
-}
-
-.portal-card-wa-icon-btn:hover {
-  background-color: #25d366;
-  color: #ffffff;
-  border-color: #25d366;
-}
-
-.portal-card-wa-icon-btn:active {
-  transform: scale(0.92);
-}
-
-/* Card Stepper Row */
-.portal-card-stepper-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+/* Full-width Product Stepper inside Card */
+.portal-card-stepper-full {
   width: 100%;
-}
-
-.portal-card-stepper {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #f1f5f9;
   border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 11px;
-  padding: 2px 4px;
+  border-radius: 10px;
+  padding: 2px;
+  box-sizing: border-box;
+  min-height: 36px;
 }
 
-.portal-card-step-btn {
-  width: 28px;
-  height: 28px;
+.portal-card-stepper-full .portal-card-step-btn {
+  width: 32px;
+  height: 30px;
   border-radius: 8px;
   background-color: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: all 0.14s ease;
 }
 
-.portal-card-step-btn:hover {
+.portal-card-stepper-full .portal-card-step-btn:hover {
   background-color: #f8fafc;
 }
 
-.portal-card-step-btn:active {
+.portal-card-stepper-full .portal-card-step-btn:active {
   transform: scale(0.9);
 }
 
-.portal-card-step-val {
+.portal-card-stepper-center-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 4px;
+  min-width: 0;
+  white-space: nowrap !important;
+  transition: opacity 0.14s ease;
+}
+
+.portal-card-stepper-center-btn:hover {
+  opacity: 0.8;
+}
+
+.portal-card-stepper-center-btn .portal-card-step-val {
   font-size: 0.8125rem;
   font-weight: 700;
   color: #0f172a;
-  padding: 0 6px;
   font-variant-numeric: tabular-nums;
 }
 
-.portal-card-incart-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background-color: #0284c7;
-  color: #ffffff;
-  padding: 7px 11px;
-  border-radius: 11px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.16s ease;
-}
-
-.portal-card-incart-btn:hover {
-  background-color: #0369a1;
-}
-
-.portal-card-incart-btn:active {
-  transform: scale(0.95);
+.portal-card-stepper-center-btn .portal-card-step-lbl {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #0284c7;
+  white-space: nowrap !important;
 }
 
 /* 3. Floating Order / Checkout Dock on Catalogue */

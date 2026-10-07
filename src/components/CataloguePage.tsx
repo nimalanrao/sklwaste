@@ -209,8 +209,8 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
             onClick={onBackToHome}
             className="portal-back-home-btn"
           >
-            <ArrowLeft size={15} strokeWidth={2.2} />
-            <span>Kembali ke Laman Utama</span>
+            <ArrowLeft size={16} strokeWidth={2.4} />
+            <span>Kembali</span>
           </button>
 
           <div className="portal-direct-contact">
@@ -221,7 +221,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
               aria-label="Buka Senarai Tempahan"
             >
               <ShoppingBag size={15} strokeWidth={2.2} />
-              <span>Senarai Tempahan</span>
+              <span>Senarai</span>
               {totalCount > 0 && <span className="portal-top-cart-badge tabular-nums">{totalCount}</span>}
             </button>
 
@@ -230,9 +230,10 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
               target="_blank" 
               rel="noopener noreferrer"
               className="portal-top-wa-link"
+              title="WhatsApp Kami"
             >
               <MessageCircle size={15} strokeWidth={2.2} />
-              <span>WhatsApp {businessData.phone.display}</span>
+              <span className="portal-top-wa-text">WhatsApp</span>
             </a>
           </div>
         </div>
@@ -498,11 +499,6 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
           ) : (
             <div className="portal-product-grid">
               {paginatedProducts.map((p, index) => {
-                const whatsappMsg = encodeURIComponent(
-                  `Hello SKL Waste, saya nak sebut harga & semak stok untuk: ${p.title} (${p.unit || 'Ton / Guni'})`
-                );
-                const waUrl = `https://wa.me/${businessData.phone.whatsapp}?text=${whatsappMsg}`;
-
                 return (
                   <article 
                     key={`product-card-${p.id}-${index}`} 
@@ -561,63 +557,56 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                         <p className="portal-card-spec" title={p.spec}>{p.spec}</p>
                       )}
 
-                      {/* Dynamic Cart & Action Buttons */}
+                      {/* Dynamic Cart & Action Buttons — Full Width, Zero Line-Break */}
                       <div className="portal-card-action">
                         {getItemQuantity(p.id) === 0 ? (
-                          <div className="portal-card-action-row">
-                            <button
-                              type="button"
-                              onClick={() => addToCart(p, 1)}
-                              className="portal-card-add-btn"
-                              title="Tambah ke Senarai Tempahan"
-                            >
-                              <Plus size={14} strokeWidth={2.4} />
-                              <span>Tambah</span>
-                            </button>
-
-                            <a 
-                              href={waUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="portal-card-wa-icon-btn"
-                              title="Tanya terus melalui WhatsApp"
-                              aria-label={`WhatsApp ${p.title}`}
-                            >
-                              <MessageCircle size={15} strokeWidth={2.2} />
-                            </a>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart(p, 1);
+                            }}
+                            className="portal-card-add-btn portal-card-add-full"
+                            title="Tambah ke Senarai Tempahan"
+                          >
+                            <Plus size={14} strokeWidth={2.5} />
+                            <span>+ Tambah</span>
+                          </button>
                         ) : (
-                          <div className="portal-card-action-row portal-card-stepper-row">
-                            <div className="portal-card-stepper">
-                              <button 
-                                type="button"
-                                onClick={() => updateQuantity(p.id, getItemQuantity(p.id) - 1)}
-                                className="portal-card-step-btn"
-                                aria-label="Kurangkan kuantiti"
-                              >
-                                <Minus size={12} strokeWidth={2.5} />
-                              </button>
-                              <span className="portal-card-step-val tabular-nums">
-                                {getItemQuantity(p.id)}
-                              </span>
-                              <button 
-                                type="button"
-                                onClick={() => updateQuantity(p.id, getItemQuantity(p.id) + 1)}
-                                className="portal-card-step-btn"
-                                aria-label="Tambah kuantiti"
-                              >
-                                <Plus size={12} strokeWidth={2.5} />
-                              </button>
-                            </div>
-
+                          <div className="portal-card-stepper-full">
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(p.id, getItemQuantity(p.id) - 1);
+                              }}
+                              className="portal-card-step-btn"
+                              aria-label="Kurangkan kuantiti"
+                            >
+                              <Minus size={13} strokeWidth={2.5} />
+                            </button>
                             <button
                               type="button"
-                              onClick={openCheckout}
-                              className="portal-card-incart-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openCheckout();
+                              }}
+                              className="portal-card-stepper-center-btn"
                               title="Buka Senarai Tempahan"
                             >
-                              <ShoppingBag size={13} strokeWidth={2.2} />
-                              <span>Semak</span>
+                              <span className="portal-card-step-val tabular-nums">{getItemQuantity(p.id)}</span>
+                              <span className="portal-card-step-lbl">dipilih</span>
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(p.id, getItemQuantity(p.id) + 1);
+                              }}
+                              className="portal-card-step-btn"
+                              aria-label="Tambah kuantiti"
+                            >
+                              <Plus size={13} strokeWidth={2.5} />
                             </button>
                           </div>
                         )}
@@ -698,13 +687,13 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
               <div className="dock-label-group">
                 <span className="dock-label-main">Senarai Tempahan</span>
                 <span className="dock-label-sub tabular-nums">
-                  {totalCount} item dipilih • Penghantaran Siang & Malam
+                  {totalCount} dipilih • Siang & Malam
                 </span>
               </div>
             </div>
             <div className="dock-right-action">
-              <span>Checkout WhatsApp</span>
-              <ChevronRight size={17} strokeWidth={2.4} />
+              <span>Checkout</span>
+              <ChevronRight size={16} strokeWidth={2.4} />
             </div>
           </button>
         </aside>
