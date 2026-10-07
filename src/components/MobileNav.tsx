@@ -131,23 +131,6 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose, onNavigat
               <Layers size={16} className="mobile-nav-cat-icon" />
               <strong>{t.nav.catalogue}</strong>
             </span>
-            <span className="mobile-nav-cat-badge">15 Items</span>
-          </a>
-          <a 
-            href="#hardware" 
-            onClick={(e) => handleLinkClick(e, "home", "#hardware")} 
-            className="mobile-nav-link"
-          >
-            <span>{t.nav.hardware}</span>
-            <ChevronRight size={16} className="mobile-nav-chevron" />
-          </a>
-          <a 
-            href="#gallery" 
-            onClick={(e) => handleLinkClick(e, "home", "#gallery")} 
-            className="mobile-nav-link"
-          >
-            <span>{t.nav.gallery}</span>
-            <ChevronRight size={16} className="mobile-nav-chevron" />
           </a>
           <a 
             href="#location" 

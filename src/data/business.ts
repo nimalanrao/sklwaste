@@ -16,11 +16,19 @@ export interface BusinessConfig {
     display: string;
     tel: string;
     whatsapp: string;
+    bossName: string;
+    bossRole?: string;
+    afterHoursDisplay: string;
+    afterHoursTel: string;
+    afterHoursWhatsapp: string;
+    afterHoursName: string;
   };
   hours: {
     status: string;
     closingTime: string;
+    shifts: string;
     notice: string;
+    is247: boolean;
   };
   googleProfile: {
     rating: number;
@@ -68,11 +76,19 @@ export const businessData: BusinessConfig = {
     display: "019-914 4743",
     tel: "+60199144743",
     whatsapp: "60199144743",
+    bossName: "Mr. Saravanan",
+    bossRole: "Boss",
+    afterHoursDisplay: "016-615 9365",
+    afterHoursTel: "+60166159365",
+    afterHoursWhatsapp: "60166159365",
+    afterHoursName: "Mr. Hari",
   },
   hours: {
-    status: "Open",
-    closingTime: "7:00 PM",
-    notice: "Closing time based on verified Google listing. Please call ahead for public holidays or specific inquiries.",
+    status: "Open 24/7",
+    closingTime: "Open 24 Hours",
+    shifts: "8:00 AM – 6:00 PM (Normal Shifts) · After 6:00 PM on-call with Mr. Hari",
+    notice: "Sungai Buloh's only 24/7 hardware store. Regular walk-in shifts 8:00 AM – 6:00 PM. After 6:00 PM, contact Mr. Hari (+60 16-615 9365) for on-call emergency supply & pickup.",
+    is247: true,
   },
   googleProfile: {
     rating: 4.5,
@@ -133,50 +149,50 @@ export const hardwareCategories: HardwareCategory[] = [
 export const galleryItems: GalleryItem[] = [
   {
     id: "gal-1",
-    title: "Hand Tools & Mechanical Essentials",
-    category: "Tools & Equipment",
-    imageUrl: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=1200&q=80",
+    title: "DongCheng 20V Cordless Brushless Rotary Hammer",
+    category: "Power Tools",
+    imageUrl: "/catalogue/dongcheng-20v-cordless-brushless-rotary-hammer-dczc02-26ek-p.png",
     aspectRatio: "4/3",
-    alt: "Organized workshop hand tools including wrenches, pliers, and screwdrivers",
+    alt: "DongCheng 20V cordless brushless rotary hammer kit with battery and case",
   },
   {
     id: "gal-2",
-    title: "Fasteners, Bolts & Threaded Hardware",
-    category: "Fasteners & Fixings",
-    imageUrl: "https://images.unsplash.com/photo-1586864387789-628af9feed72?w=1200&q=80",
+    title: "Common Red Clay Bricks (Batu Merah)",
+    category: "Bricks & Masonry",
+    imageUrl: "/catalogue/batu-merah-common-brick-per-pcs.jpeg",
     aspectRatio: "4/3",
-    alt: "Collection of metal screws, hex bolts, nuts, and hardware fasteners",
+    alt: "Stack of common red clay bricks for construction and walling",
   },
   {
     id: "gal-3",
-    title: "Plumbing & Brass Pipe Connections",
-    category: "Plumbing Supplies",
-    imageUrl: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=1200&q=80",
+    title: "Portland Cement (50kg Heavy-Duty Bag)",
+    category: "Cement & Aggregates",
+    imageUrl: "/catalogue/cement-portland-50kg.jpeg",
     aspectRatio: "4/3",
-    alt: "Brass pipe fittings, connectors, and plumbing hardware valves",
+    alt: "Portland cement 50kg bag for structural mortar and concrete mixing",
   },
   {
     id: "gal-4",
-    title: "Workshop Assembly & Maintenance Materials",
-    category: "Maintenance",
-    imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=1200&q=80",
+    title: "Milwaukee M18 FUEL Circular Saw (165mm)",
+    category: "Milwaukee Cordless",
+    imageUrl: "/catalogue/milwaukee-circular-saw-m18-fcs66-0-bare-power-tools-milwauke.png",
     aspectRatio: "4/3",
-    alt: "Craftsman workbench with woodworking and general maintenance equipment",
+    alt: "Milwaukee M18 FUEL cordless circular saw 165mm with blade",
   },
   {
     id: "gal-5",
-    title: "Power Tools & Drilling Accessories",
-    category: "Equipment",
-    imageUrl: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=1200&q=80",
+    title: "Milwaukee M18 FUEL Angle Grinder (VSR)",
+    category: "Power Tools & Grinders",
+    imageUrl: "/catalogue/milwaukee-vsr-angle-grinder-m18-fsagv100xb-0x0-bare-power-to.png",
     aspectRatio: "4/3",
-    alt: "Cordless drill and bit accessories for construction and hardware repair",
+    alt: "Milwaukee M18 FUEL 100mm variable speed angle grinder",
   },
   {
     id: "gal-6",
-    title: "Hardware Supplies & Construction Racks",
-    category: "Supplies",
-    imageUrl: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1200&q=80",
+    title: "Precast Concrete Hollow Blocks",
+    category: "Blocks & Walling",
+    imageUrl: "/catalogue/hollow-block-clean.jpeg",
     aspectRatio: "4/3",
-    alt: "Industrial shelving with neatly organized hardware tools and workshop gear",
+    alt: "Standard precast concrete hollow blocks for foundation and retaining walls",
   },
 ];

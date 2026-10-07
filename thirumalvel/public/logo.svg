@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Clean Crisp White Background -->
+  <rect width="512" height="512" rx="64" fill="#FFFFFF"/>
+  
+  <!-- Outer Architectural Roof Gable (Forest Green) -->
+  <path d="M256 52L56 216L88 248L256 112L424 248L456 216L256 52Z" fill="#236526"/>
+  
+  <!-- Inner Architectural Roof Beam (Navy Blue) -->
+  <path d="M256 138L120 250L144 274L256 182L368 274L392 250L256 138Z" fill="#164E84"/>
+  
+  <!-- Central Structural Columns & Frame (Navy & Green) -->
+  <path d="M148 270H364V296H148V270Z" fill="#236526"/>
+  <path d="M172 296H204V354H172V296Z" fill="#164E84"/>
+  <path d="M308 296H340V354H308V296Z" fill="#164E84"/>
+  
+  <!-- Central Monogram Monolith 'TV' -->
+  <!-- T Horizontal -->
+  <path d="M220 296H292V318H220V296Z" fill="#236526"/>
+  <!-- T Vertical / V Center -->
+  <path d="M246 318H266V354H246V318Z" fill="#236526"/>
+  
+  <!-- Solid Foundation Plinth -->
+  <rect x="136" y="354" width="240" height="18" rx="4" fill="#164E84"/>
+  
+  <!-- Symmetrical Cupped Hands Foundation Base (Navy Blue) -->
+  <path d="M72 358C116 432 198 438 256 394C314 438 396 432 440 358C394 402 316 396 256 372C196 396 118 402 72 358Z" fill="#164E84"/>
+
+  <!-- Brand Typography -->
+  <!-- Primary Brand Name -->
+  <text x="256" y="444" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="800" fill="#164E84" text-anchor="middle" letter-spacing="1">THIRUMAL VEL</text>
+  
+  <!-- Enterprise Subtitle -->
+  <text x="256" y="476" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#236526" text-anchor="middle" letter-spacing="6">ENTERPRISE</text>
+</svg>

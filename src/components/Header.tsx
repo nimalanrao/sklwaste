@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Navigation, Phone, Clock, MapPin } from "lucide-react";
+import { Menu, Navigation, Phone } from "lucide-react";
 import { businessData } from "../data/business";
 import { MobileNav } from "./MobileNav";
 import { LanguageToggle } from "./LanguageToggle";
@@ -44,37 +44,6 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
   return (
     <>
       <header className={`header ${isScrolled ? "header-scrolled" : ""}`}>
-        {/* Top Utility Bar: Verified Store Hours, Location & Language Switcher */}
-        <div className="header-top-bar">
-          <div className="container header-top-container">
-            <div className="top-bar-left">
-              <span className="top-status-badge">
-                <span className="status-dot-pulse" aria-hidden="true" />
-                <Clock size={13} className="top-icon" aria-hidden="true" />
-                <span className="top-status-text">{t.nav.openStatus}</span>
-              </span>
-              <span className="top-bar-sep" aria-hidden="true">·</span>
-              <span className="top-location-text">
-                <MapPin size={13} className="top-icon" aria-hidden="true" />
-                <span>Bandar Seri Coalfields</span>
-              </span>
-            </div>
-
-            <div className="top-bar-right">
-              <a 
-                href={`tel:${businessData.phone.tel}`}
-                className="top-phone-link phone-number"
-                title={`Call ${businessData.phone.display}`}
-              >
-                <Phone size={13} aria-hidden="true" />
-                <span>{businessData.phone.display}</span>
-              </a>
-              <span className="top-bar-sep top-bar-sep-lang" aria-hidden="true">|</span>
-              <LanguageToggle />
-            </div>
-          </div>
-        </div>
-
         {/* Main Navigation Bar */}
         <div className="header-main-bar">
           <div className="container header-container">
@@ -110,22 +79,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
                 onClick={(e) => handleNav(e, "catalogue")}
                 className={`nav-link ${currentView === "catalogue" ? "nav-link-active" : ""}`}
               >
-                <span>{t.nav.catalogue}</span>
-                <span className="nav-badge-count">15</span>
-              </a>
-              <a 
-                href="#hardware" 
-                onClick={(e) => handleNav(e, "home", "#hardware")}
-                className="nav-link"
-              >
-                {t.nav.hardware}
-              </a>
-              <a 
-                href="#gallery" 
-                onClick={(e) => handleNav(e, "home", "#gallery")}
-                className="nav-link"
-              >
-                {t.nav.gallery}
+                {t.nav.catalogue}
               </a>
               <a 
                 href="#location" 
@@ -145,6 +99,9 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
 
             {/* Right Header Action Buttons */}
             <div className="header-actions">
+              {/* Language Switcher */}
+              <LanguageToggle />
+
               {/* Quick Call Button */}
               <a 
                 href={`tel:${businessData.phone.tel}`} 

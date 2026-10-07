@@ -45,8 +45,7 @@ export const Footer: React.FC = () => {
             <ul className="footer-links-list">
               <li><a href="#hero" className="footer-nav-link">{t.nav.home}</a></li>
               <li><a href="#about" className="footer-nav-link">{t.nav.about}</a></li>
-              <li><a href="#hardware" className="footer-nav-link">{t.nav.hardware}</a></li>
-              <li><a href="#gallery" className="footer-nav-link">{t.nav.gallery}</a></li>
+              <li><a href="#catalogue" className="footer-nav-link">{t.nav.catalogue}</a></li>
               <li><a href="#location" className="footer-nav-link">{t.nav.location}</a></li>
               <li><a href="#contact" className="footer-nav-link">{t.nav.contact}</a></li>
             </ul>
@@ -59,9 +58,19 @@ export const Footer: React.FC = () => {
               <a 
                 href={`tel:${businessData.phone.tel}`}
                 className="footer-contact-item phone-number"
+                title={`Call ${businessData.phone.bossName}`}
               >
                 <Phone size={16} className="footer-item-icon" />
-                <span>{businessData.phone.display}</span>
+                <span>Day: {businessData.phone.display} ({businessData.phone.bossName})</span>
+              </a>
+
+              <a 
+                href={`tel:${businessData.phone.afterHoursTel}`}
+                className="footer-contact-item phone-number"
+                title={`Call ${businessData.phone.afterHoursName} for after-hours supply`}
+              >
+                <Phone size={16} className="footer-item-icon footer-item-purple" />
+                <span>After 6 PM: {businessData.phone.afterHoursDisplay} ({businessData.phone.afterHoursName})</span>
               </a>
 
               <a 

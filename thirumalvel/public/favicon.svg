@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="7" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+  <!-- Architectural Gable Roof Peak (Logo Green) -->
+  <path d="M16 3.5L4 13L6.2 15.2L16 7.4L25.8 15.2L28 13L16 3.5Z" fill="#236526"/>
+  <!-- Central 'T' Bar & Stem (Logo Blue) -->
+  <rect x="8.5" y="10.5" width="15" height="3" rx="0.5" fill="#164E84"/>
+  <rect x="14.5" y="10.5" width="3" height="9.5" fill="#164E84"/>
+  <!-- Dynamic 'V' Chevron Wings embracing the base (Logo Green & Blue) -->
+  <path d="M7 16L16 27L25 16L22.5 14.5L16 22.8L9.5 14.5L7 16Z" fill="#236526"/>
+  <!-- Foundation Baseline (Logo Blue) -->
+  <rect x="6" y="27.5" width="20" height="2" rx="0.5" fill="#164E84"/>
+</svg>
