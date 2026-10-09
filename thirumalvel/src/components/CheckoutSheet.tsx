@@ -9,23 +9,25 @@ import {
   Sun, 
   Moon, 
   ShoppingBag, 
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  MapPin,
-  User,
-  FileText,
-  CreditCard,
-  Banknote,
-  Building2,
-  QrCode,
-  Send,
-  Sparkles,
-  ClipboardCheck,
-  ChevronRight,
-  RotateCcw
+  ArrowRight, 
+  ArrowLeft, 
+  CheckCircle2, 
+  MapPin, 
+  User, 
+  FileText, 
+  CreditCard, 
+  Banknote, 
+  Building2, 
+  QrCode, 
+  Send, 
+  Sparkles, 
+  ClipboardCheck, 
+  ChevronRight, 
+  RotateCcw 
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/useLanguage";
+import { LanguageToggle } from "./LanguageToggle";
 import { businessData } from "../data/business";
 import { assetUrl } from "../utils/asset";
 
@@ -43,6 +45,9 @@ export const CheckoutSheet: React.FC = () => {
     isCheckoutOpen, 
     closeCheckout 
   } = useCart();
+
+  const { language } = useLanguage();
+  const isMalay = language === "ms";
 
   // 5-Step Kiosk Workflow: 1 (Pesanan) -> 2 (Maklumat Tapak) -> 3 (Waktu) -> 4 (Bayaran) -> 5 (Hantar)
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
@@ -77,37 +82,48 @@ export const CheckoutSheet: React.FC = () => {
 
   if (!isCheckoutOpen) return null;
 
-  const transportLabel = transportMode === "night" ? "Night Transport (Syif Malam)" : "Day Transport (Syif Siang)";
+  const transportLabel = transportMode === "night" 
+    ? (isMalay ? "Night Transport (Syif Malam)" : "Night Transport (Night Shift 24/7)") 
+    : (isMalay ? "Day Transport (Syif Siang)" : "Day Transport (Day Shift: 8am-6pm)");
+
   const paymentLabel = 
     paymentMethod === "cash" 
-      ? "Tunai (Cash on Delivery)" 
+      ? (isMalay ? "Tunai (Cash on Delivery)" : "Cash on Delivery (COD)") 
       : paymentMethod === "transfer" 
-        ? "Pindahan Bank (Online Transfer)" 
+        ? (isMalay ? "Pindahan Bank (Online Transfer)" : "Online Bank Transfer") 
         : "DuitNow QR Code";
 
   // Build clean formatted message for WhatsApp
   const buildFormattedMessage = () => {
     const transportHeader = transportMode === "night" 
-      ? "🌙 Night Transport (Syif Malam 24/7)" 
-      : "☀️ Day Transport (Syif Siang: 8:00 AM - 6:00 PM)";
+      ? (isMalay ? "🌙 Night Transport (Syif Malam 24/7)" : "🌙 Night Transport (Night Shift 24/7 On-Call)") 
+      : (isMalay ? "☀️ Day Transport (Syif Siang: 8:00 AM - 6:00 PM)" : "☀️ Day Transport (Day Shift: 8:00 AM - 6:00 PM)");
 
     const paymentHeader = 
       paymentMethod === "cash" 
-        ? "💵 Tunai / Cash on Delivery (COD)" 
+        ? (isMalay ? "💵 Tunai / Cash on Delivery (COD)" : "💵 Cash on Delivery (COD)") 
         : paymentMethod === "transfer" 
-          ? "🏦 Pindahan Bank / Online Banking" 
-          : "📱 Kod QR DuitNow (DuitNow QR)";
+          ? (isMalay ? "🏦 Pindahan Bank / Online Banking" : "🏦 Online Bank Transfer") 
+          : (isMalay ? "📱 Kod QR DuitNow (DuitNow QR)" : "📱 DuitNow QR");
 
     const itemsList = items.map((item, idx) => {
       const uomText = ` ${(item.unit || "UNIT").toUpperCase()}`;
-      return `${idx + 1}. *${item.title}*\n   └── Kuantiti: ${item.quantity}${uomText}`;
+      const qtyLabel = isMalay ? "Kuantiti" : "Quantity";
+      return `${idx + 1}. *${item.title}*\n   └── ${qtyLabel}: ${item.quantity}${uomText}`;
     }).join("\n\n");
 
-    const nameText = customerName.trim() ? customerName.trim() : "Pelanggan Laman Web";
-    const locText = deliveryLocation.trim() ? deliveryLocation.trim() : "Bandar Seri Coalfields / Sekitarnya";
-    const noteText = customerNotes.trim() ? customerNotes.trim() : "Tiada catatan tambahan. Sila semak ketersediaan stok & sebut harga.";
+    const defaultName = isMalay ? "Pelanggan Laman Web" : "Website Customer";
+    const defaultLoc = isMalay ? "Bandar Seri Coalfields / Sekitarnya" : "Bandar Seri Coalfields & Vicinity";
+    const defaultNote = isMalay 
+      ? "Tiada catatan tambahan. Sila semak ketersediaan stok & sebut harga." 
+      : "No additional notes. Please verify stock availability and quotation.";
 
-    return (
+    const nameText = customerName.trim() ? customerName.trim() : defaultName;
+    const locText = deliveryLocation.trim() ? deliveryLocation.trim() : defaultLoc;
+    const noteText = customerNotes.trim() ? customerNotes.trim() : defaultNote;
+
+    if (isMalay) {
+      return (
 `🏗️ *TEMPAHAN & SEBUT HARGA SKL WASTE*
 =========================================
 📦 *SENARAI BARANGAN (${totalCount} item):*
@@ -125,6 +141,27 @@ ${paymentHeader}
 • Catatan: ${noteText}
 =========================================
 _Dihantar melalui Sistem Pesanan Web SKL Waste_`
+      );
+    }
+
+    return (
+`🏗️ *SKL WASTE HARDWARE ORDER & QUOTATION*
+=========================================
+📦 *ORDER ITEMS (${totalCount} ${totalCount === 1 ? "item" : "items"}):*
+${itemsList}
+
+🚚 *DELIVERY SCHEDULE:*
+${transportHeader}
+
+💳 *PAYMENT METHOD:*
+${paymentHeader}
+
+📍 *DELIVERY DETAILS:*
+• Customer / Company: ${nameText}
+• Job Site Location: ${locText}
+• Notes: ${noteText}
+=========================================
+_Sent via SKL Waste Web Order System_`
     );
   };
 
@@ -145,7 +182,6 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
   const goNext = () => {
     if (currentStep < 5) {
       setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4 | 5);
-      // scroll container to top smoothly
       const body = document.querySelector(".kiosk-main-scroll");
       if (body) body.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -178,7 +214,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
       aria-labelledby="kiosk-step-heading"
     >
       {/* =========================================================================
-          TOP KIOSK HEADER: Navigation, 5-Step Segmented Bar, Dismiss
+          TOP KIOSK HEADER: Navigation, 5-Step Segmented Bar, Language, Dismiss
           ========================================================================= */}
       <header className="kiosk-top-header">
         <div className="kiosk-header-inner">
@@ -187,30 +223,30 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
             type="button" 
             onClick={goBack} 
             className="kiosk-header-back-btn"
-            title={currentStep > 1 ? "Kembali ke langkah sebelumnya" : "Tutup kiosk"}
+            title={currentStep > 1 ? (isMalay ? "Kembali ke langkah sebelumnya" : "Back to previous step") : (isMalay ? "Tutup kiosk" : "Close kiosk")}
           >
             {currentStep > 1 ? (
               <>
                 <ArrowLeft size={18} strokeWidth={2.4} />
-                <span className="kiosk-back-label">Undur</span>
+                <span className="kiosk-back-label">{isMalay ? "Undur" : "Back"}</span>
               </>
             ) : (
               <>
                 <X size={18} strokeWidth={2.4} />
-                <span className="kiosk-back-label">Batal</span>
+                <span className="kiosk-back-label">{isMalay ? "Batal" : "Cancel"}</span>
               </>
             )}
           </button>
 
           {/* McDonald's Style 5-Step Progress Pills */}
-          <nav className="kiosk-steps-nav" aria-label="Langkah Kiosk">
+          <nav className="kiosk-steps-nav" aria-label={isMalay ? "Langkah Kiosk" : "Kiosk Steps"}>
             <button 
               type="button" 
               onClick={() => setCurrentStep(1)} 
               className={`kiosk-step-pill ${currentStep === 1 ? "is-active" : currentStep > 1 ? "is-done" : ""}`}
             >
               <span className="kiosk-step-num">1</span>
-              <span className="kiosk-step-name">Pesanan</span>
+              <span className="kiosk-step-name">{isMalay ? "Pesanan" : "Items"}</span>
             </button>
 
             <span className={`kiosk-step-divider ${currentStep >= 2 ? "is-active" : ""}`} />
@@ -222,7 +258,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
               className={`kiosk-step-pill ${currentStep === 2 ? "is-active" : currentStep > 2 ? "is-done" : ""}`}
             >
               <span className="kiosk-step-num">2</span>
-              <span className="kiosk-step-name">Info Tapak</span>
+              <span className="kiosk-step-name">{isMalay ? "Info Tapak" : "Site Info"}</span>
             </button>
 
             <span className={`kiosk-step-divider ${currentStep >= 3 ? "is-active" : ""}`} />
@@ -234,7 +270,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
               className={`kiosk-step-pill ${currentStep === 3 ? "is-active" : currentStep > 3 ? "is-done" : ""}`}
             >
               <span className="kiosk-step-num">3</span>
-              <span className="kiosk-step-name">Waktu</span>
+              <span className="kiosk-step-name">{isMalay ? "Waktu" : "Timing"}</span>
             </button>
 
             <span className={`kiosk-step-divider ${currentStep >= 4 ? "is-active" : ""}`} />
@@ -246,7 +282,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
               className={`kiosk-step-pill ${currentStep === 4 ? "is-active" : currentStep > 4 ? "is-done" : ""}`}
             >
               <span className="kiosk-step-num">4</span>
-              <span className="kiosk-step-name">Bayaran</span>
+              <span className="kiosk-step-name">{isMalay ? "Bayaran" : "Payment"}</span>
             </button>
 
             <span className={`kiosk-step-divider ${currentStep >= 5 ? "is-active" : ""}`} />
@@ -258,29 +294,32 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
               className={`kiosk-step-pill ${currentStep === 5 ? "is-active" : ""}`}
             >
               <span className="kiosk-step-num">5</span>
-              <span className="kiosk-step-name">Hantar</span>
+              <span className="kiosk-step-name">{isMalay ? "Hantar" : "Send"}</span>
             </button>
           </nav>
 
-          {/* Right Header: Close Icon Button */}
+          {/* Right Header: Language Switcher + Clear + Close Button */}
           <div className="kiosk-header-right">
+            <LanguageToggle className="kiosk-lang-toggle" />
+            
             {items.length > 0 && currentStep === 1 && (
               <button 
                 type="button"
                 onClick={clearCart}
                 className="kiosk-clear-all-btn"
-                title="Kosongkan semua"
+                title={isMalay ? "Kosongkan semua" : "Clear all"}
               >
                 <RotateCcw size={14} />
-                <span>Kosongkan</span>
+                <span>{isMalay ? "Kosongkan" : "Clear"}</span>
               </button>
             )}
+
             <button 
               type="button" 
               onClick={closeCheckout}
               className="kiosk-close-btn"
-              aria-label="Tutup checkout"
-              title="Tutup (Esc)"
+              aria-label={isMalay ? "Tutup checkout" : "Close checkout"}
+              title={isMalay ? "Tutup (Esc)" : "Close (Esc)"}
             >
               <X size={20} strokeWidth={2.2} />
             </button>
@@ -299,16 +338,20 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
               <div className="kiosk-empty-icon-circle">
                 <ShoppingBag size={42} strokeWidth={1.8} />
               </div>
-              <h2 className="kiosk-empty-title">Pesanan Kosong</h2>
+              <h2 className="kiosk-empty-title">
+                {isMalay ? "Pesanan Kosong" : "Cart is Empty"}
+              </h2>
               <p className="kiosk-empty-sub">
-                Pilih perkakasan atau bahan binaan dari katalog kami untuk memulakan pesanan.
+                {isMalay 
+                  ? "Pilih perkakasan atau bahan binaan dari katalog kami untuk memulakan pesanan." 
+                  : "Select hardware or building materials from our catalogue to start your order."}
               </p>
               <button 
                 type="button" 
                 onClick={closeCheckout} 
                 className="kiosk-btn-browse"
               >
-                <span>Lihat Katalog Produk</span>
+                <span>{isMalay ? "Lihat Katalog Produk" : "Browse Product Catalogue"}</span>
                 <ArrowRight size={18} strokeWidth={2.2} />
               </button>
             </div>
@@ -322,13 +365,17 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
                       <ClipboardCheck size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">Langkah 1 / 5</span>
+                      <span className="kiosk-pane-step-tag">
+                        {isMalay ? "Langkah 1 / 5" : "Step 1 of 5"}
+                      </span>
                     </div>
                     <h1 id="kiosk-step-1-title" className="kiosk-pane-heading">
-                      Semak Barangan
+                      {isMalay ? "Semak Barangan" : "Review Order Items"}
                     </h1>
                     <p className="kiosk-pane-caption">
-                      Laraskan kuantiti setiap unit mengikut keperluan tapak anda.
+                      {isMalay 
+                        ? "Laraskan kuantiti setiap unit mengikut keperluan tapak anda." 
+                        : "Adjust quantities for each item according to your job site requirements."}
                     </p>
                   </header>
 
@@ -365,7 +412,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                                 type="button" 
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                 className="kiosk-stepper-btn"
-                                aria-label={`Kurangkan ${item.title}`}
+                                aria-label={isMalay ? `Kurangkan ${item.title}` : `Decrease ${item.title}`}
                               >
                                 <Minus size={15} strokeWidth={2.8} />
                               </button>
@@ -379,7 +426,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                                 type="button" 
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                 className="kiosk-stepper-btn"
-                                aria-label={`Tambah ${item.title}`}
+                                aria-label={isMalay ? `Tambah ${item.title}` : `Increase ${item.title}`}
                               >
                                 <Plus size={15} strokeWidth={2.8} />
                               </button>
@@ -389,8 +436,8 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                               type="button" 
                               onClick={() => removeFromCart(item.id)}
                               className="kiosk-item-del-btn"
-                              title="Padam barangan"
-                              aria-label={`Padam ${item.title}`}
+                              title={isMalay ? "Padam barangan" : "Remove item"}
+                              aria-label={isMalay ? `Padam ${item.title}` : `Remove ${item.title}`}
                             >
                               <Trash2 size={16} strokeWidth={2.2} />
                             </button>
@@ -410,13 +457,17 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
                       <User size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">Langkah 2 / 5</span>
+                      <span className="kiosk-pane-step-tag">
+                        {isMalay ? "Langkah 2 / 5" : "Step 2 of 5"}
+                      </span>
                     </div>
                     <h1 id="kiosk-step-2-title" className="kiosk-pane-heading">
-                      Maklumat & Lokasi Tapak
+                      {isMalay ? "Maklumat & Lokasi Tapak" : "Site Location & Details"}
                     </h1>
                     <p className="kiosk-pane-caption">
-                      Untuk kemudahan pemandu lori menghantar bekalan terus ke tapak binaan anda.
+                      {isMalay 
+                        ? "Untuk kemudahan pemandu lori menghantar bekalan terus ke tapak binaan anda." 
+                        : "Helps our lorry drivers deliver supplies straight to your job site or address."}
                     </p>
                   </header>
 
@@ -424,14 +475,14 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-name" className="kiosk-field-label">
                         <User size={16} strokeWidth={2.2} />
-                        <span>Nama / Nama Syarikat</span>
+                        <span>{isMalay ? "Nama / Nama Syarikat" : "Your Name / Company Name"}</span>
                       </label>
                       <input 
                         id="kiosk-name"
                         type="text"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="Cth: En. Ahmad / Mega Bina Enterprise"
+                        placeholder={isMalay ? "Cth: En. Ahmad / Mega Bina Enterprise" : "e.g. Mr. David / Bina Jaya Enterprise"}
                         className="kiosk-input-large"
                         autoFocus
                       />
@@ -440,20 +491,22 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-location" className="kiosk-field-label">
                         <MapPin size={16} strokeWidth={2.2} />
-                        <span>Lokasi Tapak Binaan / Alamat</span>
+                        <span>{isMalay ? "Lokasi Tapak Binaan / Alamat" : "Job Site Location / Delivery Address"}</span>
                       </label>
                       <input 
                         id="kiosk-location"
                         type="text"
                         value={deliveryLocation}
                         onChange={(e) => setDeliveryLocation(e.target.value)}
-                        placeholder="Cth: Bandar Seri Coalfields / Puncak Alam"
+                        placeholder={isMalay ? "Cth: Bandar Seri Coalfields / Puncak Alam" : "e.g. Bandar Seri Coalfields / Puncak Alam"}
                         className="kiosk-input-large"
                       />
 
                       {/* Rewarding 1-tap fast location chips */}
                       <div className="kiosk-quick-chips-row">
-                        <span className="kiosk-chips-hint">Pilih Pantas:</span>
+                        <span className="kiosk-chips-hint">
+                          {isMalay ? "Pilih Pantas:" : "Quick Select:"}
+                        </span>
                         {commonLocations.map((loc) => (
                           <button
                             key={loc}
@@ -470,14 +523,14 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-notes" className="kiosk-field-label">
                         <FileText size={16} strokeWidth={2.2} />
-                        <span>Catatan Tambahan (Pilihan)</span>
+                        <span>{isMalay ? "Catatan Tambahan (Pilihan)" : "Additional Notes (Optional)"}</span>
                       </label>
                       <input 
                         id="kiosk-notes"
                         type="text"
                         value={customerNotes}
                         onChange={(e) => setCustomerNotes(e.target.value)}
-                        placeholder="Cth: Lori tipper masuk ikut pintu belakang / call mandur"
+                        placeholder={isMalay ? "Cth: Lori tipper masuk ikut pintu belakang / hubungi mandur" : "e.g. Tipper lorry enter back gate / call site supervisor"}
                         className="kiosk-input-large"
                       />
                     </div>
@@ -493,13 +546,17 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
                       <Truck size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">Langkah 3 / 5</span>
+                      <span className="kiosk-pane-step-tag">
+                        {isMalay ? "Langkah 3 / 5" : "Step 3 of 5"}
+                      </span>
                     </div>
                     <h1 id="kiosk-step-3-title" className="kiosk-pane-heading">
-                      Waktu Penghantaran
+                      {isMalay ? "Waktu Penghantaran" : "Delivery Schedule"}
                     </h1>
                     <p className="kiosk-pane-caption">
-                      Pilih waktu yang paling sesuai untuk penerimaan barangan di tapak.
+                      {isMalay 
+                        ? "Pilih waktu yang paling sesuai untuk penerimaan barangan di tapak." 
+                        : "Choose the delivery timing that fits your site schedule best."}
                     </p>
                   </header>
 
@@ -529,11 +586,15 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       <div className="kiosk-choice-body">
                         <div className="kiosk-choice-header-row">
                           <h2 className="kiosk-choice-name">Day Transport</h2>
-                          <span className="kiosk-choice-pill">Syif Siang</span>
+                          <span className="kiosk-choice-pill">
+                            {isMalay ? "Syif Siang" : "Day Shift"}
+                          </span>
                         </div>
                         <span className="kiosk-choice-time">🕒 8:00 AM – 6:00 PM</span>
                         <p className="kiosk-choice-sub">
-                          Waktu penghantaran harian biasa.
+                          {isMalay 
+                            ? "Waktu penghantaran harian biasa." 
+                            : "Standard daytime site delivery schedule."}
                         </p>
                       </div>
                     </div>
@@ -563,11 +624,15 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       <div className="kiosk-choice-body">
                         <div className="kiosk-choice-header-row">
                           <h2 className="kiosk-choice-name">Night Transport</h2>
-                          <span className="kiosk-choice-pill night-pill">24 Jam On-Call</span>
+                          <span className="kiosk-choice-pill night-pill">
+                            {isMalay ? "24 Jam On-Call" : "24/7 On-Call"}
+                          </span>
                         </div>
                         <span className="kiosk-choice-time">🌙 6:00 PM – 8:00 AM</span>
                         <p className="kiosk-choice-sub">
-                          Penghantaran kecemasan malam tanpa jem.
+                          {isMalay 
+                            ? "Penghantaran kecemasan malam tanpa jem." 
+                            : "Urgent night delivery without traffic congestion."}
                         </p>
                       </div>
                     </div>
@@ -583,13 +648,17 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
                       <CreditCard size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">Langkah 4 / 5</span>
+                      <span className="kiosk-pane-step-tag">
+                        {isMalay ? "Langkah 4 / 5" : "Step 4 of 5"}
+                      </span>
                     </div>
                     <h1 id="kiosk-step-4-title" className="kiosk-pane-heading">
-                      Kaedah Bayaran
+                      {isMalay ? "Kaedah Bayaran" : "Payment Method"}
                     </h1>
                     <p className="kiosk-pane-caption">
-                      Pilih cara anda ingin membuat pembayaran semasa barangan tiba.
+                      {isMalay 
+                        ? "Pilih cara anda ingin membuat pembayaran semasa barangan tiba." 
+                        : "Choose how you would like to pay when supplies arrive at site."}
                     </p>
                   </header>
 
@@ -612,10 +681,14 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       </div>
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
-                          <h2 className="kiosk-pay-title">Tunai (COD)</h2>
-                          <span className="kiosk-pay-badge">Paling Lazim</span>
+                          <h2 className="kiosk-pay-title">{isMalay ? "Tunai (COD)" : "Cash on Delivery (COD)"}</h2>
+                          <span className="kiosk-pay-badge">{isMalay ? "Paling Lazim" : "Most Common"}</span>
                         </div>
-                        <span className="kiosk-pay-desc">Bayar tunai kepada pemandu bila barangan sampai di tapak.</span>
+                        <span className="kiosk-pay-desc">
+                          {isMalay 
+                            ? "Bayar tunai kepada pemandu bila barangan sampai di tapak." 
+                            : "Pay cash directly to the driver upon delivery to site."}
+                        </span>
                       </div>
                       <span className={`kiosk-radio-circle ${paymentMethod === "cash" ? "is-checked" : ""}`}>
                         {paymentMethod === "cash" && <CheckCircle2 size={20} strokeWidth={2.5} />}
@@ -640,10 +713,14 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       </div>
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
-                          <h2 className="kiosk-pay-title">Pindahan Bank (Online Transfer)</h2>
-                          <span className="kiosk-pay-badge">Syarikat</span>
+                          <h2 className="kiosk-pay-title">{isMalay ? "Pindahan Bank (Online Transfer)" : "Online Bank Transfer"}</h2>
+                          <span className="kiosk-pay-badge">{isMalay ? "Syarikat" : "Direct Transfer"}</span>
                         </div>
-                        <span className="kiosk-pay-desc">Pindahan atas talian & hantar resit terus melalui WhatsApp.</span>
+                        <span className="kiosk-pay-desc">
+                          {isMalay 
+                            ? "Pindahan atas talian & hantar resit terus melalui WhatsApp." 
+                            : "Transfer online and share payment slip directly via WhatsApp."}
+                        </span>
                       </div>
                       <span className={`kiosk-radio-circle ${paymentMethod === "transfer" ? "is-checked" : ""}`}>
                         {paymentMethod === "transfer" && <CheckCircle2 size={20} strokeWidth={2.5} />}
@@ -669,9 +746,13 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
                           <h2 className="kiosk-pay-title">DuitNow QR</h2>
-                          <span className="kiosk-pay-badge">Pantas</span>
+                          <span className="kiosk-pay-badge">{isMalay ? "Pantas" : "Instant QR"}</span>
                         </div>
-                        <span className="kiosk-pay-desc">Imbas kod QR menggunakan MAE, TNG eWallet atau mana-mana aplikasi bank.</span>
+                        <span className="kiosk-pay-desc">
+                          {isMalay 
+                            ? "Imbas kod QR menggunakan MAE, TNG eWallet atau mana-mana aplikasi bank." 
+                            : "Scan QR code via MAE, TNG eWallet, or any Malaysian banking app."}
+                        </span>
                       </div>
                       <span className={`kiosk-radio-circle ${paymentMethod === "qr" ? "is-checked" : ""}`}>
                         {paymentMethod === "qr" && <CheckCircle2 size={20} strokeWidth={2.5} />}
@@ -691,10 +772,12 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       <Sparkles size={22} strokeWidth={2.4} />
                     </div>
                     <h1 id="kiosk-step-5-title" className="kiosk-pane-heading">
-                      Pesanan Sedia Dihantar!
+                      {isMalay ? "Pesanan Sedia Dihantar!" : "Order Ready to Send!"}
                     </h1>
                     <p className="kiosk-pane-caption">
-                      Semak ringkasan di bawah dan hantar terus ke talian WhatsApp rasmi SKL Waste.
+                      {isMalay 
+                        ? "Semak ringkasan di bawah dan hantar terus ke talian WhatsApp rasmi SKL Waste." 
+                        : "Review your order summary below and forward directly to official SKL Waste WhatsApp."}
                     </p>
                   </header>
 
@@ -703,33 +786,39 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                     <div className="kiosk-receipt-top">
                       <div className="kiosk-receipt-brand">
                         <strong>SKL WASTE SDN BHD</strong>
-                        <span>SLIP TEMPAHAN PROJEK</span>
+                        <span>{isMalay ? "SLIP TEMPAHAN PROJEK" : "PROJECT ORDER SLIP"}</span>
                       </div>
-                      <span className="kiosk-receipt-count tabular-nums">{totalCount} Item</span>
+                      <span className="kiosk-receipt-count tabular-nums">
+                        {isMalay ? `${totalCount} Item` : `${totalCount} ${totalCount === 1 ? "Item" : "Items"}`}
+                      </span>
                     </div>
 
                     <div className="kiosk-receipt-meta-grid">
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">🚚 Waktu Lori:</span>
+                        <span className="kiosk-receipt-label">{isMalay ? "🚚 Waktu Lori:" : "🚚 Delivery Time:"}</span>
                         <strong className="kiosk-receipt-val">{transportLabel}</strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">💳 Bayaran:</span>
+                        <span className="kiosk-receipt-label">{isMalay ? "💳 Bayaran:" : "💳 Payment:"}</span>
                         <strong className="kiosk-receipt-val">{paymentLabel}</strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">👤 Pemesan:</span>
-                        <strong className="kiosk-receipt-val">{customerName.trim() || "Pelanggan Laman Web"}</strong>
+                        <span className="kiosk-receipt-label">{isMalay ? "👤 Pemesan:" : "👤 Customer:"}</span>
+                        <strong className="kiosk-receipt-val">
+                          {customerName.trim() || (isMalay ? "Pelanggan Laman Web" : "Website Customer")}
+                        </strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">📍 Tapak:</span>
+                        <span className="kiosk-receipt-label">{isMalay ? "📍 Tapak:" : "📍 Site:"}</span>
                         <strong className="kiosk-receipt-val">{deliveryLocation.trim() || "Bandar Seri Coalfields"}</strong>
                       </div>
                     </div>
 
                     <div className="kiosk-receipt-items-list">
                       <div className="kiosk-receipt-divider" />
-                      <span className="kiosk-receipt-table-header">Senarai Barangan & UOM:</span>
+                      <span className="kiosk-receipt-table-header">
+                        {isMalay ? "Senarai Barangan & UOM:" : "Order Items & UOM Summary:"}
+                      </span>
                       <ul className="kiosk-receipt-ul">
                         {items.map((it) => (
                           <li key={it.id} className="kiosk-receipt-li">
@@ -749,12 +838,16 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       type="button" 
                       onClick={handleCheckoutSaravanan}
                       className="kiosk-primary-whatsapp-btn"
-                      title="Hantar Tempahan ke WhatsApp Saravanan"
+                      title={isMalay ? "Hantar Tempahan ke WhatsApp Saravanan" : "Send Order to WhatsApp Saravanan"}
                     >
                       <MessageCircle size={22} strokeWidth={2.4} />
                       <div className="kiosk-wa-btn-labels">
-                        <span className="kiosk-wa-main-title">Hantar Tempahan ke WhatsApp</span>
-                        <span className="kiosk-wa-sub-title">Saravanan (019-914 4743) • Respon Segera</span>
+                        <span className="kiosk-wa-main-title">
+                          {isMalay ? "Hantar Tempahan ke WhatsApp" : "Send Order via WhatsApp"}
+                        </span>
+                        <span className="kiosk-wa-sub-title">
+                          {isMalay ? "Saravanan (019-914 4743) • Respon Segera" : "Mr. Saravanan (019-914 4743) • Fast Response"}
+                        </span>
                       </div>
                       <ArrowRight size={20} strokeWidth={2.4} className="kiosk-wa-arrow" />
                     </button>
@@ -763,10 +856,12 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                       type="button" 
                       onClick={handleCheckoutHari}
                       className="kiosk-secondary-whatsapp-btn"
-                      title="Hantar ke Syif Malam Hari"
+                      title={isMalay ? "Hantar ke Syif Malam Hari" : "Send to Night Shift Mr. Hari"}
                     >
                       <Moon size={16} strokeWidth={2.2} />
-                      <span>Hantar ke En. Hari (Syif Malam: 016-615 9365)</span>
+                      <span>
+                        {isMalay ? "Hantar ke En. Hari (Syif Malam: 016-615 9365)" : "Send to Mr. Hari (Night Shift: 016-615 9365)"}
+                      </span>
                     </button>
                   </div>
                 </section>
@@ -783,9 +878,11 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
         <footer className="kiosk-bottom-bar">
           <div className="kiosk-bar-inner">
             <div className="kiosk-summary-badge">
-              <span className="kiosk-summary-sub">Jumlah Pesanan:</span>
+              <span className="kiosk-summary-sub">
+                {isMalay ? "Jumlah Pesanan:" : "Order Total:"}
+              </span>
               <strong className="kiosk-summary-count tabular-nums">
-                {totalCount} <small>Unit/Item</small>
+                {totalCount} <small>{isMalay ? "Unit/Item" : (totalCount === 1 ? "Unit/Item" : "Units/Items")}</small>
               </strong>
             </div>
 
@@ -797,10 +894,10 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   className="kiosk-btn-next-action"
                 >
                   <span>
-                    {currentStep === 1 && "Maklumat Tapak"}
-                    {currentStep === 2 && "Pilih Waktu"}
-                    {currentStep === 3 && "Kaedah Bayaran"}
-                    {currentStep === 4 && "Semak & Hantar"}
+                    {currentStep === 1 && (isMalay ? "Maklumat Tapak" : "Site Info")}
+                    {currentStep === 2 && (isMalay ? "Pilih Waktu" : "Delivery Schedule")}
+                    {currentStep === 3 && (isMalay ? "Kaedah Bayaran" : "Payment Method")}
+                    {currentStep === 4 && (isMalay ? "Semak & Hantar" : "Review & Send")}
                   </span>
                   <ChevronRight size={18} strokeWidth={2.6} />
                 </button>
@@ -811,7 +908,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                   className="kiosk-btn-next-action is-whatsapp"
                 >
                   <Send size={18} strokeWidth={2.4} />
-                  <span>Hantar Sekarang</span>
+                  <span>{isMalay ? "Hantar Sekarang" : "Send Now"}</span>
                 </button>
               )}
             </div>

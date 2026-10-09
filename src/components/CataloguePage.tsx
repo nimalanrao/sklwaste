@@ -26,6 +26,8 @@ import { masterProducts, SIDEBAR_CATEGORIES } from "../data/catalogue";
 import type { MasterProduct } from "../data/catalogue";
 import { CatalogueModal } from "./CatalogueModal";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/useLanguage";
+import { LanguageToggle } from "./LanguageToggle";
 import { businessData } from "../data/business";
 import { assetUrl } from "../utils/asset";
 
@@ -35,6 +37,9 @@ interface CataloguePageProps {
 
 export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) => {
   const { addToCart, updateQuantity, getItemQuantity, totalCount, openCheckout } = useCart();
+  const { language } = useLanguage();
+  const isMalay = language === "ms";
+
   const [selectedCategory, setSelectedCategory] = useState<string>("BUILDING MATERIALS");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -152,49 +157,49 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
         return {
           icon: <BrickWall size={16} strokeWidth={2} />,
           badgeClass: "badge-brick",
-          shortLabel: "Bahan Binaan"
+          label: isMalay ? "Bahan Binaan" : "Building Materials"
         };
       case "PIPING & PLUMBING":
         return {
           icon: <Workflow size={16} strokeWidth={2} />,
           badgeClass: "badge-piping",
-          shortLabel: "Paip & Paiping"
+          label: isMalay ? "Paip & Paiping" : "Piping & Plumbing"
         };
       case "TOOLS":
         return {
           icon: <Wrench size={16} strokeWidth={2} />,
           badgeClass: "badge-tools",
-          shortLabel: "Peralatan"
+          label: isMalay ? "Peralatan" : "Tools & Hardware"
         };
       case "CUTTING TOOLS":
         return {
           icon: <Scissors size={16} strokeWidth={2} />,
           badgeClass: "badge-cutting",
-          shortLabel: "Mata Pemotong"
+          label: isMalay ? "Mata Pemotong" : "Cutting Tools"
         };
       case "WATERPROOFING & SEALANT":
         return {
           icon: <Droplets size={16} strokeWidth={2} />,
           badgeClass: "badge-waterproof",
-          shortLabel: "Kalis Air"
+          label: isMalay ? "Kalis Air & Gam" : "Waterproofing"
         };
       case "KITCHEN & BATH":
         return {
           icon: <Bath size={16} strokeWidth={2} />,
           badgeClass: "badge-bath",
-          shortLabel: "Dapur & Bilik Air"
+          label: isMalay ? "Dapur & Bilik Air" : "Kitchen & Bath"
         };
       case "PAINT":
         return {
           icon: <Paintbrush size={16} strokeWidth={2} />,
           badgeClass: "badge-paint",
-          shortLabel: "Cat & Kemasan"
+          label: isMalay ? "Cat & Kemasan" : "Paint & Coatings"
         };
       default:
         return {
           icon: <LayoutGrid size={16} strokeWidth={2} />,
           badgeClass: "badge-all",
-          shortLabel: "Semua Produk"
+          label: isMalay ? "Semua Produk" : "All Products"
         };
     }
   };
@@ -210,27 +215,30 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
             className="portal-back-home-btn"
           >
             <ArrowLeft size={16} strokeWidth={2.4} />
-            <span>Kembali</span>
+            <span>{isMalay ? "Kembali" : "Home"}</span>
           </button>
 
           <div className="portal-direct-contact">
+            {/* Bilingual Language Switcher */}
+            <LanguageToggle className="portal-lang-toggle" />
+
             <button 
               type="button" 
               onClick={openCheckout}
               className="portal-top-cart-btn"
-              aria-label="Buka Senarai Tempahan"
+              aria-label={isMalay ? "Buka Senarai Tempahan" : "Open Order Cart"}
             >
               <ShoppingBag size={15} strokeWidth={2.2} />
-              <span>Senarai</span>
+              <span>{isMalay ? "Senarai" : "Cart"}</span>
               {totalCount > 0 && <span className="portal-top-cart-badge tabular-nums">{totalCount}</span>}
             </button>
 
             <a 
-              href={`https://wa.me/${businessData.phone.whatsapp}?text=${encodeURIComponent("Hello SKL Waste, saya nak buat pertanyaan tentang produk / bahan binaan.")}`}
+              href={`https://wa.me/${businessData.phone.whatsapp}?text=${encodeURIComponent(isMalay ? "Hello SKL Waste, saya nak buat pertanyaan tentang produk / bahan binaan." : "Hello SKL Waste, I would like to inquire about products and building materials.")}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="portal-top-wa-link"
-              title="WhatsApp Kami"
+              title={isMalay ? "WhatsApp Kami" : "WhatsApp Us"}
             >
               <MessageCircle size={15} strokeWidth={2.2} />
               <span className="portal-top-wa-text">WhatsApp</span>
@@ -240,7 +248,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
       </header>
 
       {/* Horizontal Apple Segmented Pill Bar for Mobile & Tablet */}
-      <div className="portal-mobile-pills-bar" aria-label="Kategori Mudah Alih">
+      <div className="portal-mobile-pills-bar" aria-label={isMalay ? "Kategori Mudah Alih" : "Mobile Categories"}>
         <div className="portal-container portal-mobile-pills-scroll">
           <button
             type="button"
@@ -248,7 +256,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
             className={`apple-pill-item ${selectedCategory === "ALL" ? "apple-pill-active" : ""}`}
           >
             <LayoutGrid size={14} />
-            <span>Semua Produk</span>
+            <span>{isMalay ? "Semua Produk" : "All Products"}</span>
             <span className="apple-pill-count">{masterProducts.length}</span>
           </button>
 
@@ -265,7 +273,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 className={`apple-pill-item ${isActive ? "apple-pill-active" : ""}`}
               >
                 {details.icon}
-                <span>{cat}</span>
+                <span>{details.label}</span>
                 <span className="apple-pill-count">{count}</span>
               </button>
             );
@@ -281,7 +289,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
             <Search size={16} className="portal-search-icon" />
             <input 
               type="text" 
-              placeholder="Cari produk / bahan binaan..." 
+              placeholder={isMalay ? "Cari produk / bahan binaan..." : "Search products / materials..."}
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
               className="portal-search-input"
@@ -291,7 +299,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 type="button" 
                 onClick={() => { setSearchQuery(""); setPage(1); }}
                 className="portal-search-clear-btn"
-                aria-label="Padam carian"
+                aria-label={isMalay ? "Padam carian" : "Clear search"}
               >
                 <X size={14} />
               </button>
@@ -301,11 +309,13 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
           {/* Category Navigation Menu Container */}
           <div className="portal-menu-card">
             <div className="portal-menu-header">
-              <span className="portal-menu-title">Kategori Produk</span>
-              <span className="portal-menu-subtitle">{SIDEBAR_CATEGORIES.length} Kategori Rasmi</span>
+              <span className="portal-menu-title">{isMalay ? "Kategori Produk" : "Categories"}</span>
+              <span className="portal-menu-subtitle">
+                {isMalay ? `${SIDEBAR_CATEGORIES.length} Kategori Rasmi` : `${SIDEBAR_CATEGORIES.length} Official Categories`}
+              </span>
             </div>
 
-            <nav className="portal-category-list" aria-label="Kategori Produk">
+            <nav className="portal-category-list" aria-label={isMalay ? "Kategori Produk" : "Product Categories"}>
               {SIDEBAR_CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat;
                 const count = categoryCounts[cat] || 0;
@@ -323,7 +333,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                       <div className={`portal-cat-squircle ${details.badgeClass}`}>
                         {details.icon}
                       </div>
-                      <span className="portal-cat-name">{cat}</span>
+                      <span className="portal-cat-name">{details.label}</span>
                     </div>
                     <span className="portal-cat-subcount">{count}</span>
                   </button>
@@ -341,7 +351,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                   <div className="portal-cat-squircle badge-all">
                     <LayoutGrid size={16} strokeWidth={2} />
                   </div>
-                  <span className="portal-cat-name">SEMUA PRODUK</span>
+                  <span className="portal-cat-name">{isMalay ? "SEMUA PRODUK" : "ALL PRODUCTS"}</span>
                 </div>
                 <span className="portal-cat-subcount">{masterProducts.length}</span>
               </button>
@@ -354,7 +364,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
               <div className="portal-menu-header">
                 <div className="portal-menu-title-with-icon">
                   <SlidersHorizontal size={14} />
-                  <span className="portal-menu-title">Jenama / Pengeluar</span>
+                  <span className="portal-menu-title">{isMalay ? "Jenama / Pengeluar" : "Filter by Brand"}</span>
                 </div>
                 {selectedBrands.length > 0 && (
                   <button 
@@ -362,7 +372,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                     onClick={() => { setSelectedBrands([]); setPage(1); }}
                     className="portal-brand-reset-btn"
                   >
-                    Set Semula
+                    {isMalay ? "Set Semula" : "Reset"}
                   </button>
                 )}
               </div>
@@ -405,16 +415,18 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
               onClick={() => { setSelectedCategory("ALL"); setPage(1); }} 
               className="portal-crumb-link"
             >
-              Katalog Produk
+              {isMalay ? "Katalog Produk" : "Product Catalogue"}
             </span>
             {selectedCategory !== "ALL" && (
               <>
                 <ChevronRight size={13} className="portal-crumb-sep" />
-                <span className="portal-crumb-current">{selectedCategory}</span>
+                <span className="portal-crumb-current">{getCategoryDetails(selectedCategory).label}</span>
               </>
             )}
             <span className="portal-crumb-total">
-              (Memaparkan {paginatedProducts.length} daripada {filteredProducts.length} produk • Maksimum 20 per halaman)
+              {isMalay 
+                ? `(Memaparkan ${paginatedProducts.length} daripada ${filteredProducts.length} produk • Maksimum 20 per halaman)` 
+                : `(Showing ${paginatedProducts.length} of ${filteredProducts.length} products • Max 20 per page)`}
             </span>
           </div>
 
@@ -422,26 +434,30 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
           {(selectedBrands.length > 0 || searchQuery || selectedCategory !== "ALL") && (
             <div className="portal-active-filters-bar">
               <div className="portal-active-filters-content">
-                <span className="portal-filter-tag-label">Penapis Aktif:</span>
+                <span className="portal-filter-tag-label">{isMalay ? "Penapis Aktif:" : "Active Filters:"}</span>
                 {selectedCategory !== "ALL" && (
                   <span className="portal-filter-pill portal-filter-cat">
-                    Kategori: {selectedCategory}
+                    {isMalay ? "Kategori:" : "Category:"} {getCategoryDetails(selectedCategory).label}
                     {searchQuery && (
                       <button 
                         type="button" 
                         onClick={() => { setSelectedCategory("ALL"); setPage(1); }}
                         className="portal-filter-scope-btn"
-                        title="Tukar carian ke Semua Kategori"
+                        title={isMalay ? "Tukar carian ke Semua Kategori" : "Search in All Categories"}
                       >
-                        (Cari dalam Semua)
+                        {isMalay ? "(Cari dalam Semua)" : "(Search All)"}
                       </button>
                     )}
                   </span>
                 )}
                 {searchQuery && (
                   <span className="portal-filter-pill">
-                    Carian: "{searchQuery}"
-                    <button type="button" onClick={() => { setSearchQuery(""); setPage(1); }} aria-label="Padam carian">
+                    {isMalay ? "Carian:" : "Search:"} "{searchQuery}"
+                    <button 
+                      type="button" 
+                      onClick={() => { setSearchQuery(""); setPage(1); }} 
+                      aria-label={isMalay ? "Padam carian" : "Clear search"}
+                    >
                       <X size={12} />
                     </button>
                   </span>
@@ -449,7 +465,11 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 {selectedBrands.map(b => (
                   <span key={b} className="portal-filter-pill">
                     {b}
-                    <button type="button" onClick={() => handleBrandToggle(b)} aria-label={`Padam ${b}`}>
+                    <button 
+                      type="button" 
+                      onClick={() => handleBrandToggle(b)} 
+                      aria-label={isMalay ? `Padam ${b}` : `Remove ${b}`}
+                    >
                       <X size={12} />
                     </button>
                   </span>
@@ -460,7 +480,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 onClick={() => { setSearchQuery(""); setSelectedBrands([]); setSelectedCategory("ALL"); setPage(1); }}
                 className="portal-clear-filters-btn"
               >
-                Padam Semua
+                {isMalay ? "Padam Semua" : "Clear All"}
               </button>
             </div>
           )}
@@ -470,28 +490,42 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
             <div className="portal-empty-results">
               {crossCategoryMatches.length > 0 ? (
                 <div className="portal-cross-category-notice">
-                  <h3>Tiada padanan "{searchQuery}" dalam kategori {selectedCategory}</h3>
+                  <h3>
+                    {isMalay 
+                      ? `Tiada padanan "${searchQuery}" dalam kategori ${getCategoryDetails(selectedCategory).label}` 
+                      : `No match for "${searchQuery}" in ${getCategoryDetails(selectedCategory).label}`}
+                  </h3>
                   <p>
-                    Namun, terdapat <strong>{crossCategoryMatches.length} produk sepadan</strong> dalam kategori lain ({crossCategoryNames.join(", ")}).
+                    {isMalay ? (
+                      <>Namun, terdapat <strong>{crossCategoryMatches.length} produk sepadan</strong> dalam kategori lain ({crossCategoryNames.join(", ")}).</>
+                    ) : (
+                      <>Found <strong>{crossCategoryMatches.length} matching products</strong> in other categories ({crossCategoryNames.join(", ")}).</>
+                    )}
                   </p>
                   <button 
                     type="button"
                     onClick={() => { setSelectedCategory("ALL"); setPage(1); }}
                     className="portal-empty-btn"
                   >
-                    Lihat {crossCategoryMatches.length} Produk dalam Semua Kategori
+                    {isMalay 
+                      ? `Lihat ${crossCategoryMatches.length} Produk dalam Semua Kategori` 
+                      : `View ${crossCategoryMatches.length} Products in All Categories`}
                   </button>
                 </div>
               ) : (
                 <>
-                  <h3>Tiada produk ditemui</h3>
-                  <p>Sila padam carian atau pilih kategori lain dari menu di sebelah kiri.</p>
+                  <h3>{isMalay ? "Tiada produk ditemui" : "No products found"}</h3>
+                  <p>
+                    {isMalay 
+                      ? "Sila padam carian atau pilih kategori lain dari menu di sebelah kiri." 
+                      : "Please clear your search or select another category from the sidebar menu."}
+                  </p>
                   <button 
                     type="button"
                     onClick={() => { setSelectedCategory("BUILDING MATERIALS"); setSearchQuery(""); setSelectedBrands([]); setPage(1); }}
                     className="portal-empty-btn"
                   >
-                    Kembali ke Bahan Binaan
+                    {isMalay ? "Kembali ke Bahan Binaan" : "Back to Building Materials"}
                   </button>
                 </>
               )}
@@ -511,7 +545,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                       onClick={() => setSelectedProduct(p)}
                       role="button"
                       tabIndex={0}
-                      aria-label={`Lihat maklumat ${p.title}`}
+                      aria-label={isMalay ? `Lihat maklumat ${p.title}` : `View details of ${p.title}`}
                     >
                       <img 
                         src={assetUrl(p.localImage)} 
@@ -531,12 +565,11 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                       <div className="portal-card-hover-overlay">
                         <span className="portal-card-quick-pill">
                           <Eye size={13} strokeWidth={2.2} />
-                          <span>Lihat Butiran</span>
+                          <span>{isMalay ? "Lihat Butiran" : "View Specs"}</span>
                         </span>
                       </div>
                     </div>
 
-                    {/* Product Meta */}
                     {/* Product Meta */}
                     <div className="portal-card-body">
                       <div className="portal-card-meta-top">
@@ -563,7 +596,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                         <p className="portal-card-spec" title={p.spec}>{p.spec}</p>
                       )}
 
-                      {/* Dynamic Cart & Action Buttons — Full Width, Zero Line-Break */}
+                      {/* Dynamic Cart & Action Buttons */}
                       <div className="portal-card-action">
                         {getItemQuantity(p.id) === 0 ? (
                           <button
@@ -573,10 +606,10 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                               addToCart(p, 1);
                             }}
                             className="portal-card-add-btn portal-card-add-full"
-                            title={`Tambah ${p.title} ke Senarai Tempahan`}
+                            title={isMalay ? `Tambah ${p.title} ke Senarai Tempahan` : `Add ${p.title} to Order Cart`}
                           >
                             <Plus size={14} strokeWidth={2.5} />
-                            <span>+ Tambah ({(p.unit || "UNIT").toUpperCase()})</span>
+                            <span>{isMalay ? "+ Tambah" : "+ Add"} ({(p.unit || "UNIT").toUpperCase()})</span>
                           </button>
                         ) : (
                           <div className="portal-card-stepper-full">
@@ -587,7 +620,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                                 updateQuantity(p.id, getItemQuantity(p.id) - 1);
                               }}
                               className="portal-card-step-btn"
-                              aria-label="Kurangkan kuantiti"
+                              aria-label={isMalay ? "Kurangkan kuantiti" : "Decrease quantity"}
                             >
                               <Minus size={13} strokeWidth={2.5} />
                             </button>
@@ -598,19 +631,19 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                                 openCheckout();
                               }}
                               className="portal-card-stepper-center-btn"
-                              title="Buka Senarai Tempahan"
+                              title={isMalay ? "Buka Senarai Tempahan" : "Open Order Cart"}
                             >
                               <span className="portal-card-step-val tabular-nums">{getItemQuantity(p.id)}</span>
                               <span className="portal-card-step-lbl">{(p.unit || "UNIT").toUpperCase()}</span>
                             </button>
                             <button 
-                              type="button"
+                              type="button" 
                               onClick={(e) => {
                                 e.stopPropagation();
                                 updateQuantity(p.id, getItemQuantity(p.id) + 1);
                               }}
                               className="portal-card-step-btn"
-                              aria-label="Tambah kuantiti"
+                              aria-label={isMalay ? "Tambah kuantiti" : "Increase quantity"}
                             >
                               <Plus size={13} strokeWidth={2.5} />
                             </button>
@@ -632,10 +665,10 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 disabled={page === 1}
                 onClick={() => handlePageChange(Math.max(1, page - 1))}
                 className="portal-page-nav-btn"
-                aria-label="Previous page"
+                aria-label={isMalay ? "Halaman sebelumnya" : "Previous page"}
               >
                 <ChevronLeft size={16} />
-                <span>Prev</span>
+                <span>{isMalay ? "Sebelum" : "Prev"}</span>
               </button>
 
               <div className="portal-page-numbers">
@@ -667,9 +700,9 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 disabled={page === totalPages}
                 onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
                 className="portal-page-nav-btn"
-                aria-label="Next page"
+                aria-label={isMalay ? "Halaman seterusnya" : "Next page"}
               >
-                <span>Next</span>
+                <span>{isMalay ? "Seterusnya" : "Next"}</span>
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -679,7 +712,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
 
       {/* Floating Order / Checkout Dock on Catalogue View */}
       {totalCount > 0 && (
-        <aside className="portal-floating-cart-dock" aria-label="Akses Pantas Senarai Tempahan">
+        <aside className="portal-floating-cart-dock" aria-label={isMalay ? "Akses Pantas Senarai Tempahan" : "Quick Access Order Cart"}>
           <button
             type="button"
             onClick={openCheckout}
@@ -691,9 +724,11 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                 <span className="dock-pill-number tabular-nums">{totalCount}</span>
               </div>
               <div className="dock-label-group">
-                <span className="dock-label-main">Senarai Tempahan</span>
+                <span className="dock-label-main">{isMalay ? "Senarai Tempahan" : "Order Cart"}</span>
                 <span className="dock-label-sub tabular-nums">
-                  {totalCount} dipilih • Siang & Malam
+                  {isMalay 
+                    ? `${totalCount} dipilih • Siang & Malam` 
+                    : `${totalCount} selected • Day & Night`}
                 </span>
               </div>
             </div>

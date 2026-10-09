@@ -169,6 +169,34 @@
   color: inherit;
 }
 
+.portal-lang-toggle,
+.kiosk-lang-toggle {
+  height: 34px;
+  padding: 0 10px;
+  font-size: 0.8125rem;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #334155;
+}
+
+.portal-lang-toggle:hover,
+.kiosk-lang-toggle:hover {
+  background-color: #f1f5f9;
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+@media (max-width: 640px) {
+  .portal-lang-toggle,
+  .kiosk-lang-toggle {
+    height: 30px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+}
+
 /* --------------------------------------------------------------------------
    3. MAIN HEADER & NAVIGATION BAR
    -------------------------------------------------------------------------- */
