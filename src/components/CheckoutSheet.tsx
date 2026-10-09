@@ -23,7 +23,8 @@ import {
   Sparkles, 
   ClipboardCheck, 
   ChevronRight, 
-  RotateCcw 
+  RotateCcw,
+  Clock 
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useLanguage } from "../context/useLanguage";
@@ -119,15 +120,15 @@ export const CheckoutSheet: React.FC = () => {
   // Build clean formatted message for WhatsApp
   const buildFormattedMessage = () => {
     const transportHeader = transportMode === "night" 
-      ? (isMalay ? "🌙 Night Transport (Syif Malam 24/7)" : "🌙 Night Transport (Night Shift 24/7 On-Call)") 
-      : (isMalay ? "☀️ Day Transport (Syif Siang: 8:00 AM - 6:00 PM)" : "☀️ Day Transport (Day Shift: 8:00 AM - 6:00 PM)");
+      ? (isMalay ? "Night Transport (Syif Malam 24/7 On-Call)" : "Night Transport (Night Shift 24/7 On-Call)") 
+      : (isMalay ? "Day Transport (Syif Siang: 8:00 AM - 6:00 PM)" : "Day Transport (Day Shift: 8:00 AM - 6:00 PM)");
 
     const paymentHeader = 
       paymentMethod === "cash" 
-        ? (isMalay ? "💵 Tunai / Cash on Delivery (COD)" : "💵 Cash on Delivery (COD)") 
+        ? (isMalay ? "Tunai / Cash on Delivery (COD)" : "Cash on Delivery (COD)") 
         : paymentMethod === "transfer" 
-          ? (isMalay ? "🏦 Pindahan Bank / Online Banking" : "🏦 Online Bank Transfer") 
-          : (isMalay ? "📱 Kod QR DuitNow (DuitNow QR)" : "📱 DuitNow QR");
+          ? (isMalay ? "Pindahan Bank / Online Banking" : "Online Bank Transfer") 
+          : (isMalay ? "Kod QR DuitNow (DuitNow QR)" : "DuitNow QR");
 
     const itemsList = items.map((item, idx) => {
       const uomText = ` ${(item.unit || "UNIT").toUpperCase()}`;
@@ -147,18 +148,18 @@ export const CheckoutSheet: React.FC = () => {
 
     if (isMalay) {
       return (
-`🏗️ *TEMPAHAN & SEBUT HARGA SKL WASTE*
+`*TEMPAHAN & SEBUT HARGA SKL WASTE*
 =========================================
-📦 *SENARAI BARANGAN (${totalCount} item):*
+*SENARAI BARANGAN (${totalCount} item):*
 ${itemsList}
 
-🚚 *WAKTU PENGHANTARAN:*
+*WAKTU PENGHANTARAN:*
 ${transportHeader}
 
-💳 *KAEDAH PEMBAYARAN:*
+*KAEDAH PEMBAYARAN:*
 ${paymentHeader}
 
-📍 *MAKLUMAT PENGHANTARAN:*
+*MAKLUMAT PENGHANTARAN:*
 • Nama / Syarikat: ${nameText}
 • Lokasi Tapak: ${locText}
 • Catatan: ${noteText}
@@ -168,18 +169,18 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
     }
 
     return (
-`🏗️ *SKL WASTE HARDWARE ORDER & QUOTATION*
+`*SKL WASTE HARDWARE ORDER & QUOTATION*
 =========================================
-📦 *ORDER ITEMS (${totalCount} ${totalCount === 1 ? "item" : "items"}):*
+*ORDER ITEMS (${totalCount} ${totalCount === 1 ? "item" : "items"}):*
 ${itemsList}
 
-🚚 *DELIVERY SCHEDULE:*
+*DELIVERY SCHEDULE:*
 ${transportHeader}
 
-💳 *PAYMENT METHOD:*
+*PAYMENT METHOD:*
 ${paymentHeader}
 
-📍 *DELIVERY DETAILS:*
+*DELIVERY DETAILS:*
 • Customer / Company: ${nameText}
 • Job Site Location: ${locText}
 • Notes: ${noteText}
@@ -613,7 +614,10 @@ _Sent via SKL Waste Web Order System_`
                             {isMalay ? "Syif Siang" : "Day Shift"}
                           </span>
                         </div>
-                        <span className="kiosk-choice-time">🕒 8:00 AM – 6:00 PM</span>
+                        <span className="kiosk-choice-time">
+                          <Clock size={13} strokeWidth={2.4} aria-hidden="true" />
+                          <span>8:00 AM – 6:00 PM</span>
+                        </span>
                         <p className="kiosk-choice-sub">
                           {isMalay 
                             ? "Waktu penghantaran harian biasa." 
@@ -651,7 +655,10 @@ _Sent via SKL Waste Web Order System_`
                             {isMalay ? "24 Jam On-Call" : "24/7 On-Call"}
                           </span>
                         </div>
-                        <span className="kiosk-choice-time">🌙 6:00 PM – 8:00 AM</span>
+                        <span className="kiosk-choice-time">
+                          <Moon size={13} strokeWidth={2.4} aria-hidden="true" />
+                          <span>6:00 PM – 8:00 AM</span>
+                        </span>
                         <p className="kiosk-choice-sub">
                           {isMalay 
                             ? "Penghantaran kecemasan malam tanpa jem." 
@@ -818,21 +825,33 @@ _Sent via SKL Waste Web Order System_`
 
                     <div className="kiosk-receipt-meta-grid">
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">{isMalay ? "🚚 Waktu Lori:" : "🚚 Delivery Time:"}</span>
+                        <span className="kiosk-receipt-label">
+                          <Truck size={13} strokeWidth={2.2} aria-hidden="true" />
+                          <span>{isMalay ? "Waktu Lori:" : "Delivery Time:"}</span>
+                        </span>
                         <strong className="kiosk-receipt-val">{transportLabel}</strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">{isMalay ? "💳 Bayaran:" : "💳 Payment:"}</span>
+                        <span className="kiosk-receipt-label">
+                          <CreditCard size={13} strokeWidth={2.2} aria-hidden="true" />
+                          <span>{isMalay ? "Bayaran:" : "Payment:"}</span>
+                        </span>
                         <strong className="kiosk-receipt-val">{paymentLabel}</strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">{isMalay ? "👤 Pemesan:" : "👤 Customer:"}</span>
+                        <span className="kiosk-receipt-label">
+                          <User size={13} strokeWidth={2.2} aria-hidden="true" />
+                          <span>{isMalay ? "Pemesan:" : "Customer:"}</span>
+                        </span>
                         <strong className="kiosk-receipt-val">
                           {customerName.trim() || (isMalay ? "Pelanggan Laman Web" : "Website Customer")}
                         </strong>
                       </div>
                       <div className="kiosk-receipt-meta-cell">
-                        <span className="kiosk-receipt-label">{isMalay ? "📍 Tapak:" : "📍 Site:"}</span>
+                        <span className="kiosk-receipt-label">
+                          <MapPin size={13} strokeWidth={2.2} aria-hidden="true" />
+                          <span>{isMalay ? "Tapak:" : "Site:"}</span>
+                        </span>
                         <strong className="kiosk-receipt-val">{deliveryLocation.trim() || "Bandar Seri Coalfields"}</strong>
                       </div>
                     </div>

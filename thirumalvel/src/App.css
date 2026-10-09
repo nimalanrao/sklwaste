@@ -7410,9 +7410,16 @@
 }
 
 .kiosk-choice-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.8125rem;
   font-weight: 700;
   color: #0284c7;
+}
+
+.kiosk-choice-time svg {
+  flex-shrink: 0;
 }
 
 .kiosk-choice-sub {
@@ -7597,9 +7604,17 @@
 }
 
 .kiosk-receipt-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.6875rem;
   font-weight: 600;
   color: #64748b;
+}
+
+.kiosk-receipt-label svg {
+  color: #0284c7;
+  flex-shrink: 0;
 }
 
 .kiosk-receipt-val {
