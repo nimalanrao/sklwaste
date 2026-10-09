@@ -5041,8 +5041,9 @@
     flex-shrink: 0;
   }
   .portal-floating-cart-dock {
-    width: calc(100% - 20px) !important;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
+    width: calc(100% - 24px) !important;
+    max-width: 440px !important;
+    bottom: calc(max(14px, env(safe-area-inset-bottom, 14px)) + 80px) !important;
   }
   .portal-cart-dock-btn {
     padding: 8px 12px !important;
@@ -6381,6 +6382,14 @@
   width: calc(100% - 32px);
   max-width: 480px;
   animation: floatDockEntrance 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .portal-floating-cart-dock {
+    bottom: calc(max(14px, env(safe-area-inset-bottom, 14px)) + 80px) !important;
+    width: calc(100% - 24px) !important;
+    max-width: 440px !important;
+  }
 }
 
 @keyframes floatDockEntrance {
