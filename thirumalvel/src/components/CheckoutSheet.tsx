@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   X, 
   Trash2, 
@@ -56,31 +56,54 @@ export const CheckoutSheet: React.FC = () => {
   const [deliveryLocation, setDeliveryLocation] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
 
-  // Lock body scroll when kiosk is open
+  // Lock body scroll and handle smooth exit animation
+  const [isRendered, setIsRendered] = useState(isCheckoutOpen);
+  const [isClosing, setIsClosing] = useState(false);
+  const closingTimeoutRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (isCheckoutOpen) {
+      if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current);
+      setIsRendered(true);
+      setIsClosing(false);
       document.body.style.overflow = "hidden";
       setCurrentStep(1);
-    } else {
-      document.body.style.overflow = "";
+    } else if (isRendered && !isClosing) {
+      setIsClosing(true);
+      closingTimeoutRef.current = window.setTimeout(() => {
+        setIsRendered(false);
+        setIsClosing(false);
+        document.body.style.overflow = "";
+      }, 230);
     }
     return () => {
-      document.body.style.overflow = "";
+      if (closingTimeoutRef.current) clearTimeout(closingTimeoutRef.current);
     };
   }, [isCheckoutOpen]);
+
+  const handleKioskClose = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    closingTimeoutRef.current = window.setTimeout(() => {
+      setIsRendered(false);
+      setIsClosing(false);
+      document.body.style.overflow = "";
+      closeCheckout();
+    }, 210);
+  };
 
   // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isCheckoutOpen) {
-        closeCheckout();
+      if (e.key === "Escape" && isCheckoutOpen && !isClosing) {
+        handleKioskClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCheckoutOpen, closeCheckout]);
+  }, [isCheckoutOpen, isClosing]);
 
-  if (!isCheckoutOpen) return null;
+  if (!isRendered) return null;
 
   const transportLabel = transportMode === "night" 
     ? (isMalay ? "Night Transport (Syif Malam)" : "Night Transport (Night Shift 24/7)") 
@@ -193,7 +216,7 @@ _Sent via SKL Waste Web Order System_`
       const body = document.querySelector(".kiosk-main-scroll");
       if (body) body.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      closeCheckout();
+      handleKioskClose();
     }
   };
 
@@ -208,7 +231,7 @@ _Sent via SKL Waste Web Order System_`
 
   return (
     <div 
-      className="checkout-kiosk-fullscreen"
+      className={`checkout-kiosk-fullscreen ${isClosing ? "kiosk-closing" : ""}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="kiosk-step-heading"
@@ -316,7 +339,7 @@ _Sent via SKL Waste Web Order System_`
 
             <button 
               type="button" 
-              onClick={closeCheckout}
+              onClick={handleKioskClose}
               className="kiosk-close-btn"
               aria-label={isMalay ? "Tutup checkout" : "Close checkout"}
               title={isMalay ? "Tutup (Esc)" : "Close (Esc)"}
@@ -348,7 +371,7 @@ _Sent via SKL Waste Web Order System_`
               </p>
               <button 
                 type="button" 
-                onClick={closeCheckout} 
+                onClick={handleKioskClose} 
                 className="kiosk-btn-browse"
               >
                 <span>{isMalay ? "Lihat Katalog Produk" : "Browse Product Catalogue"}</span>

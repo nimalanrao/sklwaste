@@ -387,6 +387,49 @@
   }
 }
 
+.mobile-nav-fullscreen-overlay.mobile-nav-closing {
+  animation: mobileNavFullFadeOut 0.22s cubic-bezier(0.32, 0, 0.67, 0) forwards;
+  pointer-events: none;
+}
+
+@keyframes mobileNavFullFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.975) translateY(12px);
+  }
+}
+
+.mobile-nav-fullscreen-overlay.mobile-nav-closing .mobile-nav-top-bar {
+  animation: mobileNavTopSlideOut 0.18s cubic-bezier(0.32, 0, 0.67, 0) forwards;
+}
+
+@keyframes mobileNavTopSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.mobile-nav-fullscreen-overlay.mobile-nav-closing .mobile-nav-card {
+  transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+}
+
+.mobile-nav-fullscreen-overlay.mobile-nav-closing .mobile-nav-footer-hub {
+  transition: transform 0.18s ease-in, opacity 0.18s ease-in;
+  transform: translateY(12px);
+  opacity: 0;
+}
+
 .mobile-nav-fullscreen-content {
   width: 100%;
   max-width: 520px;
@@ -6667,6 +6710,22 @@
   }
 }
 
+.checkout-kiosk-fullscreen.kiosk-closing {
+  animation: kioskFadeOut 0.21s cubic-bezier(0.32, 0, 0.67, 0) forwards;
+  pointer-events: none;
+}
+
+@keyframes kioskFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.978) translateY(14px);
+  }
+}
+
 /* Kiosk Top Header */
 .kiosk-top-header {
   background-color: #ffffff;
@@ -7846,6 +7905,14 @@
   .kiosk-btn-next-action {
     padding: 12px 18px;
     font-size: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-fullscreen-overlay.mobile-nav-closing,
+  .checkout-kiosk-fullscreen.kiosk-closing {
+    animation-duration: 0.05s !important;
+    transform: none !important;
   }
 }
 

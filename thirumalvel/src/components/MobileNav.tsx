@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { 
   X, 
   Phone, 
@@ -32,43 +32,72 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const { t, language } = useLanguage();
+  const [isRendered, setIsRendered] = useState(isOpen);
+  const [isClosing, setIsClosing] = useState(false);
+  const closingTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (closingTimeoutRef.current) {
+        clearTimeout(closingTimeoutRef.current);
+        closingTimeoutRef.current = null;
+      }
+      setIsRendered(true);
+      setIsClosing(false);
+      document.body.style.overflow = "hidden";
+      setTimeout(() => closeButtonRef.current?.focus(), 50);
+    } else if (isRendered && !isClosing) {
+      setIsClosing(true);
+      closingTimeoutRef.current = window.setTimeout(() => {
+        setIsRendered(false);
+        setIsClosing(false);
+        document.body.style.overflow = "";
+      }, 230);
+    }
+    return () => {
+      if (closingTimeoutRef.current) {
+        clearTimeout(closingTimeoutRef.current);
+      }
+    };
+  }, [isOpen]);
+
+  const handleTriggerClose = (callback?: () => void) => {
+    if (isClosing) return;
+    setIsClosing(true);
+    closingTimeoutRef.current = window.setTimeout(() => {
+      setIsRendered(false);
+      setIsClosing(false);
+      document.body.style.overflow = "";
+      onClose();
+      if (callback) callback();
+    }, 220);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
+      if (e.key === "Escape" && isOpen && !isClosing) {
+        handleTriggerClose();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, isClosing]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      closeButtonRef.current?.focus();
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+  if (!isRendered) return null;
 
   const handleLinkClick = (e: React.MouseEvent, view: "home" | "catalogue", hash?: string) => {
     e.preventDefault();
-    onClose();
-    if (onNavigate) {
-      onNavigate(view, hash);
-    } else {
-      if (view === "catalogue") {
-        window.location.hash = "#catalogue";
-      } else if (hash) {
-        window.location.hash = hash;
+    handleTriggerClose(() => {
+      if (onNavigate) {
+        onNavigate(view, hash);
+      } else {
+        if (view === "catalogue") {
+          window.location.hash = "#catalogue";
+        } else if (hash) {
+          window.location.hash = hash;
+        }
       }
-    }
+    });
   };
 
   const navItems = [
@@ -99,9 +128,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({
       icon: Layers,
       iconClass: "nav-icon-catalogue",
       view: "catalogue" as const,
-      hash: undefined,
-      badge: "1,081+ Produk",
       isSpecial: true,
+      badge: language === "ms" ? "Paling Popular" : "Featured",
       isActive: currentView === "catalogue",
     },
     {
@@ -128,8 +156,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({
 
   return (
     <div 
-      className="mobile-nav-fullscreen-overlay" 
-      onClick={onClose}
+      className={`mobile-nav-fullscreen-overlay ${isClosing ? "mobile-nav-closing" : ""}`} 
+      onClick={() => handleTriggerClose()}
       role="dialog"
       aria-modal="true"
       aria-label="Mobile Navigation Menu"
@@ -158,9 +186,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             <button 
               ref={closeButtonRef}
               className="mobile-nav-close-circle" 
-              onClick={onClose}
-              aria-label="Tutup menu navigasi"
-              title="Tutup (Esc)"
+              onClick={() => handleTriggerClose()}
+              aria-label={language === "ms" ? "Tutup menu navigasi" : "Close navigation menu"}
+              title={language === "ms" ? "Tutup (Esc)" : "Close (Esc)"}
             >
               <X size={20} strokeWidth={2.4} />
             </button>
