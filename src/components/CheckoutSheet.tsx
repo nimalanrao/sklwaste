@@ -11,23 +11,23 @@ import {
   ShoppingBag, 
   ArrowRight,
   ArrowLeft,
-  ShieldCheck,
   CheckCircle2,
   MapPin,
   User,
   FileText,
-  ClipboardCheck,
   CreditCard,
   Banknote,
   Building2,
   QrCode,
   Send,
-  Sparkles
+  Sparkles,
+  ClipboardCheck,
+  ChevronRight,
+  RotateCcw
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { businessData } from "../data/business";
 import { assetUrl } from "../utils/asset";
-import { useDragToDismiss } from "../hooks/useDragToDismiss";
 
 export const CheckoutSheet: React.FC = () => {
   const { 
@@ -44,20 +44,14 @@ export const CheckoutSheet: React.FC = () => {
     closeCheckout 
   } = useCart();
 
-  // Multi-step checkout state: 1 (Review) -> 2 (Transport) -> 3 (Payment) -> 4 (Send Order)
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  // 5-Step Kiosk Workflow: 1 (Pesanan) -> 2 (Maklumat Tapak) -> 3 (Waktu) -> 4 (Bayaran) -> 5 (Hantar)
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   const [customerName, setCustomerName] = useState("");
   const [deliveryLocation, setDeliveryLocation] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
 
-  const { sheetRef, handleProps, contentProps, isDragging } = useDragToDismiss({
-    isOpen: isCheckoutOpen,
-    onClose: closeCheckout,
-    threshold: 80,
-  });
-
-  // Reset to Step 1 when opened, lock body scroll
+  // Lock body scroll when kiosk is open
   useEffect(() => {
     if (isCheckoutOpen) {
       document.body.style.overflow = "hidden";
@@ -86,12 +80,12 @@ export const CheckoutSheet: React.FC = () => {
   const transportLabel = transportMode === "night" ? "Night Transport (Syif Malam)" : "Day Transport (Syif Siang)";
   const paymentLabel = 
     paymentMethod === "cash" 
-      ? "Tunai (Cash on Delivery / COD)" 
+      ? "Tunai (Cash on Delivery)" 
       : paymentMethod === "transfer" 
         ? "Pindahan Bank (Online Transfer)" 
         : "DuitNow QR Code";
 
-  // Build the clean, formatted WhatsApp message
+  // Build clean formatted message for WhatsApp
   const buildFormattedMessage = () => {
     const transportHeader = transportMode === "night" 
       ? "🌙 Night Transport (Syif Malam 24/7)" 
@@ -148,333 +142,371 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const goNext = () => {
+    if (currentStep < 5) {
+      setCurrentStep((prev) => (prev + 1) as 1 | 2 | 3 | 4 | 5);
+      // scroll container to top smoothly
+      const body = document.querySelector(".kiosk-main-scroll");
+      if (body) body.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4 | 5);
+      const body = document.querySelector(".kiosk-main-scroll");
+      if (body) body.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      closeCheckout();
+    }
+  };
+
+  const commonLocations = [
+    "Bandar Seri Coalfields",
+    "Puncak Alam",
+    "Saujana Utama",
+    "Ijok",
+    "Sungai Buloh",
+    "Kundang"
+  ];
+
   return (
     <div 
-      className="checkout-backdrop" 
-      onClick={closeCheckout}
+      className="checkout-kiosk-fullscreen"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="checkout-sheet-title"
+      aria-labelledby="kiosk-step-heading"
     >
-      <div 
-        ref={sheetRef}
-        className={`checkout-sheet checkout-sheet-stepped ${isDragging ? "checkout-sheet-dragging" : ""}`}
-        onClick={(e) => e.stopPropagation()}
-        {...contentProps}
-      >
-        {/* Apple Tactile Drag-Down Handle Bar */}
-        <div 
-          className="sheet-drag-handle-zone" 
-          {...handleProps}
-          title="Tarik ke bawah untuk tutup"
-        >
-          <div className="sheet-drag-pill" />
-        </div>
+      {/* =========================================================================
+          TOP KIOSK HEADER: Navigation, 5-Step Segmented Bar, Dismiss
+          ========================================================================= */}
+      <header className="kiosk-top-header">
+        <div className="kiosk-header-inner">
+          {/* Back / Exit Button */}
+          <button 
+            type="button" 
+            onClick={goBack} 
+            className="kiosk-header-back-btn"
+            title={currentStep > 1 ? "Kembali ke langkah sebelumnya" : "Tutup kiosk"}
+          >
+            {currentStep > 1 ? (
+              <>
+                <ArrowLeft size={18} strokeWidth={2.4} />
+                <span className="kiosk-back-label">Undur</span>
+              </>
+            ) : (
+              <>
+                <X size={18} strokeWidth={2.4} />
+                <span className="kiosk-back-label">Batal</span>
+              </>
+            )}
+          </button>
 
-        {/* Top Header Bar */}
-        <header className="checkout-sheet-header">
-          <div className="checkout-header-left">
-            <div className="checkout-icon-badge">
-              <ShoppingBag size={18} strokeWidth={2.2} />
-            </div>
-            <div>
-              <h2 id="checkout-sheet-title" className="checkout-title">
-                Tempahan & Sebut Harga
-              </h2>
-              <span className="checkout-subtitle tabular-nums">
-                Langkah {currentStep} daripada 4 • {totalCount} barangan dipilih
-              </span>
-            </div>
-          </div>
+          {/* McDonald's Style 5-Step Progress Pills */}
+          <nav className="kiosk-steps-nav" aria-label="Langkah Kiosk">
+            <button 
+              type="button" 
+              onClick={() => setCurrentStep(1)} 
+              className={`kiosk-step-pill ${currentStep === 1 ? "is-active" : currentStep > 1 ? "is-done" : ""}`}
+            >
+              <span className="kiosk-step-num">1</span>
+              <span className="kiosk-step-name">Pesanan</span>
+            </button>
 
-          <div className="checkout-header-actions">
+            <span className={`kiosk-step-divider ${currentStep >= 2 ? "is-active" : ""}`} />
+
+            <button 
+              type="button" 
+              onClick={() => items.length > 0 && setCurrentStep(2)} 
+              disabled={items.length === 0}
+              className={`kiosk-step-pill ${currentStep === 2 ? "is-active" : currentStep > 2 ? "is-done" : ""}`}
+            >
+              <span className="kiosk-step-num">2</span>
+              <span className="kiosk-step-name">Info Tapak</span>
+            </button>
+
+            <span className={`kiosk-step-divider ${currentStep >= 3 ? "is-active" : ""}`} />
+
+            <button 
+              type="button" 
+              onClick={() => items.length > 0 && setCurrentStep(3)} 
+              disabled={items.length === 0}
+              className={`kiosk-step-pill ${currentStep === 3 ? "is-active" : currentStep > 3 ? "is-done" : ""}`}
+            >
+              <span className="kiosk-step-num">3</span>
+              <span className="kiosk-step-name">Waktu</span>
+            </button>
+
+            <span className={`kiosk-step-divider ${currentStep >= 4 ? "is-active" : ""}`} />
+
+            <button 
+              type="button" 
+              onClick={() => items.length > 0 && setCurrentStep(4)} 
+              disabled={items.length === 0}
+              className={`kiosk-step-pill ${currentStep === 4 ? "is-active" : currentStep > 4 ? "is-done" : ""}`}
+            >
+              <span className="kiosk-step-num">4</span>
+              <span className="kiosk-step-name">Bayaran</span>
+            </button>
+
+            <span className={`kiosk-step-divider ${currentStep >= 5 ? "is-active" : ""}`} />
+
+            <button 
+              type="button" 
+              onClick={() => items.length > 0 && setCurrentStep(5)} 
+              disabled={items.length === 0}
+              className={`kiosk-step-pill ${currentStep === 5 ? "is-active" : ""}`}
+            >
+              <span className="kiosk-step-num">5</span>
+              <span className="kiosk-step-name">Hantar</span>
+            </button>
+          </nav>
+
+          {/* Right Header: Close Icon Button */}
+          <div className="kiosk-header-right">
             {items.length > 0 && currentStep === 1 && (
               <button 
-                type="button" 
+                type="button"
                 onClick={clearCart}
-                className="checkout-clear-btn"
-                title="Kosongkan senarai"
+                className="kiosk-clear-all-btn"
+                title="Kosongkan semua"
               >
-                Kosongkan
+                <RotateCcw size={14} />
+                <span>Kosongkan</span>
               </button>
             )}
             <button 
               type="button" 
               onClick={closeCheckout}
-              className="checkout-close-btn"
-              aria-label="Tutup tetingkap pesanan"
+              className="kiosk-close-btn"
+              aria-label="Tutup checkout"
               title="Tutup (Esc)"
             >
-              <X size={18} strokeWidth={2.4} />
+              <X size={20} strokeWidth={2.2} />
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* 4-Step Progress Segment Bar with Distinct Icons */}
-        {items.length > 0 && (
-          <nav className="checkout-step-progress-bar" aria-label="Langkah Pesanan">
-            {/* Step 1: Review */}
-            <button
-              type="button"
-              onClick={() => setCurrentStep(1)}
-              className={`checkout-step-tab ${currentStep === 1 ? "step-active" : currentStep > 1 ? "step-completed" : ""}`}
-              aria-current={currentStep === 1 ? "step" : undefined}
-            >
-              <div className="step-tab-icon">
-                <ClipboardCheck size={16} strokeWidth={2.2} />
-              </div>
-              <span className="step-tab-text">1. Semak</span>
-            </button>
-
-            <div className={`checkout-step-line ${currentStep >= 2 ? "line-active" : ""}`} />
-
-            {/* Step 2: Transport */}
-            <button
-              type="button"
-              onClick={() => setCurrentStep(2)}
-              className={`checkout-step-tab ${currentStep === 2 ? "step-active" : currentStep > 2 ? "step-completed" : ""}`}
-              aria-current={currentStep === 2 ? "step" : undefined}
-            >
-              <div className="step-tab-icon">
-                <Truck size={16} strokeWidth={2.2} />
-              </div>
-              <span className="step-tab-text">2. Waktu</span>
-            </button>
-
-            <div className={`checkout-step-line ${currentStep >= 3 ? "line-active" : ""}`} />
-
-            {/* Step 3: Payment */}
-            <button
-              type="button"
-              onClick={() => setCurrentStep(3)}
-              className={`checkout-step-tab ${currentStep === 3 ? "step-active" : currentStep > 3 ? "step-completed" : ""}`}
-              aria-current={currentStep === 3 ? "step" : undefined}
-            >
-              <div className="step-tab-icon">
-                <CreditCard size={16} strokeWidth={2.2} />
-              </div>
-              <span className="step-tab-text">3. Bayaran</span>
-            </button>
-
-            <div className={`checkout-step-line ${currentStep >= 4 ? "line-active" : ""}`} />
-
-            {/* Step 4: Send Order */}
-            <button
-              type="button"
-              onClick={() => setCurrentStep(4)}
-              className={`checkout-step-tab ${currentStep === 4 ? "step-active" : ""}`}
-              aria-current={currentStep === 4 ? "step" : undefined}
-            >
-              <div className="step-tab-icon">
-                <Send size={16} strokeWidth={2.2} />
-              </div>
-              <span className="step-tab-text">4. Hantar</span>
-            </button>
-          </nav>
-        )}
-
-        {/* Main Step Body */}
-        <div className="checkout-sheet-body">
+      {/* =========================================================================
+          KIOSK MAIN SCROLLABLE CONTENT BODY
+          ========================================================================= */}
+      <main className="kiosk-main-scroll">
+        <div className="kiosk-content-wrapper">
           {items.length === 0 ? (
             /* Empty State */
-            <div className="checkout-empty-state">
-              <div className="checkout-empty-icon-wrap">
-                <ShoppingBag size={36} strokeWidth={1.8} className="checkout-empty-icon" />
+            <div className="kiosk-empty-box">
+              <div className="kiosk-empty-icon-circle">
+                <ShoppingBag size={42} strokeWidth={1.8} />
               </div>
-              <h3 className="checkout-empty-title">Senarai anda masih kosong</h3>
-              <p className="checkout-empty-desc">
-                Pilih mana-mana perkakasan atau bahan binaan dari katalog kami dan tekan "+ Tambah" untuk menyusun tempahan anda.
+              <h2 className="kiosk-empty-title">Pesanan Kosong</h2>
+              <p className="kiosk-empty-sub">
+                Pilih perkakasan atau bahan binaan dari katalog kami untuk memulakan pesanan.
               </p>
               <button 
                 type="button" 
-                onClick={closeCheckout}
-                className="checkout-browse-btn"
+                onClick={closeCheckout} 
+                className="kiosk-btn-browse"
               >
                 <span>Lihat Katalog Produk</span>
-                <ArrowRight size={16} strokeWidth={2.2} />
+                <ArrowRight size={18} strokeWidth={2.2} />
               </button>
             </div>
           ) : (
             <>
-              {/* =========================================================================
-                  STEP 1: CONFIRMING ORDER (REVIEW ITEMS & DETAILS)
-                  ========================================================================= */}
+              {/* ===================================================================
+                  STEP 1: SEMAK PESANAN (REVIEW ITEMS & QUANTITIES WITH UOMS)
+                  =================================================================== */}
               {currentStep === 1 && (
-                <div className="checkout-step-pane checkout-step-1">
-                  <div className="checkout-step-header">
-                    <div className="checkout-step-badge">
-                      <ClipboardCheck size={18} strokeWidth={2.2} />
-                      <span>Langkah 1: Semak Senarai Barangan</span>
+                <section className="kiosk-step-pane" aria-labelledby="kiosk-step-1-title">
+                  <header className="kiosk-pane-banner">
+                    <div className="kiosk-pane-badge">
+                      <ClipboardCheck size={20} strokeWidth={2.4} />
+                      <span className="kiosk-pane-step-tag">Langkah 1 / 5</span>
                     </div>
-                    <span className="checkout-step-hint">
-                      Semak kuantiti dan unit ukuran (UOM) sebelum memilih waktu penghantaran.
-                    </span>
-                  </div>
+                    <h1 id="kiosk-step-1-title" className="kiosk-pane-heading">
+                      Semak Barangan
+                    </h1>
+                    <p className="kiosk-pane-caption">
+                      Laraskan kuantiti setiap unit mengikut keperluan tapak anda.
+                    </p>
+                  </header>
 
-                  {/* Items List Section */}
-                  <section className="checkout-section checkout-items-section">
-                    <div className="checkout-items-list">
-                      {items.map((item) => {
-                        const uomBadge = item.unit ? item.unit : "Unit";
+                  <div className="kiosk-items-stack">
+                    {items.map((item) => {
+                      const uomBadge = item.unit ? item.unit : "Unit";
 
-                        return (
-                          <article key={item.id} className="checkout-item-card">
-                            {/* Contained image preview */}
-                            <div className="checkout-item-thumb-container">
-                              <img 
-                                src={assetUrl(item.localImage)} 
-                                alt={item.title} 
-                                className="checkout-item-img"
-                                onError={(e) => {
-                                  if (item.fallbackImage) {
-                                    e.currentTarget.src = assetUrl(item.fallbackImage);
-                                  }
-                                }}
-                              />
+                      return (
+                        <article key={item.id} className="kiosk-item-row">
+                          <div className="kiosk-item-thumb">
+                            <img 
+                              src={assetUrl(item.localImage)} 
+                              alt={item.title} 
+                              className="kiosk-item-img"
+                              onError={(e) => {
+                                if (item.fallbackImage) {
+                                  e.currentTarget.src = assetUrl(item.fallbackImage);
+                                }
+                              }}
+                            />
+                          </div>
+
+                          <div className="kiosk-item-meta">
+                            <div className="kiosk-item-tags">
+                              <span className="kiosk-uom-tag">UOM: {uomBadge}</span>
+                              <span className="kiosk-cat-tag">{item.category}</span>
                             </div>
+                            <h2 className="kiosk-item-title">{item.title}</h2>
+                          </div>
 
-                            {/* Item Details */}
-                            <div className="checkout-item-details">
-                              <div className="checkout-item-meta-row">
-                                <span className="checkout-item-cat">{item.category}</span>
-                                <span className="checkout-item-uom-pill" title="Unit of Measurement (UOM)">
-                                  UOM: {uomBadge}
-                                </span>
-                              </div>
-                              <h4 className="checkout-item-title" title={item.title}>
-                                {item.title}
-                              </h4>
-                            </div>
+                          <div className="kiosk-item-controls">
+                            <div className="kiosk-stepper-box">
+                              <button 
+                                type="button" 
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="kiosk-stepper-btn"
+                                aria-label={`Kurangkan ${item.title}`}
+                              >
+                                <Minus size={15} strokeWidth={2.8} />
+                              </button>
 
-                            {/* Stepper & Remove Actions */}
-                            <div className="checkout-item-actions">
-                              <div className="checkout-stepper">
-                                <button 
-                                  type="button"
-                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                  className="checkout-stepper-btn"
-                                  aria-label={`Kurangkan kuantiti ${item.title}`}
-                                >
-                                  <Minus size={13} strokeWidth={2.5} />
-                                </button>
-                                <span className="checkout-stepper-value tabular-nums">
-                                  {item.quantity} <small className="uom-label-abbr">{uomBadge}</small>
-                                </span>
-                                <button 
-                                  type="button"
-                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                  className="checkout-stepper-btn"
-                                  aria-label={`Tambah kuantiti ${item.title}`}
-                                >
-                                  <Plus size={13} strokeWidth={2.5} />
-                                </button>
+                              <div className="kiosk-stepper-count">
+                                <span className="kiosk-stepper-val tabular-nums">{item.quantity}</span>
+                                <span className="kiosk-stepper-uom">{uomBadge}</span>
                               </div>
 
                               <button 
-                                type="button"
-                                onClick={() => removeFromCart(item.id)}
-                                className="checkout-item-remove-btn"
-                                title="Padam dari senarai"
-                                aria-label={`Padam ${item.title}`}
+                                type="button" 
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="kiosk-stepper-btn"
+                                aria-label={`Tambah ${item.title}`}
                               >
-                                <Trash2 size={15} strokeWidth={2} />
+                                <Plus size={15} strokeWidth={2.8} />
                               </button>
                             </div>
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </section>
 
-                  {/* Customer Details Form (Frictionless / No login required) */}
-                  <section className="checkout-section checkout-details-section">
-                    <span className="checkout-section-label">Maklumat Tapak / Pemesan (Pilihan)</span>
-
-                    <div className="checkout-form-grid">
-                      <div className="checkout-field-wrap">
-                        <label htmlFor="customer-name" className="checkout-field-label">
-                          <User size={13} strokeWidth={2.2} />
-                          <span>Nama / Nama Syarikat</span>
-                        </label>
-                        <input 
-                          id="customer-name"
-                          type="text"
-                          value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          placeholder="Cth: En. Ahmad / Kontraktor Aiman"
-                          className="checkout-input"
-                        />
-                      </div>
-
-                      <div className="checkout-field-wrap">
-                        <label htmlFor="delivery-location" className="checkout-field-label">
-                          <MapPin size={13} strokeWidth={2.2} />
-                          <span>Lokasi Tapak Binaan / Alamat</span>
-                        </label>
-                        <input 
-                          id="delivery-location"
-                          type="text"
-                          value={deliveryLocation}
-                          onChange={(e) => setDeliveryLocation(e.target.value)}
-                          placeholder="Cth: Bandar Seri Coalfields / Puncak Alam"
-                          className="checkout-input"
-                        />
-                      </div>
-
-                      <div className="checkout-field-wrap checkout-field-full">
-                        <label htmlFor="customer-notes" className="checkout-field-label">
-                          <FileText size={13} strokeWidth={2.2} />
-                          <span>Catatan Tambahan (Lori / Waktu)</span>
-                        </label>
-                        <input 
-                          id="customer-notes"
-                          type="text"
-                          value={customerNotes}
-                          onChange={(e) => setCustomerNotes(e.target.value)}
-                          placeholder="Cth: Lori tipper perlu sampai sebelum 11 pagi / hubungi mandur"
-                          className="checkout-input"
-                        />
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* Bottom Navigation for Step 1 */}
-                  <div className="checkout-step-actions-bar">
-                    <div className="checkout-step-summary-chip">
-                      <span>Jumlah:</span>
-                      <strong>{totalCount} item dipilih</strong>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="checkout-next-step-btn"
-                    >
-                      <span>Pilih Waktu Logistik</span>
-                      <ArrowRight size={16} strokeWidth={2.4} />
-                    </button>
+                            <button 
+                              type="button" 
+                              onClick={() => removeFromCart(item.id)}
+                              className="kiosk-item-del-btn"
+                              title="Padam barangan"
+                              aria-label={`Padam ${item.title}`}
+                            >
+                              <Trash2 size={16} strokeWidth={2.2} />
+                            </button>
+                          </div>
+                        </article>
+                      );
+                    })}
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* =========================================================================
-                  STEP 2: PICK TRANSPORT TIME (NIGHT OR DAY)
-                  ========================================================================= */}
+              {/* ===================================================================
+                  STEP 2: MAKLUMAT TAPAK & PEMESAN (NAME N INFO ONE SECTION)
+                  =================================================================== */}
               {currentStep === 2 && (
-                <div className="checkout-step-pane checkout-step-2">
-                  <div className="checkout-step-header">
-                    <div className="checkout-step-badge">
-                      <Truck size={18} strokeWidth={2.2} />
-                      <span>Langkah 2: Pilih Waktu Penghantaran Logistik</span>
+                <section className="kiosk-step-pane" aria-labelledby="kiosk-step-2-title">
+                  <header className="kiosk-pane-banner">
+                    <div className="kiosk-pane-badge">
+                      <User size={20} strokeWidth={2.4} />
+                      <span className="kiosk-pane-step-tag">Langkah 2 / 5</span>
                     </div>
-                    <span className="checkout-step-hint">
-                      Lori tipper dan lori kargo sedia beroperasi waktu siang dan syif malam 24/7.
-                    </span>
-                  </div>
+                    <h1 id="kiosk-step-2-title" className="kiosk-pane-heading">
+                      Maklumat & Lokasi Tapak
+                    </h1>
+                    <p className="kiosk-pane-caption">
+                      Untuk kemudahan pemandu lori menghantar bekalan terus ke tapak binaan anda.
+                    </p>
+                  </header>
 
-                  <div className="checkout-transport-cards-grid">
-                    {/* Option 1: Day Transport */}
+                  <div className="kiosk-card-section">
+                    <div className="kiosk-field-block">
+                      <label htmlFor="kiosk-name" className="kiosk-field-label">
+                        <User size={16} strokeWidth={2.2} />
+                        <span>Nama / Nama Syarikat</span>
+                      </label>
+                      <input 
+                        id="kiosk-name"
+                        type="text"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder="Cth: En. Ahmad / Mega Bina Enterprise"
+                        className="kiosk-input-large"
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="kiosk-field-block">
+                      <label htmlFor="kiosk-location" className="kiosk-field-label">
+                        <MapPin size={16} strokeWidth={2.2} />
+                        <span>Lokasi Tapak Binaan / Alamat</span>
+                      </label>
+                      <input 
+                        id="kiosk-location"
+                        type="text"
+                        value={deliveryLocation}
+                        onChange={(e) => setDeliveryLocation(e.target.value)}
+                        placeholder="Cth: Bandar Seri Coalfields / Puncak Alam"
+                        className="kiosk-input-large"
+                      />
+
+                      {/* Rewarding 1-tap fast location chips */}
+                      <div className="kiosk-quick-chips-row">
+                        <span className="kiosk-chips-hint">Pilih Pantas:</span>
+                        {commonLocations.map((loc) => (
+                          <button
+                            key={loc}
+                            type="button"
+                            onClick={() => setDeliveryLocation(loc)}
+                            className={`kiosk-chip-btn ${deliveryLocation === loc ? "is-selected" : ""}`}
+                          >
+                            {loc}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="kiosk-field-block">
+                      <label htmlFor="kiosk-notes" className="kiosk-field-label">
+                        <FileText size={16} strokeWidth={2.2} />
+                        <span>Catatan Tambahan (Pilihan)</span>
+                      </label>
+                      <input 
+                        id="kiosk-notes"
+                        type="text"
+                        value={customerNotes}
+                        onChange={(e) => setCustomerNotes(e.target.value)}
+                        placeholder="Cth: Lori tipper masuk ikut pintu belakang / call mandur"
+                        className="kiosk-input-large"
+                      />
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* ===================================================================
+                  STEP 3: WAKTU LOGISTIK (DAY TRANSPORT VS NIGHT TRANSPORT)
+                  =================================================================== */}
+              {currentStep === 3 && (
+                <section className="kiosk-step-pane" aria-labelledby="kiosk-step-3-title">
+                  <header className="kiosk-pane-banner">
+                    <div className="kiosk-pane-badge">
+                      <Truck size={20} strokeWidth={2.4} />
+                      <span className="kiosk-pane-step-tag">Langkah 3 / 5</span>
+                    </div>
+                    <h1 id="kiosk-step-3-title" className="kiosk-pane-heading">
+                      Waktu Penghantaran
+                    </h1>
+                    <p className="kiosk-pane-caption">
+                      Pilih waktu yang paling sesuai untuk penerimaan barangan di tapak.
+                    </p>
+                  </header>
+
+                  <div className="kiosk-grid-choices">
+                    {/* Day Transport Card */}
                     <div 
-                      className={`checkout-transport-card ${transportMode === "day" ? "checkout-transport-active" : ""}`}
+                      className={`kiosk-choice-card ${transportMode === "day" ? "is-chosen" : ""}`}
                       onClick={() => setTransportMode("day")}
                       role="button"
                       tabIndex={0}
@@ -484,28 +516,31 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           setTransportMode("day");
                         }
                       }}
-                      aria-label="Pilih Day Transport (Syif Siang)"
                     >
-                      <div className="checkout-transport-card-top">
-                        <div className="checkout-transport-icon-wrap checkout-icon-day">
-                          <Sun size={20} strokeWidth={2.2} />
+                      <div className="kiosk-choice-top">
+                        <div className="kiosk-choice-icon-wrap day-icon-theme">
+                          <Sun size={26} strokeWidth={2.2} />
                         </div>
-                        <span className={`checkout-transport-radio ${transportMode === "day" ? "radio-checked" : ""}`}>
-                          {transportMode === "day" && <CheckCircle2 size={16} strokeWidth={2.5} />}
+                        <span className={`kiosk-radio-circle ${transportMode === "day" ? "is-checked" : ""}`}>
+                          {transportMode === "day" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                         </span>
                       </div>
-                      <div className="checkout-transport-card-info">
-                        <strong className="checkout-transport-name">Day Transport (Syif Siang)</strong>
-                        <span className="checkout-transport-hours">🕒 8:00 AM – 6:00 PM</span>
-                        <p className="checkout-transport-desc">
-                          Penghantaran standard waktu operasi harian. Sesuai untuk bekalan tapak projek lazim.
+
+                      <div className="kiosk-choice-body">
+                        <div className="kiosk-choice-header-row">
+                          <h2 className="kiosk-choice-name">Day Transport</h2>
+                          <span className="kiosk-choice-pill">Syif Siang</span>
+                        </div>
+                        <span className="kiosk-choice-time">🕒 8:00 AM – 6:00 PM</span>
+                        <p className="kiosk-choice-sub">
+                          Waktu penghantaran harian biasa.
                         </p>
                       </div>
                     </div>
 
-                    {/* Option 2: Night Transport */}
+                    {/* Night Transport Card */}
                     <div 
-                      className={`checkout-transport-card ${transportMode === "night" ? "checkout-transport-active" : ""}`}
+                      className={`kiosk-choice-card ${transportMode === "night" ? "is-chosen" : ""}`}
                       onClick={() => setTransportMode("night")}
                       role="button"
                       tabIndex={0}
@@ -515,77 +550,53 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           setTransportMode("night");
                         }
                       }}
-                      aria-label="Pilih Night Transport (Syif Malam 24/7)"
                     >
-                      <div className="checkout-transport-card-top">
-                        <div className="checkout-transport-icon-wrap checkout-icon-night">
-                          <Moon size={20} strokeWidth={2.2} />
+                      <div className="kiosk-choice-top">
+                        <div className="kiosk-choice-icon-wrap night-icon-theme">
+                          <Moon size={26} strokeWidth={2.2} />
                         </div>
-                        <span className={`checkout-transport-radio ${transportMode === "night" ? "radio-checked" : ""}`}>
-                          {transportMode === "night" && <CheckCircle2 size={16} strokeWidth={2.5} />}
+                        <span className={`kiosk-radio-circle ${transportMode === "night" ? "is-checked" : ""}`}>
+                          {transportMode === "night" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                         </span>
                       </div>
-                      <div className="checkout-transport-card-info">
-                        <div className="checkout-night-badge-row">
-                          <strong className="checkout-transport-name">Night Transport (Syif Malam)</strong>
-                          <span className="checkout-night-live-tag">24/7 On-Call</span>
+
+                      <div className="kiosk-choice-body">
+                        <div className="kiosk-choice-header-row">
+                          <h2 className="kiosk-choice-name">Night Transport</h2>
+                          <span className="kiosk-choice-pill night-pill">24 Jam On-Call</span>
                         </div>
-                        <span className="checkout-transport-hours">🌙 6:00 PM – 8:00 AM (Subuh)</span>
-                        <p className="checkout-transport-desc">
-                          Penghantaran kecemasan syif malam terus ke tapak binaan tanpa gangguan trafik siang.
+                        <span className="kiosk-choice-time">🌙 6:00 PM – 8:00 AM</span>
+                        <p className="kiosk-choice-sub">
+                          Penghantaran kecemasan malam tanpa jem.
                         </p>
                       </div>
                     </div>
                   </div>
-
-                  <div className="checkout-transport-badge-row">
-                    <Truck size={14} className="checkout-badge-icon" />
-                    <span>
-                      Mod Dipilih: <strong>{transportLabel}</strong> • Meliputi Coalfields, Sg. Buloh & Puncak Alam.
-                    </span>
-                  </div>
-
-                  {/* Bottom Navigation for Step 2 */}
-                  <div className="checkout-step-actions-bar">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="checkout-back-step-btn"
-                    >
-                      <ArrowLeft size={16} strokeWidth={2.4} />
-                      <span>Kembali ke Semakan</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="checkout-next-step-btn"
-                    >
-                      <span>Pilih Kaedah Bayaran</span>
-                      <ArrowRight size={16} strokeWidth={2.4} />
-                    </button>
-                  </div>
-                </div>
+                </section>
               )}
 
-              {/* =========================================================================
-                  STEP 3: PAYMENT METHOD (CASH, TRANSFER, QR CODE)
-                  ========================================================================= */}
-              {currentStep === 3 && (
-                <div className="checkout-step-pane checkout-step-3">
-                  <div className="checkout-step-header">
-                    <div className="checkout-step-badge">
-                      <CreditCard size={18} strokeWidth={2.2} />
-                      <span>Langkah 3: Pilih Kaedah Pembayaran</span>
+              {/* ===================================================================
+                  STEP 4: CARA BAYARAN (CASH, BANK TRANSFER, QR CODE)
+                  =================================================================== */}
+              {currentStep === 4 && (
+                <section className="kiosk-step-pane" aria-labelledby="kiosk-step-4-title">
+                  <header className="kiosk-pane-banner">
+                    <div className="kiosk-pane-badge">
+                      <CreditCard size={20} strokeWidth={2.4} />
+                      <span className="kiosk-pane-step-tag">Langkah 4 / 5</span>
                     </div>
-                    <span className="checkout-step-hint">
-                      Pilih kaedah bayaran yang anda inginkan semasa pesanan dihantar atau diambil.
-                    </span>
-                  </div>
+                    <h1 id="kiosk-step-4-title" className="kiosk-pane-heading">
+                      Kaedah Bayaran
+                    </h1>
+                    <p className="kiosk-pane-caption">
+                      Pilih cara anda ingin membuat pembayaran semasa barangan tiba.
+                    </p>
+                  </header>
 
-                  <div className="checkout-payment-cards-grid">
-                    {/* Option 1: Cash / COD */}
+                  <div className="kiosk-payment-list">
+                    {/* Cash */}
                     <div 
-                      className={`checkout-payment-card ${paymentMethod === "cash" ? "checkout-payment-active" : ""}`}
+                      className={`kiosk-pay-row ${paymentMethod === "cash" ? "is-chosen" : ""}`}
                       onClick={() => setPaymentMethod("cash")}
                       role="button"
                       tabIndex={0}
@@ -595,27 +606,25 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           setPaymentMethod("cash");
                         }
                       }}
-                      aria-label="Pilih Tunai / Cash on Delivery"
                     >
-                      <div className="checkout-payment-icon-box pay-icon-cash">
-                        <Banknote size={22} strokeWidth={2.2} />
+                      <div className="kiosk-pay-icon pay-cash-theme">
+                        <Banknote size={24} strokeWidth={2.2} />
                       </div>
-                      <div className="checkout-payment-info">
-                        <div className="checkout-payment-title-row">
-                          <strong className="checkout-payment-title">Tunai (Cash on Delivery)</strong>
-                          <span className={`checkout-transport-radio ${paymentMethod === "cash" ? "radio-checked" : ""}`}>
-                            {paymentMethod === "cash" && <CheckCircle2 size={16} strokeWidth={2.5} />}
-                          </span>
+                      <div className="kiosk-pay-info">
+                        <div className="kiosk-pay-head">
+                          <h2 className="kiosk-pay-title">Tunai (COD)</h2>
+                          <span className="kiosk-pay-badge">Paling Lazim</span>
                         </div>
-                        <span className="checkout-payment-desc">
-                          Bayar tunai kepada pemandu lori semasa barangan sampai di tapak atau semasa ambil sendiri di kedai hardware.
-                        </span>
+                        <span className="kiosk-pay-desc">Bayar tunai kepada pemandu bila barangan sampai di tapak.</span>
                       </div>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "cash" ? "is-checked" : ""}`}>
+                        {paymentMethod === "cash" && <CheckCircle2 size={20} strokeWidth={2.5} />}
+                      </span>
                     </div>
 
-                    {/* Option 2: Bank Transfer */}
+                    {/* Bank Transfer */}
                     <div 
-                      className={`checkout-payment-card ${paymentMethod === "transfer" ? "checkout-payment-active" : ""}`}
+                      className={`kiosk-pay-row ${paymentMethod === "transfer" ? "is-chosen" : ""}`}
                       onClick={() => setPaymentMethod("transfer")}
                       role="button"
                       tabIndex={0}
@@ -625,27 +634,25 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           setPaymentMethod("transfer");
                         }
                       }}
-                      aria-label="Pilih Pindahan Bank Online"
                     >
-                      <div className="checkout-payment-icon-box pay-icon-bank">
-                        <Building2 size={22} strokeWidth={2.2} />
+                      <div className="kiosk-pay-icon pay-bank-theme">
+                        <Building2 size={24} strokeWidth={2.2} />
                       </div>
-                      <div className="checkout-payment-info">
-                        <div className="checkout-payment-title-row">
-                          <strong className="checkout-payment-title">Pindahan Bank (Online Transfer)</strong>
-                          <span className={`checkout-transport-radio ${paymentMethod === "transfer" ? "radio-checked" : ""}`}>
-                            {paymentMethod === "transfer" && <CheckCircle2 size={16} strokeWidth={2.5} />}
-                          </span>
+                      <div className="kiosk-pay-info">
+                        <div className="kiosk-pay-head">
+                          <h2 className="kiosk-pay-title">Pindahan Bank (Online Transfer)</h2>
+                          <span className="kiosk-pay-badge">Syarikat</span>
                         </div>
-                        <span className="checkout-payment-desc">
-                          Pindahan terus (Instant Transfer) ke akaun rasmi SKL Waste Sdn Bhd. Resit boleh dikongsi terus melalui WhatsApp.
-                        </span>
+                        <span className="kiosk-pay-desc">Pindahan atas talian & hantar resit terus melalui WhatsApp.</span>
                       </div>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "transfer" ? "is-checked" : ""}`}>
+                        {paymentMethod === "transfer" && <CheckCircle2 size={20} strokeWidth={2.5} />}
+                      </span>
                     </div>
 
-                    {/* Option 3: DuitNow QR */}
+                    {/* DuitNow QR */}
                     <div 
-                      className={`checkout-payment-card ${paymentMethod === "qr" ? "checkout-payment-active" : ""}`}
+                      className={`kiosk-pay-row ${paymentMethod === "qr" ? "is-chosen" : ""}`}
                       onClick={() => setPaymentMethod("qr")}
                       role="button"
                       tabIndex={0}
@@ -655,114 +662,79 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           setPaymentMethod("qr");
                         }
                       }}
-                      aria-label="Pilih Kod QR DuitNow"
                     >
-                      <div className="checkout-payment-icon-box pay-icon-qr">
-                        <QrCode size={22} strokeWidth={2.2} />
+                      <div className="kiosk-pay-icon pay-qr-theme">
+                        <QrCode size={24} strokeWidth={2.2} />
                       </div>
-                      <div className="checkout-payment-info">
-                        <div className="checkout-payment-title-row">
-                          <strong className="checkout-payment-title">DuitNow QR Code</strong>
-                          <span className={`checkout-transport-radio ${paymentMethod === "qr" ? "radio-checked" : ""}`}>
-                            {paymentMethod === "qr" && <CheckCircle2 size={16} strokeWidth={2.5} />}
-                          </span>
+                      <div className="kiosk-pay-info">
+                        <div className="kiosk-pay-head">
+                          <h2 className="kiosk-pay-title">DuitNow QR</h2>
+                          <span className="kiosk-pay-badge">Pantas</span>
                         </div>
-                        <span className="checkout-payment-desc">
-                          Imbas kod QR DuitNow dengan mana-mana aplikasi perbankan atau e-Wallet (TNG eWallet, MAE, Boost) semasa lori tiba.
-                        </span>
+                        <span className="kiosk-pay-desc">Imbas kod QR menggunakan MAE, TNG eWallet atau mana-mana aplikasi bank.</span>
                       </div>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "qr" ? "is-checked" : ""}`}>
+                        {paymentMethod === "qr" && <CheckCircle2 size={20} strokeWidth={2.5} />}
+                      </span>
                     </div>
                   </div>
-
-                  {/* Bottom Navigation for Step 3 */}
-                  <div className="checkout-step-actions-bar">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="checkout-back-step-btn"
-                    >
-                      <ArrowLeft size={16} strokeWidth={2.4} />
-                      <span>Kembali ke Waktu</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(4)}
-                      className="checkout-next-step-btn checkout-btn-accent"
-                    >
-                      <span>Seterusnya: Semak & Hantar</span>
-                      <ArrowRight size={16} strokeWidth={2.4} />
-                    </button>
-                  </div>
-                </div>
+                </section>
               )}
 
-              {/* =========================================================================
-                  STEP 4: SEND ORDER (WHATSAPP SUMMARY & CONFIRMATION)
-                  ========================================================================= */}
-              {currentStep === 4 && (
-                <div className="checkout-step-pane checkout-step-4">
-                  <div className="checkout-step-header">
-                    <div className="checkout-step-badge">
-                      <Send size={18} strokeWidth={2.2} />
-                      <span>Langkah 4: Hantar Tempahan Terus ke WhatsApp</span>
+              {/* ===================================================================
+                  STEP 5: PENGESAHAN & HANTAR KE WHATSAPP (REWARDING KIOSK SUMMARY)
+                  =================================================================== */}
+              {currentStep === 5 && (
+                <section className="kiosk-step-pane" aria-labelledby="kiosk-step-5-title">
+                  <header className="kiosk-pane-banner kiosk-banner-celebration">
+                    <div className="kiosk-celebrate-badge">
+                      <Sparkles size={22} strokeWidth={2.4} />
                     </div>
-                    <span className="checkout-step-hint">
-                      Pesanan anda disusun dengan rapi berserta unit ukuran, waktu lori, dan pilihan bayaran.
-                    </span>
-                  </div>
+                    <h1 id="kiosk-step-5-title" className="kiosk-pane-heading">
+                      Pesanan Sedia Dihantar!
+                    </h1>
+                    <p className="kiosk-pane-caption">
+                      Semak ringkasan di bawah dan hantar terus ke talian WhatsApp rasmi SKL Waste.
+                    </p>
+                  </header>
 
-                  {/* Summary Card */}
-                  <div className="checkout-order-summary-card">
-                    <div className="order-summary-header">
-                      <span className="order-summary-tag">
-                        <Sparkles size={13} strokeWidth={2.4} />
-                        Ringkasan Pesanan Tapak
-                      </span>
-                      <span className="order-summary-count tabular-nums">{totalCount} item</span>
-                    </div>
-
-                    <div className="order-summary-grid">
-                      <div className="order-summary-row">
-                        <span className="order-summary-label">
-                          <Truck size={14} /> Waktu Logistik:
-                        </span>
-                        <strong className="order-summary-value">{transportLabel}</strong>
+                  {/* McDonald's Style Digital Order Ticket Card */}
+                  <div className="kiosk-receipt-card">
+                    <div className="kiosk-receipt-top">
+                      <div className="kiosk-receipt-brand">
+                        <strong>SKL WASTE SDN BHD</strong>
+                        <span>SLIP TEMPAHAN PROJEK</span>
                       </div>
-
-                      <div className="order-summary-row">
-                        <span className="order-summary-label">
-                          <CreditCard size={14} /> Kaedah Bayaran:
-                        </span>
-                        <strong className="order-summary-value">{paymentLabel}</strong>
-                      </div>
-
-                      {customerName.trim() && (
-                        <div className="order-summary-row">
-                          <span className="order-summary-label">
-                            <User size={14} /> Pelanggan:
-                          </span>
-                          <strong className="order-summary-value">{customerName}</strong>
-                        </div>
-                      )}
-
-                      {deliveryLocation.trim() && (
-                        <div className="order-summary-row">
-                          <span className="order-summary-label">
-                            <MapPin size={14} /> Lokasi Tapak:
-                          </span>
-                          <strong className="order-summary-value">{deliveryLocation}</strong>
-                        </div>
-                      )}
+                      <span className="kiosk-receipt-count tabular-nums">{totalCount} Item</span>
                     </div>
 
-                    {/* Compact Items List Preview */}
-                    <div className="order-summary-items-preview">
-                      <span className="order-preview-label">Senarai Barangan & UOM:</span>
-                      <ul className="order-preview-ul">
+                    <div className="kiosk-receipt-meta-grid">
+                      <div className="kiosk-receipt-meta-cell">
+                        <span className="kiosk-receipt-label">🚚 Waktu Lori:</span>
+                        <strong className="kiosk-receipt-val">{transportLabel}</strong>
+                      </div>
+                      <div className="kiosk-receipt-meta-cell">
+                        <span className="kiosk-receipt-label">💳 Bayaran:</span>
+                        <strong className="kiosk-receipt-val">{paymentLabel}</strong>
+                      </div>
+                      <div className="kiosk-receipt-meta-cell">
+                        <span className="kiosk-receipt-label">👤 Pemesan:</span>
+                        <strong className="kiosk-receipt-val">{customerName.trim() || "Pelanggan Laman Web"}</strong>
+                      </div>
+                      <div className="kiosk-receipt-meta-cell">
+                        <span className="kiosk-receipt-label">📍 Tapak:</span>
+                        <strong className="kiosk-receipt-val">{deliveryLocation.trim() || "Bandar Seri Coalfields"}</strong>
+                      </div>
+                    </div>
+
+                    <div className="kiosk-receipt-items-list">
+                      <div className="kiosk-receipt-divider" />
+                      <span className="kiosk-receipt-table-header">Senarai Barangan & UOM:</span>
+                      <ul className="kiosk-receipt-ul">
                         {items.map((it) => (
-                          <li key={it.id} className="order-preview-li">
-                            <span className="order-preview-title">{it.title}</span>
-                            <span className="order-preview-qty tabular-nums">
+                          <li key={it.id} className="kiosk-receipt-li">
+                            <span className="kiosk-receipt-item-title">{it.title}</span>
+                            <span className="kiosk-receipt-item-qty tabular-nums">
                               <strong>{it.quantity}</strong> {it.unit || "Unit"}
                             </span>
                           </li>
@@ -771,68 +743,81 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                     </div>
                   </div>
 
-                  {/* Live WhatsApp Message Preview Container */}
-                  <div className="checkout-preview-box">
-                    <div className="checkout-preview-box-header">
-                      <MessageCircle size={14} />
-                      <span>Format Mesej WhatsApp Yang Akan Dihantar:</span>
-                    </div>
-                    <pre className="checkout-preview-pre">{buildFormattedMessage()}</pre>
-                  </div>
-
-                  {/* Direct WhatsApp Send Buttons */}
-                  <div className="checkout-final-buttons-stack">
+                  {/* Primary WhatsApp Action Buttons */}
+                  <div className="kiosk-final-buttons-stack">
                     <button 
                       type="button" 
                       onClick={handleCheckoutSaravanan}
-                      className="checkout-btn-whatsapp-main"
+                      className="kiosk-primary-whatsapp-btn"
                       title="Hantar Tempahan ke WhatsApp Saravanan"
                     >
-                      <MessageCircle size={20} strokeWidth={2.4} />
-                      <div className="btn-wa-text-group">
-                        <span className="btn-wa-main-text">Hantar Tempahan ke WhatsApp</span>
-                        <span className="btn-wa-sub-text">Saravanan (019-914 4743) • Respon Pantas</span>
+                      <MessageCircle size={22} strokeWidth={2.4} />
+                      <div className="kiosk-wa-btn-labels">
+                        <span className="kiosk-wa-main-title">Hantar Tempahan ke WhatsApp</span>
+                        <span className="kiosk-wa-sub-title">Saravanan (019-914 4743) • Respon Segera</span>
                       </div>
+                      <ArrowRight size={20} strokeWidth={2.4} className="kiosk-wa-arrow" />
                     </button>
 
                     <button 
                       type="button" 
                       onClick={handleCheckoutHari}
-                      className="checkout-btn-whatsapp-sub"
-                      title="Hantar kepada En. Hari (Syif Malam / 24/7)"
+                      className="kiosk-secondary-whatsapp-btn"
+                      title="Hantar ke Syif Malam Hari"
                     >
                       <Moon size={16} strokeWidth={2.2} />
-                      <span>Hantar kepada En. Hari - Syif Malam (016-615 9365)</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="checkout-back-step-btn checkout-back-step-btn-center"
-                    >
-                      <ArrowLeft size={15} strokeWidth={2.4} />
-                      <span>Ubah Kaedah Bayaran / Senarai</span>
+                      <span>Hantar ke En. Hari (Syif Malam: 016-615 9365)</span>
                     </button>
                   </div>
-
-                  {/* Trust guarantees */}
-                  <div className="checkout-trust-row">
-                    <div className="checkout-trust-item">
-                      <ShieldCheck size={14} className="checkout-trust-icon" />
-                      <span>Tanpa perlu daftar akaun</span>
-                    </div>
-                    <span className="checkout-trust-dot">•</span>
-                    <div className="checkout-trust-item">
-                      <CheckCircle2 size={14} className="checkout-trust-icon" />
-                      <span>Sebut harga terus dari pihak pengurusan SKL</span>
-                    </div>
-                  </div>
-                </div>
+                </section>
               )}
             </>
           )}
         </div>
-      </div>
+      </main>
+
+      {/* =========================================================================
+          STICKY BOTTOM KIOSK FOOTER: Item Summary & Large Forward Button
+          ========================================================================= */}
+      {items.length > 0 && (
+        <footer className="kiosk-bottom-bar">
+          <div className="kiosk-bar-inner">
+            <div className="kiosk-summary-badge">
+              <span className="kiosk-summary-sub">Jumlah Pesanan:</span>
+              <strong className="kiosk-summary-count tabular-nums">
+                {totalCount} <small>Unit/Item</small>
+              </strong>
+            </div>
+
+            <div className="kiosk-bar-actions">
+              {currentStep < 5 ? (
+                <button 
+                  type="button" 
+                  onClick={goNext}
+                  className="kiosk-btn-next-action"
+                >
+                  <span>
+                    {currentStep === 1 && "Maklumat Tapak"}
+                    {currentStep === 2 && "Pilih Waktu"}
+                    {currentStep === 3 && "Kaedah Bayaran"}
+                    {currentStep === 4 && "Semak & Hantar"}
+                  </span>
+                  <ChevronRight size={18} strokeWidth={2.6} />
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  onClick={handleCheckoutSaravanan}
+                  className="kiosk-btn-next-action is-whatsapp"
+                >
+                  <Send size={18} strokeWidth={2.4} />
+                  <span>Hantar Sekarang</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
