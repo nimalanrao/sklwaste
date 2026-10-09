@@ -138,11 +138,12 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
         </div>
       </header>
 
-      {/* Accessible Mobile Navigation Drawer */}
+      {/* Accessible Full-Screen Mobile Navigation Menu */}
       <MobileNav 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)}
         onNavigate={onNavigate}
+        currentView={currentView}
       />
     </>
   );

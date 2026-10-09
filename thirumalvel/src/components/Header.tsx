@@ -4,6 +4,7 @@ import { businessData } from "../data/business";
 import { MobileNav } from "./MobileNav";
 import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
 interface HeaderProps {
   currentView?: "home" | "catalogue";
@@ -52,11 +53,11 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
               href="#hero" 
               onClick={(e) => handleNav(e, "home", "#hero")}
               className="brand-wordmark-wrap" 
-              aria-label="Thirumal Vel Enterprise Kedai Hardware Home"
+              aria-label="SKL Waste Kedai Hardware Home"
             >
               <img 
-                src="/logo.png" 
-                alt="Thirumal Vel Enterprise Logo" 
+                src={assetUrl("/logo.png")} 
+                alt="SKL Hardware Logo" 
                 className="header-brand-logo"
               />
               <div className="brand-wordmark-text">
@@ -137,11 +138,12 @@ export const Header: React.FC<HeaderProps> = ({ currentView = "home", onNavigate
         </div>
       </header>
 
-      {/* Accessible Mobile Navigation Drawer */}
+      {/* Accessible Full-Screen Mobile Navigation Menu */}
       <MobileNav 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)}
         onNavigate={onNavigate}
+        currentView={currentView}
       />
     </>
   );
