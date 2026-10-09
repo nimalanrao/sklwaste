@@ -537,10 +537,16 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                     </div>
 
                     {/* Product Meta */}
+                    {/* Product Meta */}
                     <div className="portal-card-body">
                       <div className="portal-card-meta-top">
                         <span className="portal-card-cat-badge">{p.subCategory || p.mainCategory}</span>
-                        {p.brand && p.brand !== "SKL Hardware" && (
+                        {p.unit && (
+                          <span className="portal-card-uom-tag" title={`Unit of Measurement: ${p.unit}`}>
+                            UOM: {p.unit}
+                          </span>
+                        )}
+                        {p.brand && p.brand !== "SKL Hardware" && p.brand !== "SKL Quarry Direct" && (
                           <span className="portal-card-brand-tag">{p.brand}</span>
                         )}
                       </div>
@@ -567,10 +573,10 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                               addToCart(p, 1);
                             }}
                             className="portal-card-add-btn portal-card-add-full"
-                            title="Tambah ke Senarai Tempahan"
+                            title={`Tambah ${p.title} ke Senarai Tempahan`}
                           >
                             <Plus size={14} strokeWidth={2.5} />
-                            <span>+ Tambah</span>
+                            <span>+ Tambah {p.unit ? `(${p.unit})` : ""}</span>
                           </button>
                         ) : (
                           <div className="portal-card-stepper-full">
@@ -595,7 +601,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                               title="Buka Senarai Tempahan"
                             >
                               <span className="portal-card-step-val tabular-nums">{getItemQuantity(p.id)}</span>
-                              <span className="portal-card-step-lbl">dipilih</span>
+                              <span className="portal-card-step-lbl">{p.unit || "dipilih"}</span>
                             </button>
                             <button 
                               type="button"

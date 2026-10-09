@@ -13,12 +13,15 @@ export interface CartItem {
 }
 
 export type TransportMode = "day" | "night";
+export type PaymentMethod = "cash" | "transfer" | "qr";
 
 interface CartContextType {
   items: CartItem[];
   totalCount: number;
   transportMode: TransportMode;
   setTransportMode: (mode: TransportMode) => void;
+  paymentMethod: PaymentMethod;
+  setPaymentMethod: (method: PaymentMethod) => void;
   addToCart: (product: MasterProduct, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -33,6 +36,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const STORAGE_KEY = "skl_waste_cart_items";
 const TRANSPORT_STORAGE_KEY = "skl_waste_cart_transport";
+const PAYMENT_STORAGE_KEY = "skl_waste_cart_payment";
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
@@ -55,6 +59,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return "day"; // default to Day Transport
   });
 
+  const [paymentMethod, setPaymentMethodState] = useState<PaymentMethod>(() => {
+    try {
+      const saved = localStorage.getItem(PAYMENT_STORAGE_KEY);
+      if (saved === "cash" || saved === "transfer" || saved === "qr") return saved;
+    } catch {
+      // ignore
+    }
+    return "cash"; // default to Cash on Delivery / Self Pickup
+  });
+
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // Sync items to localStorage
@@ -70,6 +84,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTransportModeState(mode);
     try {
       localStorage.setItem(TRANSPORT_STORAGE_KEY, mode);
+    } catch {
+      // ignore
+    }
+  };
+
+  const setPaymentMethod = (method: PaymentMethod) => {
+    setPaymentMethodState(method);
+    try {
+      localStorage.setItem(PAYMENT_STORAGE_KEY, method);
     } catch {
       // ignore
     }
@@ -134,6 +157,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         totalCount,
         transportMode,
         setTransportMode,
+        paymentMethod,
+        setPaymentMethod,
         addToCart,
         removeFromCart,
         updateQuantity,

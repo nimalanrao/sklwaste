@@ -255,9 +255,9 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 <div className="apple-metric-cell">
                   <div className="apple-metric-header">
                     <Package size={12} className="apple-metric-icon" />
-                    <span className="apple-metric-label">Pilihan Saiz</span>
+                    <span className="apple-metric-label">Unit Ukuran (UOM)</span>
                   </div>
-                  <span className="apple-metric-value">{product.unit || "Guni / Ton / Unit"}</span>
+                  <span className="apple-metric-value font-semibold text-blue-600">{product.unit || "Unit"}</span>
                 </div>
               </div>
 
