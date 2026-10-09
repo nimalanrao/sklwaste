@@ -257,7 +257,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                     <Package size={12} className="apple-metric-icon" />
                     <span className="apple-metric-label">Unit Ukuran (UOM)</span>
                   </div>
-                  <span className="apple-metric-value font-semibold text-blue-600">{product.unit || "Unit"}</span>
+                  <span className="apple-metric-value font-semibold text-blue-600">{(product.unit || "UNIT").toUpperCase()}</span>
                 </div>
               </div>
 

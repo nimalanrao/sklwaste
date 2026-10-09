@@ -542,8 +542,8 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                       <div className="portal-card-meta-top">
                         <span className="portal-card-cat-badge">{p.subCategory || p.mainCategory}</span>
                         {p.unit && (
-                          <span className="portal-card-uom-tag" title={`Unit of Measurement: ${p.unit}`}>
-                            UOM: {p.unit}
+                          <span className="portal-card-uom-tag" title={`Unit of Measurement: ${p.unit.toUpperCase()}`}>
+                            {p.unit.toUpperCase()}
                           </span>
                         )}
                         {p.brand && p.brand !== "SKL Hardware" && p.brand !== "SKL Quarry Direct" && (
@@ -576,12 +576,12 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                             title={`Tambah ${p.title} ke Senarai Tempahan`}
                           >
                             <Plus size={14} strokeWidth={2.5} />
-                            <span>+ Tambah {p.unit ? `(${p.unit})` : ""}</span>
+                            <span>+ Tambah ({(p.unit || "UNIT").toUpperCase()})</span>
                           </button>
                         ) : (
                           <div className="portal-card-stepper-full">
                             <button 
-                              type="button"
+                              type="button" 
                               onClick={(e) => {
                                 e.stopPropagation();
                                 updateQuantity(p.id, getItemQuantity(p.id) - 1);
@@ -601,7 +601,7 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) =>
                               title="Buka Senarai Tempahan"
                             >
                               <span className="portal-card-step-val tabular-nums">{getItemQuantity(p.id)}</span>
-                              <span className="portal-card-step-lbl">{p.unit || "dipilih"}</span>
+                              <span className="portal-card-step-lbl">{(p.unit || "UNIT").toUpperCase()}</span>
                             </button>
                             <button 
                               type="button"

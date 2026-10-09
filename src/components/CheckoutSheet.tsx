@@ -99,7 +99,7 @@ export const CheckoutSheet: React.FC = () => {
           : "📱 Kod QR DuitNow (DuitNow QR)";
 
     const itemsList = items.map((item, idx) => {
-      const uomText = item.unit ? ` ${item.unit}` : " Unit";
+      const uomText = ` ${(item.unit || "UNIT").toUpperCase()}`;
       return `${idx + 1}. *${item.title}*\n   └── Kuantiti: ${item.quantity}${uomText}`;
     }).join("\n\n");
 
@@ -334,7 +334,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
 
                   <div className="kiosk-items-stack">
                     {items.map((item) => {
-                      const uomBadge = item.unit ? item.unit : "Unit";
+                      const uomBadge = (item.unit || "UNIT").toUpperCase();
 
                       return (
                         <article key={item.id} className="kiosk-item-row">
@@ -735,7 +735,7 @@ _Dihantar melalui Sistem Pesanan Web SKL Waste_`
                           <li key={it.id} className="kiosk-receipt-li">
                             <span className="kiosk-receipt-item-title">{it.title}</span>
                             <span className="kiosk-receipt-item-qty tabular-nums">
-                              <strong>{it.quantity}</strong> {it.unit || "Unit"}
+                              <strong>{it.quantity}</strong> {(it.unit || "UNIT").toUpperCase()}
                             </span>
                           </li>
                         ))}
