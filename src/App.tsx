@@ -4,9 +4,9 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
-import { ShiftsSection } from "./components/ShiftsSection";
 import { QuickInfo } from "./components/QuickInfo";
 import { About } from "./components/About";
+import { ReviewsSummary } from "./components/ReviewsSummary";
 import { LocationSection } from "./components/LocationSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
@@ -17,6 +17,8 @@ import { CheckoutSheet } from "./components/CheckoutSheet";
 
 export const AppContent: React.FC = () => {
   const [loadingComplete, setLoadingComplete] = useState(false);
+  const [portalCategory, setPortalCategory] = useState<string>("ALL");
+  const [portalQuery, setPortalQuery] = useState<string>("");
   const [currentView, setCurrentView] = useState<"home" | "catalogue">(() => {
     if (typeof window !== "undefined" && window.location.hash === "#catalogue") {
       return "catalogue";
@@ -39,7 +41,7 @@ export const AppContent: React.FC = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  // Ultra-optimized scroll blur-fade animation observer (GPU accelerated, 60fps/120fps mobile)
+  // Scroll reveal animation observer
   useEffect(() => {
     let currentObserver: IntersectionObserver | null = null;
 
@@ -57,8 +59,7 @@ export const AppContent: React.FC = () => {
             if (entry.isIntersecting) {
               const target = entry.target as HTMLElement;
               target.classList.add("is-revealed");
-              
-              // Ultra-optimization: Drop GPU blur filter once transition finishes to keep 120Hz scrolling crisp
+
               const handleDone = () => {
                 target.classList.add("is-revealed-done");
                 target.removeEventListener("transitionend", handleDone);
@@ -79,13 +80,9 @@ export const AppContent: React.FC = () => {
       elements.forEach((el) => currentObserver?.observe(el));
     };
 
-    // Initial check
     observeElements();
-
-    // Small delay to ensure any rendered DOM elements are observed
     const t = setTimeout(observeElements, 100);
 
-    // Watch for dynamic DOM changes (e.g. Catalogue filters, search)
     const mutationObs = new MutationObserver(() => {
       observeElements();
     });
@@ -125,55 +122,64 @@ export const AppContent: React.FC = () => {
     }
   };
 
+  const handleOpenCataloguePortal = (initialCategory?: string, initialQuery?: string) => {
+    setPortalCategory(initialCategory || "ALL");
+    setPortalQuery(initialQuery || "");
+    navigateTo("catalogue");
+  };
+
   return (
     <div className="app-root">
-      {/* 0. Brand Loading Screen Animation */}
+      {/* 0. Initial Loading Screen */}
       <LoadingScreen onComplete={() => setLoadingComplete(true)} />
 
-      {/* 1. Header & Navigation (Liquid Glass with Top English / Malay Switcher) */}
-      <Header 
+      {/* 1. Sticky Corporate White Header */}
+      <Header
         currentView={currentView}
         onNavigate={navigateTo}
       />
 
       <main id="main-content" className={loadingComplete ? "main-content-loaded" : ""}>
         {currentView === "catalogue" ? (
-          /* Dedicated Product Catalogue Page */
-          <CataloguePage 
+          /* Dedicated Full Interactive Product Catalogue Directory */
+          <CataloguePage
+            key={`${portalCategory}__${portalQuery}`}
             onBackToHome={() => navigateTo("home", "#hero")}
+            initialCategory={portalCategory}
+            initialSearchQuery={portalQuery}
           />
         ) : (
-          /* Main Store Overview Landing Sections */
+          /* Complete Corporate SaaS Landing Experience */
           <>
-            {/* 2. Hero Section */}
-            <Hero />
+            {/* 2. Impactful Full-Width Hero Section */}
+            <Hero onExploreCatalogue={() => handleOpenCataloguePortal("ALL", "")} />
 
-            {/* 2.5. Dedicated 24/7 Store Shifts & Direct Contact Section */}
-            <ShiftsSection />
-
-            {/* 3. Quick Information Section */}
+            {/* 3. Trust & Statistics Strip */}
             <QuickInfo />
 
-            {/* 4. About Section */}
+            {/* 4. About Us Section (2-Column with Hardware Photo & 3 Feature Cards) */}
             <About />
 
-            {/* 5. Combined Location & Authentic Google Reviews Section */}
+            {/* 5. Why Choose Us (6-Feature Icon Grid) */}
+            <ReviewsSummary />
+
+            {/* 6. Location & Google Map Section */}
             <LocationSection />
 
-            {/* 8. Contact & Storefront Assistance Section */}
+            {/* 7. Contact Section (Day Enquiries & Emergency Enquiries) */}
             <ContactSection />
           </>
         )}
       </main>
 
-      {/* 9. Footer */}
-      <Footer />
+      {/* 10. Corporate Footer */}
+      <Footer onNavigate={navigateTo} />
 
-      {/* 9.5 Dedicated Cart & Checkout Bottom Sheet (Drag-to-dismiss) */}
+      {/* 11. Cart & Checkout Kiosk Sheet */}
       <CheckoutSheet />
 
-      {/* 10. Apple-Quality Floating Quick Action Dock on Mobile */}
-      <MobileFloatingBar 
+      {/* 12. Mobile Floating Quick Action Bar */}
+      <MobileFloatingBar
         currentView={currentView}
         onNavigate={navigateTo}
       />

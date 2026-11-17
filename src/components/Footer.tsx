@@ -1,111 +1,132 @@
 import React from "react";
-import { Phone, MapPin, Navigation, ArrowUp } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
 import { assetUrl } from "../utils/asset";
 
-const CURRENT_YEAR = new Date().getFullYear();
+interface FooterProps {
+  onNavigate?: (view: "home" | "catalogue", hash?: string) => void;
+}
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
 
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate("home", hash);
+    }
   };
 
   return (
     <footer className="footer">
       <div className="container">
-        {/* Main Footer Row */}
         <div className="footer-top-grid">
-          {/* Brand & Category Column with Logo */}
+          {/* Column 1: Brand & Tagline */}
           <div className="footer-brand-col">
-            <a href="#hero" className="footer-wordmark">
-              <img 
-                src={assetUrl("/logo.png")} 
-                alt="SKL Hardware Logo" 
-                className="footer-brand-logo" 
-              />
+            <a
+              href="#hero"
+              onClick={(e) => handleLinkClick(e, "#hero")}
+              className="footer-brand-wrap"
+            >
+              <div className="footer-logo-box">
+                <img
+                  src={assetUrl("/logo.png")}
+                  alt="SKL Waste Sdn Bhd Logo"
+                  className="footer-brand-logo"
+                />
+              </div>
               <div>
-                <span className="footer-brand-title">{businessData.fullName}</span>
-                <span className="footer-brand-badge">{businessData.subtitle}</span>
+                <div className="footer-brand-title">{businessData.fullName}</div>
+                <div className="footer-brand-subtitle">{businessData.subtitle}</div>
               </div>
             </a>
-            <p className="footer-desc">
-              {t.footer.tagline}
-            </p>
-            <div className="footer-location-line">
-              <MapPin size={16} className="footer-pin-icon" />
-              <span>{businessData.address.area}, {businessData.address.state}</span>
-            </div>
+
+            <p className="footer-tagline">{t.footer.tagline}</p>
           </div>
 
-          {/* Quick Navigation Links */}
-          <div className="footer-nav-col">
+          {/* Column 2: Navigation */}
+          <div>
             <h4 className="footer-col-heading">{t.footer.navigationHeading}</h4>
-            <ul className="footer-links-list">
-              <li><a href="#hero" className="footer-nav-link">{t.nav.home}</a></li>
-              <li><a href="#about" className="footer-nav-link">{t.nav.about}</a></li>
-              <li><a href="#catalogue" className="footer-nav-link">{t.nav.catalogue}</a></li>
-              <li><a href="#location" className="footer-nav-link">{t.nav.location}</a></li>
-              <li><a href="#contact" className="footer-nav-link">{t.nav.contact}</a></li>
+            <ul className="footer-nav-list">
+              <li>
+                <a
+                  href="#hero"
+                  onClick={(e) => handleLinkClick(e, "#hero")}
+                  className="footer-nav-link"
+                >
+                  {t.nav.home}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  onClick={(e) => handleLinkClick(e, "#about")}
+                  className="footer-nav-link"
+                >
+                  {t.nav.about}
+                </a>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate && onNavigate("catalogue")}
+                  className="footer-nav-link"
+                >
+                  {t.nav.catalogue}
+                </button>
+              </li>
+              <li>
+                <a
+                  href="#location"
+                  onClick={(e) => handleLinkClick(e, "#location")}
+                  className="footer-nav-link"
+                >
+                  {t.nav.location}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  onClick={(e) => handleLinkClick(e, "#contact")}
+                  className="footer-nav-link"
+                >
+                  {t.nav.contact}
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Direct Access & Contact Column */}
-          <div className="footer-contact-col">
+          {/* Column 3: Phone & Location */}
+          <div>
             <h4 className="footer-col-heading">{t.footer.assistanceHeading}</h4>
-            <div className="footer-contact-items">
-              <a 
-                href={`tel:${businessData.phone.tel}`}
-                className="footer-contact-item phone-number"
-                title={`Call ${businessData.phone.bossName}`}
-              >
-                <Phone size={16} className="footer-item-icon" />
-                <span>Day: {businessData.phone.display} ({businessData.phone.bossName})</span>
+            <div className="footer-contact-list">
+              <a href={`tel:${businessData.phone.tel}`} className="footer-phone-card">
+                <Phone size={16} strokeWidth={2} aria-hidden="true" />
+                <div className="footer-phone-meta">
+                  <span className="footer-phone-shift tabular-nums">Mr. Saravanan (8:00 AM - 6:00 PM)</span>
+                  <span className="footer-phone-num tabular-nums">{businessData.phone.display}</span>
+                </div>
               </a>
 
-              <a 
-                href={`tel:${businessData.phone.afterHoursTel}`}
-                className="footer-contact-item phone-number"
-                title={`Call ${businessData.phone.afterHoursName} for after-hours supply`}
-              >
-                <Phone size={16} className="footer-item-icon footer-item-purple" />
-                <span>After 6 PM: {businessData.phone.afterHoursDisplay} ({businessData.phone.afterHoursName})</span>
+              <a href={`tel:${businessData.phone.afterHoursTel}`} className="footer-phone-card">
+                <Phone size={16} strokeWidth={2} aria-hidden="true" />
+                <div className="footer-phone-meta">
+                  <span className="footer-phone-shift tabular-nums">Mr. Hari (24/7 Emergency)</span>
+                  <span className="footer-phone-num tabular-nums">{businessData.phone.afterHoursDisplay}</span>
+                </div>
               </a>
 
-              <a 
-                href={businessData.googleProfile.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-contact-item"
-              >
-                <Navigation size={16} className="footer-item-icon" />
-                <span>{t.footer.directionsAction}</span>
-              </a>
-            </div>
-
-            <div className="footer-hours-pill">
-              <span>{t.footer.verifiedHoursText}</span>
+              <address className="footer-address-block">
+                <MapPin size={16} strokeWidth={2} style={{ flexShrink: 0, marginTop: 2 }} />
+                <span>Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia</span>
+              </address>
             </div>
           </div>
         </div>
 
-        {/* Bottom Copyright & Back to Top Bar */}
         <div className="footer-bottom-bar">
-          <p className="footer-copyright">
-            &copy; {CURRENT_YEAR} {businessData.fullName} ({businessData.subtitle}). {t.footer.copyright}
-          </p>
-
-          <button 
-            type="button" 
-            onClick={handleScrollToTop}
-            className="footer-back-to-top"
-            aria-label="Back to top of page"
-          >
-            <span>{t.footer.backToTop}</span>
-            <ArrowUp size={15} strokeWidth={2} />
-          </button>
+          <p>© 2026 SKL Waste Sdn Bhd. {t.footer.copyright}</p>
         </div>
       </div>
     </footer>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Sun, Moon, Phone, MessageCircle, Clock, ShieldCheck } from "lucide-react";
+import { Sun, Moon, Phone, Clock } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
 
@@ -7,147 +7,95 @@ export const ShiftsSection: React.FC = () => {
   const { t, language } = useLanguage();
   const isMalay = language === "ms";
 
-  const waNightMsg = encodeURIComponent(
-    isMalay 
-      ? "Salam Mr. Hari, saya nak buat pesanan hardware kecemasan selepas waktu kerja."
-      : "Hello Mr. Hari, I need urgent after-hours hardware or materials supply."
-  );
-
   return (
-    <section id="shifts" className="shifts-section" aria-labelledby="shifts-title">
-      <div className="container">
-        {/* Section Header */}
-        <div className="section-header shifts-section-header scroll-reveal">
-          <div className="shifts-section-badge">
-            <span className="shifts-section-pulse" />
-            <span className="eyebrow">{t.shiftsSection.eyebrow}</span>
-          </div>
-          <h2 id="shifts-title" className="section-title">
-            {(() => {
-              const parts = t.shiftsSection.title.split(/(Only|only|Satu-satunya|SATU-SATUNYA)/);
-              if (parts.length <= 1) return t.shiftsSection.title;
-              return parts.map((part, idx) => {
-                if (/^(Only|only|Satu-satunya|SATU-SATUNYA)$/i.test(part)) {
-                  return (
-                    <span key={idx} className="title-highlight-wrap">
-                      <span className="title-highlight-badge">
-                        <span className="title-highlight-text">{part}</span>
-                      </span>
-                      <svg
-                        className="title-highlight-stroke"
-                        viewBox="0 0 100 14"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        preserveAspectRatio="none"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M 3 9.5 C 28 3.5, 72 3.5, 97 8"
-                          stroke="currentColor"
-                          strokeWidth="3.5"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  );
-                }
-                return <React.Fragment key={idx}>{part}</React.Fragment>;
-              });
-            })()}
+    <section id="shifts" className="emergency-feature-section" aria-labelledby="shifts-title">
+      <div className="emergency-bg-pattern" aria-hidden="true" />
+
+      <div className="container emergency-container">
+        <div className="emergency-header">
+          <h2 id="shifts-title" className="emergency-headline">
+            {t.shiftsSection.title}
           </h2>
-          <p className="section-desc">
+          <p className="emergency-description">
             {t.shiftsSection.subtitle}
           </p>
         </div>
 
-        {/* 2-Card Direct Shift Schedule Grid */}
-        <div className="shifts-section-grid">
-          {/* 1. Day Shifts: Normal Store Hours with Boss */}
-          <div className="card shift-section-card shift-section-day scroll-reveal">
-            <div className="shift-card-top">
-              <div className="shift-card-icon-wrap shift-card-icon-day">
-                <Sun size={24} strokeWidth={2} />
-              </div>
-              <div className="shift-card-badge-wrap">
-                <span className="shift-card-badge badge-day">
-                  <Clock size={12} strokeWidth={2.5} />
-                  <span>{t.shiftsSection.dayShiftHours}</span>
-                </span>
-              </div>
+        {/* Two Contact Cards: DAY SHIFT & NIGHT SHIFT */}
+        <div className="emergency-cards-grid">
+          {/* Card 1: DAY SHIFT - Mr. Saravanan */}
+          <article className="emergency-shift-card">
+            <div className="shift-card-header-row">
+              <span className="shift-badge-pill day-pill">
+                <Sun size={14} strokeWidth={2} />
+                <span>{t.shiftsSection.dayShiftBadge}</span>
+              </span>
+              <span className="shift-hours-chip tabular-nums">
+                <Clock size={14} strokeWidth={2} />
+                <span>{t.shiftsSection.dayShiftHours}</span>
+              </span>
             </div>
 
-            <div className="shift-card-person">
-              <h3 className="shift-card-person-name">{t.shiftsSection.dayShiftName}</h3>
-              <span className="shift-card-role-tag role-day">{t.shiftsSection.dayShiftRole}</span>
+            <div className="shift-person-block">
+              <h3 className="shift-person-name">{t.shiftsSection.dayShiftName}</h3>
+              <p className="shift-person-role">{t.shiftsSection.dayShiftRole}</p>
             </div>
 
-            <p className="shift-card-desc">
-              {t.shiftsSection.dayShiftDesc}
-            </p>
-
-            <div className="shift-card-actions">
-              <a 
+            <div className="shift-phone-display">
+              <span className="shift-phone-label">{isMalay ? "Telefon" : "Phone"}</span>
+              <a
                 href={`tel:${businessData.phone.tel}`}
-                className="btn btn-primary btn-lg shift-card-btn phone-number"
-                title={`Call ${businessData.phone.bossName}`}
+                className="shift-phone-number tabular-nums"
               >
-                <Phone size={16} strokeWidth={2} />
-                <span>{t.shiftsSection.dayShiftAction}</span>
+                {businessData.phone.display}
               </a>
             </div>
-          </div>
 
-          {/* 2. Night Shift: After 6:00 PM On-Call with Mr. Hari */}
-          <div className="card shift-section-card shift-section-night scroll-reveal reveal-delay-1">
-            <div className="shift-card-top">
-              <div className="shift-card-icon-wrap shift-card-icon-night">
-                <Moon size={24} strokeWidth={2} />
-              </div>
-              <div className="shift-card-badge-wrap">
-                <span className="shift-card-badge badge-night">
-                  <Clock size={12} strokeWidth={2.5} />
-                  <span>{t.shiftsSection.nightShiftHours}</span>
-                </span>
-              </div>
+            <a
+              href={`tel:${businessData.phone.tel}`}
+              className="btn btn-primary btn-lg shift-primary-call-btn phone-number"
+            >
+              <Phone size={18} strokeWidth={2} />
+              <span>{t.shiftsSection.dayShiftAction}</span>
+            </a>
+          </article>
+
+          {/* Card 2: NIGHT SHIFT - Mr. Hari */}
+          <article className="emergency-shift-card">
+            <div className="shift-card-header-row">
+              <span className="shift-badge-pill night-pill">
+                <Moon size={14} strokeWidth={2} />
+                <span>{t.shiftsSection.nightShiftBadge}</span>
+              </span>
+              <span className="shift-hours-chip tabular-nums">
+                <Clock size={14} strokeWidth={2} />
+                <span>{t.shiftsSection.nightShiftHours}</span>
+              </span>
             </div>
 
-            <div className="shift-card-person">
-              <h3 className="shift-card-person-name">{t.shiftsSection.nightShiftName}</h3>
-              <span className="shift-card-role-tag role-night">{t.shiftsSection.nightShiftRole}</span>
+            <div className="shift-person-block">
+              <h3 className="shift-person-name">{t.shiftsSection.nightShiftName}</h3>
+              <p className="shift-person-role">{t.shiftsSection.nightShiftRole}</p>
             </div>
 
-            <p className="shift-card-desc">
-              {t.shiftsSection.nightShiftDesc}
-            </p>
-
-            <div className="shift-card-actions shift-dual-btns">
-              <a 
+            <div className="shift-phone-display night-phone">
+              <span className="shift-phone-label">{isMalay ? "Telefon" : "Phone"}</span>
+              <a
                 href={`tel:${businessData.phone.afterHoursTel}`}
-                className="btn btn-secondary btn-lg shift-card-btn phone-number shift-card-night-btn"
-                title={`Call ${businessData.phone.afterHoursName}`}
+                className="shift-phone-number tabular-nums"
               >
-                <Phone size={16} strokeWidth={2} />
-                <span>{t.shiftsSection.nightShiftAction}</span>
-              </a>
-
-              <a 
-                href={`https://wa.me/${businessData.phone.afterHoursWhatsapp}?text=${waNightMsg}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-whatsapp btn-lg shift-card-btn shift-card-wa-btn"
-                title="WhatsApp Mr. Hari"
-              >
-                <MessageCircle size={16} strokeWidth={2} />
-                <span>{t.shiftsSection.whatsappAction}</span>
+                {businessData.phone.afterHoursDisplay}
               </a>
             </div>
-          </div>
-        </div>
 
-        {/* Bottom Reassurance Banner */}
-        <div className="shifts-section-footer">
-          <ShieldCheck size={18} className="shifts-footer-shield" />
-          <span>{t.shiftsSection.notice}</span>
+            <a
+              href={`tel:${businessData.phone.afterHoursTel}`}
+              className="btn btn-accent btn-lg shift-primary-call-btn phone-number"
+            >
+              <Phone size={18} strokeWidth={2} />
+              <span>{t.shiftsSection.nightShiftAction}</span>
+            </a>
+          </article>
         </div>
       </div>
     </section>

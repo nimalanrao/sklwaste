@@ -1,750 +1,1007 @@
-import React, { useState, useMemo } from "react";
-import { 
-  Search, 
-  Home, 
-  MessageCircle, 
-  ChevronRight, 
-  ChevronLeft,
+import React, { useState, useMemo, useEffect } from "react";
+import {
+  Search,
   ArrowLeft,
   X,
-  BrickWall,
-  Wrench,
-  Scissors,
-  Droplets,
-  Bath,
-  Paintbrush,
-  LayoutGrid,
+  Barcode,
+  Layers,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
   Eye,
-  SlidersHorizontal,
   Check,
-  Workflow,
-  ShoppingBag,
-  Plus,
-  Minus
+  Copy,
+  Package,
+  MessageSquare,
+  Phone,
+  LayoutGrid,
+  List,
+  ArrowUpDown,
+  Tag,
+  Truck,
+  CheckCircle2
 } from "lucide-react";
-import { masterProducts, SIDEBAR_CATEGORIES } from "../data/catalogue";
-import type { MasterProduct } from "../data/catalogue";
-import { CatalogueModal } from "./CatalogueModal";
-import { useCart } from "../context/CartContext";
+import { allDatabaseItems, DATABASE_CATEGORIES } from "../data/catalogue";
+import type { DatabaseItem, ProductVariant } from "../data/catalogue";
 import { useLanguage } from "../context/useLanguage";
-import { LanguageToggle } from "./LanguageToggle";
-import { businessData } from "../data/business";
-import { assetUrl } from "../utils/asset";
 
 interface CataloguePageProps {
   onBackToHome: () => void;
+  initialCategory?: string;
+  initialSearchQuery?: string;
 }
 
-export const CataloguePage: React.FC<CataloguePageProps> = ({ onBackToHome }) => {
-  const { addToCart, updateQuantity, getItemQuantity, totalCount, openCheckout } = useCart();
+// Escape special regex characters
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Safe resolution for public assets considering Vite's base path
+export function getProductImageUrl(img?: string): string {
+  if (!img) return "";
+  if (img.startsWith("http://") || img.startsWith("https://")) {
+    return img;
+  }
+  const base = import.meta.env.BASE_URL || "/";
+  const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const cleanPath = img.startsWith("/") ? img : `/${img}`;
+  return `${cleanBase}${cleanPath}`;
+}
+
+// Helper to highlight matched words in yellow
+function HighlightedText({ text, queryTokens }: { text: string; queryTokens: string[] }) {
+  if (!queryTokens.length || !text) {
+    return <>{text}</>;
+  }
+
+  const sortedTokens = [...queryTokens].sort((a, b) => b.length - a.length);
+  const regexPattern = `(${sortedTokens.map(escapeRegExp).join("|")})`;
+  const parts = text.split(new RegExp(regexPattern, "gi"));
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        const isMatch = sortedTokens.some((t) => t.toLowerCase() === part.toLowerCase());
+        return isMatch ? (
+          <mark key={index} className="db-highlight">
+            {part}
+          </mark>
+        ) : (
+          part
+        );
+      })}
+    </>
+  );
+}
+
+export const CataloguePage: React.FC<CataloguePageProps> = ({
+  onBackToHome,
+  initialCategory = "ALL",
+  initialSearchQuery = ""
+}) => {
   const { language } = useLanguage();
   const isMalay = language === "ms";
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("BUILDING MATERIALS");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<MasterProduct | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+  const [viewMode, setViewMode] = useState<"store" | "table">("store");
+  const [filterPhotosOnly, setFilterPhotosOnly] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<"relevance" | "name" | "sku">("relevance");
   const [page, setPage] = useState(1);
+  const [selectedItem, setSelectedItem] = useState<DatabaseItem | null>(null);
+  const [cardVariants, setCardVariants] = useState<Record<string, ProductVariant>>({});
+  const [modalVariant, setModalVariant] = useState<ProductVariant | null>(null);
+  const [copiedBarcode, setCopiedBarcode] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // STRICT REQUIREMENT: Maximum 20 cards per page (4 cols x 5 rows)
-  const itemsPerPage = 20;
+  const itemsPerPage = viewMode === "store" ? 36 : 50;
 
-  // Compute category counts for the 6 allowed categories
+  // Split query into individual search tokens
+  const queryTokens = useMemo(() => {
+    return searchQuery
+      .trim()
+      .split(/\s+/)
+      .map((t) => t.trim().toLowerCase())
+      .filter((t) => t.length > 0);
+  }, [searchQuery]);
+
+  // Category counts
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const p of masterProducts) {
-      counts[p.mainCategory] = (counts[p.mainCategory] || 0) + 1;
+    for (const item of allDatabaseItems) {
+      counts[item.category] = (counts[item.category] || 0) + 1;
     }
     return counts;
   }, []);
 
-  // Compute available brands for the active category
-  const availableBrands = useMemo(() => {
-    const brands: Record<string, number> = {};
-    const relevantProducts = selectedCategory === "ALL" 
-      ? masterProducts 
-      : masterProducts.filter(p => p.mainCategory === selectedCategory);
-      
-    for (const p of relevantProducts) {
-      if (p.brand && p.brand !== "SKL Hardware") {
-        brands[p.brand] = (brands[p.brand] || 0) + 1;
-      }
-    }
-    return Object.entries(brands)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 12);
-  }, [selectedCategory]);
+  // Filter items: every token must match somewhere in the item (description, code, or barcode)
+  const filteredItems = useMemo(() => {
+    let result = allDatabaseItems.filter((item) => {
+      const matchesCat = selectedCategory === "ALL" || item.category === selectedCategory;
+      if (!matchesCat) return false;
+      if (filterPhotosOnly && !item.image) return false;
+      if (!queryTokens.length) return true;
 
-  const handleBrandToggle = (brandName: string) => {
-    setSelectedBrands(prev => 
-      prev.includes(brandName) ? prev.filter(b => b !== brandName) : [...prev, brandName]
-    );
-    setPage(1);
-  };
+      const descLower = item.description.toLowerCase();
+      const codeLower = item.itemCode.toLowerCase();
+      const barcodeLower = item.barcode.toLowerCase();
+      const fullText = `${descLower} ${codeLower} ${barcodeLower}`;
 
-  // Filtered Products
-  const filteredProducts = useMemo(() => {
-    return masterProducts.filter(p => {
-      const matchesCat = selectedCategory === "ALL" || p.mainCategory === selectedCategory;
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch = !q || 
-        p.title.toLowerCase().includes(q) || 
-        p.subCategory.toLowerCase().includes(q) || 
-        p.brand.toLowerCase().includes(q) ||
-        (p.description && p.description.toLowerCase().includes(q));
-      
-      const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
-
-      return matchesCat && matchesSearch && matchesBrand;
+      return queryTokens.every((token) => fullText.includes(token));
     });
-  }, [selectedCategory, searchQuery, selectedBrands]);
 
-  // Compute matches across other categories when search returns 0 in active category
-  const crossCategoryMatches = useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
-    if (!q || selectedCategory === "ALL") return [];
-    return masterProducts.filter(p => {
-      if (p.mainCategory === selectedCategory) return false;
-      return (
-        p.title.toLowerCase().includes(q) || 
-        p.subCategory.toLowerCase().includes(q) || 
-        p.brand.toLowerCase().includes(q) ||
-        (p.description && p.description.toLowerCase().includes(q))
-      );
-    });
-  }, [searchQuery, selectedCategory]);
-
-  const crossCategoryNames = useMemo(() => {
-    const names = new Set<string>();
-    for (const p of crossCategoryMatches) {
-      names.add(p.mainCategory);
+    if (sortBy === "name") {
+      result = [...result].sort((a, b) => a.description.localeCompare(b.description));
+    } else if (sortBy === "sku") {
+      result = [...result].sort((a, b) => a.itemCode.localeCompare(b.itemCode));
     }
-    return Array.from(names);
-  }, [crossCategoryMatches]);
 
-  // Paginated Slice - STRICTLY 20 PER PAGE
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = useMemo(() => {
+    return result;
+  }, [selectedCategory, filterPhotosOnly, queryTokens, sortBy]);
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const paginatedItems = useMemo(() => {
     const start = (page - 1) * itemsPerPage;
-    return filteredProducts.slice(start, start + itemsPerPage);
-  }, [filteredProducts, page, itemsPerPage]);
+    return filteredItems.slice(start, start + itemsPerPage);
+  }, [filteredItems, page, itemsPerPage]);
 
-  // Generate numbered pagination items with smart sliding window
-  const paginationRange = useMemo(() => {
-    const delta = 2;
-    const range: (number | string)[] = [];
-    for (let i = 1; i <= totalPages; i++) {
-      if (i === 1 || i === totalPages || (i >= page - delta && i <= page + delta)) {
-        range.push(i);
-      } else if (range[range.length - 1] !== "...") {
-        range.push("...");
-      }
-    }
-    return range;
-  }, [page, totalPages]);
+  const startIndex = filteredItems.length === 0 ? 0 : (page - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(page * itemsPerPage, filteredItems.length);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    const contentEl = document.querySelector(".portal-content");
-    if (contentEl) {
-      contentEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Selected item index in current filtered view
+  const selectedIndex = useMemo(() => {
+    if (!selectedItem) return -1;
+    return filteredItems.findIndex(
+      (it) => it.itemCode === selectedItem.itemCode && it.barcode === selectedItem.barcode
+    );
+  }, [selectedItem, filteredItems]);
+
+  const openItemModal = (item: DatabaseItem) => {
+    setSelectedItem(item);
+    const chosen = cardVariants[item.itemCode] || (item.variants && item.variants.length > 0 ? item.variants[0] : null);
+    setModalVariant(chosen);
+    setCopiedBarcode(false);
+  };
+
+  const handlePrevItem = () => {
+    if (selectedIndex > 0) {
+      const it = filteredItems[selectedIndex - 1];
+      setSelectedItem(it);
+      setModalVariant(cardVariants[it.itemCode] || (it.variants && it.variants.length > 0 ? it.variants[0] : null));
+      setCopiedBarcode(false);
     }
   };
 
-  const getCategoryDetails = (category: string) => {
-    switch (category) {
-      case "BUILDING MATERIALS":
-        return {
-          icon: <BrickWall size={16} strokeWidth={2} />,
-          badgeClass: "badge-brick",
-          label: isMalay ? "Bahan Binaan" : "Building Materials"
-        };
-      case "PIPING & PLUMBING":
-        return {
-          icon: <Workflow size={16} strokeWidth={2} />,
-          badgeClass: "badge-piping",
-          label: isMalay ? "Paip & Paiping" : "Piping & Plumbing"
-        };
-      case "TOOLS":
-        return {
-          icon: <Wrench size={16} strokeWidth={2} />,
-          badgeClass: "badge-tools",
-          label: isMalay ? "Peralatan" : "Tools & Hardware"
-        };
-      case "CUTTING TOOLS":
-        return {
-          icon: <Scissors size={16} strokeWidth={2} />,
-          badgeClass: "badge-cutting",
-          label: isMalay ? "Mata Pemotong" : "Cutting Tools"
-        };
-      case "WATERPROOFING & SEALANT":
-        return {
-          icon: <Droplets size={16} strokeWidth={2} />,
-          badgeClass: "badge-waterproof",
-          label: isMalay ? "Kalis Air & Gam" : "Waterproofing"
-        };
-      case "KITCHEN & BATH":
-        return {
-          icon: <Bath size={16} strokeWidth={2} />,
-          badgeClass: "badge-bath",
-          label: isMalay ? "Dapur & Bilik Air" : "Kitchen & Bath"
-        };
-      case "PAINT":
-        return {
-          icon: <Paintbrush size={16} strokeWidth={2} />,
-          badgeClass: "badge-paint",
-          label: isMalay ? "Cat & Kemasan" : "Paint & Coatings"
-        };
-      default:
-        return {
-          icon: <LayoutGrid size={16} strokeWidth={2} />,
-          badgeClass: "badge-all",
-          label: isMalay ? "Semua Produk" : "All Products"
-        };
+  const handleNextItem = () => {
+    if (selectedIndex >= 0 && selectedIndex < filteredItems.length - 1) {
+      const it = filteredItems[selectedIndex + 1];
+      setSelectedItem(it);
+      setModalVariant(cardVariants[it.itemCode] || (it.variants && it.variants.length > 0 ? it.variants[0] : null));
+      setCopiedBarcode(false);
+    }
+  };
+
+  // Keyboard controls for modal
+  useEffect(() => {
+    if (!selectedItem) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedItem(null);
+      } else if (e.key === "ArrowLeft") {
+        handlePrevItem();
+      } else if (e.key === "ArrowRight") {
+        handleNextItem();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedItem, selectedIndex, filteredItems]);
+
+  // Prevent background scrolling when pop-up modal is open
+  useEffect(() => {
+    if (selectedItem) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedItem]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((current) => (current === msg ? null : current));
+    }, 2200);
+  };
+
+  const handleCopyBarcode = (barcode: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(barcode);
+      setCopiedBarcode(true);
+      showToast(`Copied barcode ${barcode}`);
+      setTimeout(() => setCopiedBarcode(false), 2000);
     }
   };
 
   return (
-    <div className="product-portal-layout main-view-transition">
-      {/* Top Banner Bar - Apple Translucent Frosted Header */}
-      <header className="portal-top-bar">
-        <div className="portal-container portal-top-content">
-          <button 
-            type="button" 
-            onClick={onBackToHome}
-            className="portal-back-home-btn"
-          >
-            <ArrowLeft size={16} strokeWidth={2.4} />
-            <span>{isMalay ? "Kembali" : "Home"}</span>
-          </button>
+    <div className="db-page store-mode">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="store-toast-banner" role="status">
+          <CheckCircle2 size={16} className="text-emerald" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
-          <div className="portal-direct-contact">
-            {/* Bilingual Language Switcher */}
-            <LanguageToggle className="portal-lang-toggle" />
-
-            <button 
-              type="button" 
-              onClick={openCheckout}
-              className="portal-top-cart-btn"
-              aria-label={isMalay ? "Buka Senarai Tempahan" : "Open Order Cart"}
-            >
-              <ShoppingBag size={15} strokeWidth={2.2} />
-              <span>{isMalay ? "Senarai" : "Cart"}</span>
-              {totalCount > 0 && <span className="portal-top-cart-badge tabular-nums">{totalCount}</span>}
+      {/* Top Search & Store Controls Bar */}
+      <header className="store-header-bar">
+        <div className="store-container store-header-inner">
+          <div className="store-header-left">
+            <button type="button" onClick={onBackToHome} className="store-home-btn" style={{ minHeight: 44 }}>
+              <ArrowLeft size={16} strokeWidth={2} aria-hidden="true" />
+              <span>{isMalay ? "Laman Utama" : "Home"}</span>
             </button>
+            <div className="store-brand-pill">
+              <span className="store-brand-badge">SKL STORE</span>
+              <span className="store-brand-sub">Bandar Seri Coalfields</span>
+            </div>
+          </div>
 
-            <a 
-              href={`https://wa.me/${businessData.phone.whatsapp}?text=${encodeURIComponent(isMalay ? "Hello SKL Waste, saya nak buat pertanyaan tentang produk / bahan binaan." : "Hello SKL Waste, I would like to inquire about products and building materials.")}`}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="portal-top-wa-link"
-              title={isMalay ? "WhatsApp Kami" : "WhatsApp Us"}
+          {/* Search Box */}
+          <div className="store-search-wrap">
+            <Search size={18} className="store-search-icon" aria-hidden="true" />
+            <input
+              type="search"
+              placeholder={
+                isMalay
+                  ? "Cari barang binaan, paip, cat, perkakasan (cth: Y12 CQ, simen, sarung tangan)..."
+                  : "Search hardware, pipes, cement, tools (e.g. Y12 CQ, gloves, safety)..."
+              }
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              className="store-search-input"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setPage(1);
+                }}
+                className="store-search-clear"
+                style={{ minWidth: 44, minHeight: 44, right: 0 }}
+                aria-label="Clear search"
+              >
+                <X size={15} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+
+          {/* Quick Actions / Mobile Filter Toggle */}
+          <div className="store-header-actions">
+            <button
+              type="button"
+              className="store-mobile-filter-btn"
+              style={{ minHeight: 44 }}
+              onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
             >
-              <MessageCircle size={15} strokeWidth={2.2} />
-              <span className="portal-top-wa-text">WhatsApp</span>
-            </a>
+              <Filter size={15} aria-hidden="true" />
+              <span>{isMalay ? "Kategori" : "Categories"}</span>
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Horizontal Apple Segmented Pill Bar for Mobile & Tablet */}
-      <div className="portal-mobile-pills-bar" aria-label={isMalay ? "Kategori Mudah Alih" : "Mobile Categories"}>
-        <div className="portal-container portal-mobile-pills-scroll">
-          <button
-            type="button"
-            onClick={() => { setSelectedCategory("ALL"); setSelectedBrands([]); setPage(1); }}
-            className={`apple-pill-item ${selectedCategory === "ALL" ? "apple-pill-active" : ""}`}
-          >
-            <LayoutGrid size={14} />
-            <span>{isMalay ? "Semua Produk" : "All Products"}</span>
-            <span className="apple-pill-count">{masterProducts.length}</span>
-          </button>
-
-          {SIDEBAR_CATEGORIES.map((cat) => {
-            const isActive = selectedCategory === cat;
-            const count = categoryCounts[cat] || 0;
-            const details = getCategoryDetails(cat);
-
-            return (
+      {/* Main Store Layout */}
+      <div className="store-container store-layout">
+        {/* Left Category Sidebar */}
+        <aside className={`store-sidebar ${mobileFilterOpen ? "is-open" : ""}`}>
+          <div className="store-sidebar-header">
+            <div className="store-sidebar-title-row">
+              <Layers size={16} className="text-blue" aria-hidden="true" />
+              <h3>{isMalay ? "Kategori Kedai" : "Store Departments"}</h3>
+            </div>
+            {mobileFilterOpen && (
               <button
-                key={`mobile-${cat}`}
                 type="button"
-                onClick={() => { setSelectedCategory(cat); setSelectedBrands([]); setPage(1); }}
-                className={`apple-pill-item ${isActive ? "apple-pill-active" : ""}`}
+                className="store-sidebar-close"
+                style={{ minWidth: 44, minHeight: 44, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+                onClick={() => setMobileFilterOpen(false)}
+                aria-label={isMalay ? "Tutup kategori" : "Close categories"}
               >
-                {details.icon}
-                <span>{details.label}</span>
-                <span className="apple-pill-count">{count}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="portal-container portal-main-body">
-        {/* Left Sidebar Menu - Ultra Clean Apple Sidebar Design */}
-        <aside className="portal-sidebar">
-          {/* Apple-styled Search Box */}
-          <div className="portal-search-box">
-            <Search size={16} className="portal-search-icon" />
-            <input 
-              type="text" 
-              placeholder={isMalay ? "Cari produk / bahan binaan..." : "Search products / materials..."}
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-              className="portal-search-input"
-            />
-            {searchQuery && (
-              <button 
-                type="button" 
-                onClick={() => { setSearchQuery(""); setPage(1); }}
-                className="portal-search-clear-btn"
-                aria-label={isMalay ? "Padam carian" : "Clear search"}
-              >
-                <X size={14} />
+                <X size={18} aria-hidden="true" />
               </button>
             )}
           </div>
 
-          {/* Category Navigation Menu Container */}
-          <div className="portal-menu-card">
-            <div className="portal-menu-header">
-              <span className="portal-menu-title">{isMalay ? "Kategori Produk" : "Categories"}</span>
-              <span className="portal-menu-subtitle">
-                {isMalay ? `${SIDEBAR_CATEGORIES.length} Kategori Rasmi` : `${SIDEBAR_CATEGORIES.length} Official Categories`}
-              </span>
-            </div>
-
-            <nav className="portal-category-list" aria-label={isMalay ? "Kategori Produk" : "Product Categories"}>
-              {SIDEBAR_CATEGORIES.map((cat) => {
-                const isActive = selectedCategory === cat;
-                const count = categoryCounts[cat] || 0;
-                const details = getCategoryDetails(cat);
-
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => { setSelectedCategory(cat); setSelectedBrands([]); setPage(1); }}
-                    className={`portal-cat-item ${isActive ? "portal-cat-active" : ""}`}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    <div className="portal-cat-left">
-                      <div className={`portal-cat-squircle ${details.badgeClass}`}>
-                        {details.icon}
-                      </div>
-                      <span className="portal-cat-name">{details.label}</span>
-                    </div>
-                    <span className="portal-cat-subcount">{count}</span>
-                  </button>
-                );
-              })}
-
-              {/* All Products Item */}
+          <ul className="store-dept-list">
+            <li>
               <button
                 type="button"
-                onClick={() => { setSelectedCategory("ALL"); setSelectedBrands([]); setPage(1); }}
-                className={`portal-cat-item ${selectedCategory === "ALL" ? "portal-cat-active" : ""}`}
-                aria-current={selectedCategory === "ALL" ? "page" : undefined}
+                onClick={() => {
+                  setSelectedCategory("ALL");
+                  setPage(1);
+                  setMobileFilterOpen(false);
+                }}
+                className={`store-dept-link ${selectedCategory === "ALL" ? "is-active" : ""}`}
+                style={{ minHeight: 44 }}
               >
-                <div className="portal-cat-left">
-                  <div className="portal-cat-squircle badge-all">
-                    <LayoutGrid size={16} strokeWidth={2} />
-                  </div>
-                  <span className="portal-cat-name">{isMalay ? "SEMUA PRODUK" : "ALL PRODUCTS"}</span>
-                </div>
-                <span className="portal-cat-subcount">{masterProducts.length}</span>
+                <span>{isMalay ? "Semua Barangan" : "All Products"}</span>
+                <span className="store-dept-count tabular-nums">
+                  {allDatabaseItems.length.toLocaleString()}
+                </span>
               </button>
-            </nav>
-          </div>
+            </li>
+            {DATABASE_CATEGORIES.map((cat) => (
+              <li key={cat}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setPage(1);
+                    setMobileFilterOpen(false);
+                  }}
+                  className={`store-dept-link ${selectedCategory === cat ? "is-active" : ""}`}
+                  style={{ minHeight: 44 }}
+                >
+                  <span className="store-dept-title">{cat}</span>
+                  <span className="store-dept-count tabular-nums">
+                    {(categoryCounts[cat] || 0).toLocaleString()}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
 
-          {/* Brand Filter Menu */}
-          {availableBrands.length > 0 && (
-            <div className="portal-menu-card portal-brand-card">
-              <div className="portal-menu-header">
-                <div className="portal-menu-title-with-icon">
-                  <SlidersHorizontal size={14} />
-                  <span className="portal-menu-title">{isMalay ? "Jenama / Pengeluar" : "Filter by Brand"}</span>
-                </div>
-                {selectedBrands.length > 0 && (
-                  <button 
-                    type="button" 
-                    onClick={() => { setSelectedBrands([]); setPage(1); }}
-                    className="portal-brand-reset-btn"
-                  >
-                    {isMalay ? "Set Semula" : "Reset"}
-                  </button>
-                )}
-              </div>
-
-              <div className="portal-brand-checklist">
-                {availableBrands.map(([brand, count]) => {
-                  const isChecked = selectedBrands.includes(brand);
-                  return (
-                    <label key={brand} className={`portal-brand-row ${isChecked ? "portal-brand-row-selected" : ""}`}>
-                      <div className="portal-brand-checkbox-wrap">
-                        <input 
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => handleBrandToggle(brand)}
-                          className="portal-brand-native-checkbox"
-                        />
-                        <div className={`portal-brand-custom-checkbox ${isChecked ? "checked" : ""}`}>
-                          {isChecked && <Check size={11} strokeWidth={3} />}
-                        </div>
-                      </div>
-                      <span className="portal-brand-text">{brand}</span>
-                      <span className="portal-brand-count">{count}</span>
-                    </label>
-                  );
-                })}
-              </div>
+          {/* Contact Direct Info Box */}
+          <div className="store-sidebar-help">
+            <div className="store-sidebar-help-header">
+              <Truck size={16} className="text-blue" aria-hidden="true" />
+              <h4>{isMalay ? "Bekalan Tapak Pukal" : "Contractor Bulk Supply"}</h4>
             </div>
-          )}
+            <p>
+              {isMalay
+                ? "Hubungi kami melalui WhatsApp untuk harga pukal atau bekalan lori tapak binaan."
+                : "Direct tipper lorry dispatch & contractor wholesale quotation available daily."}
+            </p>
+            <a
+              href="https://wa.me/60199144743?text=Hello%20SKL%20Hardware%2C%20I%20would%20like%20to%20inquire%20about%20bulk%20materials%20pricing."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="store-sidebar-wa-btn"
+              style={{ minHeight: 44 }}
+            >
+              <MessageSquare size={14} aria-hidden="true" />
+              <span>WhatsApp SKL Direct</span>
+            </a>
+          </div>
         </aside>
 
-        {/* Right Main Content Area */}
-        <main className="portal-content">
-          {/* Breadcrumb Row */}
-          <div className="portal-breadcrumb-row">
-            <button type="button" onClick={onBackToHome} className="portal-home-icon-btn" title="Home">
-              <Home size={14} />
-            </button>
-            <ChevronRight size={13} className="portal-crumb-sep" />
-            <span 
-              onClick={() => { setSelectedCategory("ALL"); setPage(1); }} 
-              className="portal-crumb-link"
-            >
-              {isMalay ? "Katalog Produk" : "Product Catalogue"}
-            </span>
-            {selectedCategory !== "ALL" && (
-              <>
-                <ChevronRight size={13} className="portal-crumb-sep" />
-                <span className="portal-crumb-current">{getCategoryDetails(selectedCategory).label}</span>
-              </>
-            )}
-            <span className="portal-crumb-total">
-              {isMalay 
-                ? `(Memaparkan ${paginatedProducts.length} daripada ${filteredProducts.length} produk • Maksimum 20 per halaman)` 
-                : `(Showing ${paginatedProducts.length} of ${filteredProducts.length} products • Max 20 per page)`}
-            </span>
-          </div>
-
-          {/* Active Filters Clear Button & Search Scope */}
-          {(selectedBrands.length > 0 || searchQuery || selectedCategory !== "ALL") && (
-            <div className="portal-active-filters-bar">
-              <div className="portal-active-filters-content">
-                <span className="portal-filter-tag-label">{isMalay ? "Penapis Aktif:" : "Active Filters:"}</span>
-                {selectedCategory !== "ALL" && (
-                  <span className="portal-filter-pill portal-filter-cat">
-                    {isMalay ? "Kategori:" : "Category:"} {getCategoryDetails(selectedCategory).label}
-                    {searchQuery && (
-                      <button 
-                        type="button" 
-                        onClick={() => { setSelectedCategory("ALL"); setPage(1); }}
-                        className="portal-filter-scope-btn"
-                        title={isMalay ? "Tukar carian ke Semua Kategori" : "Search in All Categories"}
-                      >
-                        {isMalay ? "(Cari dalam Semua)" : "(Search All)"}
-                      </button>
-                    )}
-                  </span>
-                )}
-                {searchQuery && (
-                  <span className="portal-filter-pill">
-                    {isMalay ? "Carian:" : "Search:"} "{searchQuery}"
-                    <button 
-                      type="button" 
-                      onClick={() => { setSearchQuery(""); setPage(1); }} 
-                      aria-label={isMalay ? "Padam carian" : "Clear search"}
-                    >
-                      <X size={12} />
-                    </button>
-                  </span>
-                )}
-                {selectedBrands.map(b => (
-                  <span key={b} className="portal-filter-pill">
-                    {b}
-                    <button 
-                      type="button" 
-                      onClick={() => handleBrandToggle(b)} 
-                      aria-label={isMalay ? `Padam ${b}` : `Remove ${b}`}
-                    >
-                      <X size={12} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <button 
-                type="button" 
-                onClick={() => { setSearchQuery(""); setSelectedBrands([]); setSelectedCategory("ALL"); setPage(1); }}
-                className="portal-clear-filters-btn"
+        {/* Right Content Area: Store Toolbar + Products */}
+        <main className="store-main">
+          {/* Active Search & Filter Banner */}
+          {searchQuery && (
+            <div className="store-active-query-bar">
+              <span>
+                Found <strong className="tabular-nums">{filteredItems.length.toLocaleString()}</strong> products for "
+                <strong>{searchQuery}</strong>" in{" "}
+                <strong>{selectedCategory === "ALL" ? "All Departments" : selectedCategory}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setPage(1);
+                }}
+                className="store-clear-search-btn"
+                style={{ minHeight: 44, padding: "0 8px" }}
               >
-                {isMalay ? "Padam Semua" : "Clear All"}
+                Clear Search
               </button>
             </div>
           )}
 
-          {/* 4 Columns x Max 5 Rows Grid (20 items max per page) */}
-          {paginatedProducts.length === 0 ? (
-            <div className="portal-empty-results">
-              {crossCategoryMatches.length > 0 ? (
-                <div className="portal-cross-category-notice">
-                  <h3>
-                    {isMalay 
-                      ? `Tiada padanan "${searchQuery}" dalam kategori ${getCategoryDetails(selectedCategory).label}` 
-                      : `No match for "${searchQuery}" in ${getCategoryDetails(selectedCategory).label}`}
-                  </h3>
-                  <p>
-                    {isMalay ? (
-                      <>Namun, terdapat <strong>{crossCategoryMatches.length} produk sepadan</strong> dalam kategori lain ({crossCategoryNames.join(", ")}).</>
-                    ) : (
-                      <>Found <strong>{crossCategoryMatches.length} matching products</strong> in other categories ({crossCategoryNames.join(", ")}).</>
-                    )}
-                  </p>
-                  <button 
-                    type="button"
-                    onClick={() => { setSelectedCategory("ALL"); setPage(1); }}
-                    className="portal-empty-btn"
-                  >
-                    {isMalay 
-                      ? `Lihat ${crossCategoryMatches.length} Produk dalam Semua Kategori` 
-                      : `View ${crossCategoryMatches.length} Products in All Categories`}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <h3>{isMalay ? "Tiada produk ditemui" : "No products found"}</h3>
-                  <p>
-                    {isMalay 
-                      ? "Sila padam carian atau pilih kategori lain dari menu di sebelah kiri." 
-                      : "Please clear your search or select another category from the sidebar menu."}
-                  </p>
-                  <button 
-                    type="button"
-                    onClick={() => { setSelectedCategory("BUILDING MATERIALS"); setSearchQuery(""); setSelectedBrands([]); setPage(1); }}
-                    className="portal-empty-btn"
-                  >
-                    {isMalay ? "Kembali ke Bahan Binaan" : "Back to Building Materials"}
-                  </button>
-                </>
-              )}
+          {/* Store Toolbar: Counts, Sorting & View Toggle */}
+          <div className="store-toolbar">
+            <div className="store-toolbar-count tabular-nums">
+              Showing <strong>{startIndex.toLocaleString()}-{endIndex.toLocaleString()}</strong> of{" "}
+              <strong>{filteredItems.length.toLocaleString()}</strong> products
             </div>
-          ) : (
-            <div className="portal-product-grid">
-              {paginatedProducts.map((p, index) => {
-                return (
-                  <article 
-                    key={`product-card-${p.id}-${index}`} 
-                    className="portal-card portal-card-animated"
-                    style={{ animationDelay: `${(index % 10) * 35}ms` }}
-                  >
-                    {/* Clean Framed Image with Hover Quick View Popup */}
-                    <div 
-                      className="portal-card-media"
-                      onClick={() => setSelectedProduct(p)}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={isMalay ? `Lihat maklumat ${p.title}` : `View details of ${p.title}`}
-                    >
-                      <img 
-                        src={assetUrl(p.localImage)} 
-                        alt={p.title} 
-                        className="portal-card-img"
-                        loading="lazy"
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          const fb = assetUrl(p.fallbackImage);
-                          if (target.src !== fb) {
-                            target.src = fb;
-                          }
-                        }}
-                      />
 
-                      {/* Apple Quick-View Pill Overlay on Hover */}
-                      <div className="portal-card-hover-overlay">
-                        <span className="portal-card-quick-pill">
-                          <Eye size={13} strokeWidth={2.2} />
-                          <span>{isMalay ? "Lihat Butiran" : "View Specs"}</span>
+            <div className="store-toolbar-controls">
+              {/* Sort Selector */}
+              <div className="store-sort-wrap">
+                <ArrowUpDown size={14} className="store-sort-icon" aria-hidden="true" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "relevance" | "name" | "sku")}
+                  className="store-sort-select"
+                  style={{ minHeight: 44 }}
+                  aria-label="Sort products"
+                >
+                  <option value="relevance">Default Order</option>
+                  <option value="name">Product Name (A-Z)</option>
+                  <option value="sku">SKU Code</option>
+                </select>
+              </div>
+
+              {/* View Switcher: Store Grid vs Table View */}
+              <div className="store-view-toggle">
+                <button
+                  type="button"
+                  className={`store-view-btn ${viewMode === "store" ? "is-active" : ""}`}
+                  style={{ minHeight: 44 }}
+                  onClick={() => setViewMode("store")}
+                  title="Shopping Store Grid View"
+                  aria-label="Grid view"
+                >
+                  <LayoutGrid size={15} aria-hidden="true" />
+                  <span>Store Grid</span>
+                </button>
+                <button
+                  type="button"
+                  className={`store-view-btn ${viewMode === "table" ? "is-active" : ""}`}
+                  style={{ minHeight: 44 }}
+                  onClick={() => setViewMode("table")}
+                  title="List Table View"
+                  aria-label="List table view"
+                >
+                  <List size={15} aria-hidden="true" />
+                  <span>Data Table</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Empty State */}
+          {filteredItems.length === 0 ? (
+            <div className="store-empty-box">
+              <Package size={44} strokeWidth={1.5} className="store-empty-icon" />
+              <h3>{isMalay ? "Tiada produk ditemui" : "No matching products found"}</h3>
+              <p>
+                {isMalay
+                  ? "Cuba kata carian berbeza atau pilih jabatan lain dari senarai."
+                  : "Try checking your spelling, removing keywords, or switching departments."}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory("ALL");
+                  setSearchQuery("");
+                  setFilterPhotosOnly(false);
+                  setPage(1);
+                }}
+                className="btn btn-primary"
+              >
+                Browse All Products
+              </button>
+            </div>
+          ) : viewMode === "store" ? (
+            /* =========================================================================
+               NICE SHOPPING STORE PRODUCT GRID (STAGGERED ANIMATIONS, ZERO CURVES)
+               ========================================================================= */
+            <div className="store-grid" key={`page-${page}-${selectedCategory}`}>
+              {paginatedItems.map((item, idx) => {
+                const resolvedImg = getProductImageUrl(item.image);
+                const activeVar = cardVariants[item.itemCode] || (item.variants && item.variants.length > 0 ? item.variants[0] : null);
+                const displayCode = activeVar ? activeVar.itemCode : item.itemCode;
+                const displayBarcode = activeVar ? activeVar.barcode : item.barcode;
+                const displaySpec = activeVar ? activeVar.spec : item.spec;
+
+                return (
+                  <article
+                    key={`${item.itemCode}-${idx}`}
+                    className="store-card store-card-animated"
+                    style={{ "--card-index": idx } as React.CSSProperties}
+                    onClick={() => openItemModal(item)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openItemModal(item);
+                      }
+                    }}
+                  >
+                    {/* Product Photo Showcase */}
+                    <div className="store-card-media">
+                      {resolvedImg ? (
+                        <img
+                          src={resolvedImg}
+                          alt={item.description}
+                          loading="lazy"
+                          className="store-card-img"
+                          onError={(e) => {
+                            const target = e.currentTarget as HTMLElement;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent && !parent.querySelector(".store-card-no-img")) {
+                              const fallback = document.createElement("div");
+                              fallback.className = "store-card-no-img";
+                              fallback.innerHTML = "<span>Verified Hardware Spec</span>";
+                              parent.appendChild(fallback);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="store-card-no-img">
+                          <Package size={36} strokeWidth={1.4} />
+                          <span>Standard Hardware Spec</span>
+                        </div>
+                      )}
+
+                      {/* Multi-Size Count Badge (No In-Stock or OUM slop) */}
+                      {item.variants && item.variants.length > 1 && (
+                        <div className="store-card-badge-row">
+                          <span className="store-sizes-badge">
+                            {item.variants.length} Sizes Available
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Quick Hover Overlay */}
+                      <div className="store-card-hover-overlay">
+                        <span className="store-quick-view-text">
+                          <Eye size={13} /> Quick Specs
                         </span>
                       </div>
                     </div>
 
-                    {/* Product Meta */}
-                    <div className="portal-card-body">
-                      <div className="portal-card-meta-top">
-                        <span className="portal-card-cat-badge">{p.subCategory || p.mainCategory}</span>
-                        {p.unit && (
-                          <span className="portal-card-uom-tag" title={`Unit of Measurement: ${p.unit.toUpperCase()}`}>
-                            {p.unit.toUpperCase()}
-                          </span>
-                        )}
-                        {p.brand && p.brand !== "SKL Hardware" && p.brand !== "SKL Quarry Direct" && (
-                          <span className="portal-card-brand-tag">{p.brand}</span>
+                      {/* Product Card Content */}
+                    <div className="store-card-body">
+                      <div className="store-card-meta-top">
+                        <span className="store-card-dept">{item.category}</span>
+                        {item.brand && item.brand !== "Standard Trade" && (
+                          <span className="store-card-brand-pill">{item.brand}</span>
                         )}
                       </div>
 
-                      <h3 
-                        className="portal-card-title"
-                        title={p.title}
-                        onClick={() => setSelectedProduct(p)}
-                      >
-                        {p.title}
+                      <h3 className="store-card-title" title={item.description}>
+                        <HighlightedText text={item.description} queryTokens={queryTokens} />
                       </h3>
 
-                      {p.spec && (
-                        <p className="portal-card-spec" title={p.spec}>{p.spec}</p>
+                      {/* Interactive Size Variant Dropdown right on Card */}
+                      {item.variants && item.variants.length > 1 ? (
+                        <div className="store-card-variant-box" onClick={(e) => e.stopPropagation()}>
+                          <label className="store-card-variant-label" htmlFor={`variant-select-${item.itemCode}`}>
+                            Size:
+                          </label>
+                          <select
+                            id={`variant-select-${item.itemCode}`}
+                            className="store-card-variant-dropdown"
+                            style={{ minHeight: 44 }}
+                            value={activeVar?.itemCode || item.itemCode}
+                            onChange={(e) => {
+                              const chosen = item.variants?.find((v) => v.itemCode === e.target.value);
+                              if (chosen) {
+                                setCardVariants((prev) => ({
+                                  ...prev,
+                                  [item.itemCode]: chosen
+                                }));
+                              }
+                            }}
+                          >
+                            {item.variants.map((v) => (
+                              <option key={v.itemCode} value={v.itemCode}>
+                                {v.spec}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        displaySpec && displaySpec !== "Standard Jobsite Grade" && (
+                          <div className="store-card-spec-row">
+                            <Tag size={11} className="store-spec-icon" aria-hidden="true" />
+                            <span className="store-card-spec-val">{displaySpec}</span>
+                          </div>
+                        )
                       )}
 
-                      {/* Dynamic Cart & Action Buttons */}
-                      <div className="portal-card-action">
-                        {getItemQuantity(p.id) === 0 ? (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addToCart(p, 1);
-                            }}
-                            className="portal-card-add-btn portal-card-add-full"
-                            title={isMalay ? `Tambah ${p.title} ke Senarai Tempahan` : `Add ${p.title} to Order Cart`}
-                          >
-                            <Plus size={14} strokeWidth={2.5} />
-                            <span>{isMalay ? "+ Tambah" : "+ Add"} ({(p.unit || "UNIT").toUpperCase()})</span>
-                          </button>
-                        ) : (
-                          <div className="portal-card-stepper-full">
-                            <button 
-                              type="button" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateQuantity(p.id, getItemQuantity(p.id) - 1);
-                              }}
-                              className="portal-card-step-btn"
-                              aria-label={isMalay ? "Kurangkan kuantiti" : "Decrease quantity"}
-                            >
-                              <Minus size={13} strokeWidth={2.5} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openCheckout();
-                              }}
-                              className="portal-card-stepper-center-btn"
-                              title={isMalay ? "Buka Senarai Tempahan" : "Open Order Cart"}
-                            >
-                              <span className="portal-card-step-val tabular-nums">{getItemQuantity(p.id)}</span>
-                              <span className="portal-card-step-lbl">{(p.unit || "UNIT").toUpperCase()}</span>
-                            </button>
-                            <button 
-                              type="button" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateQuantity(p.id, getItemQuantity(p.id) + 1);
-                              }}
-                              className="portal-card-step-btn"
-                              aria-label={isMalay ? "Tambah kuantiti" : "Increase quantity"}
-                            >
-                              <Plus size={13} strokeWidth={2.5} />
-                            </button>
-                          </div>
-                        )}
+                      <div className="store-card-meta">
+                        <div className="store-card-barcode">
+                          <Barcode size={13} aria-hidden="true" />
+                          <code className="tabular-nums">
+                            <HighlightedText text={displayBarcode} queryTokens={queryTokens} />
+                          </code>
+                        </div>
+                        <span className="store-card-sku tabular-nums">SKU: {displayCode}</span>
+                      </div>
+
+                      {/* Store Card Footer: Inquire / View Button */}
+                      <div className="store-card-footer">
+                        <button
+                          type="button"
+                          className="store-card-action-btn"
+                          style={{ minHeight: 44 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openItemModal(item);
+                          }}
+                        >
+                          <Eye size={14} aria-hidden="true" />
+                          <span>View Product</span>
+                        </button>
                       </div>
                     </div>
                   </article>
                 );
               })}
             </div>
+          ) : (
+            /* =========================================================================
+               DATA TABLE VIEW (FOR QUICK AUDIT)
+               ========================================================================= */
+            <div className="db-table-container">
+              <table className="db-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "50px" }}>#</th>
+                    <th style={{ width: "64px" }}>Photo</th>
+                    <th style={{ width: "170px" }}>
+                      <span className="db-th-flex">
+                        <Barcode size={14} />
+                        Barcode / Code
+                      </span>
+                    </th>
+                    <th>Description</th>
+                    <th style={{ width: "140px" }}>Brand / Spec</th>
+                    <th style={{ width: "190px" }}>
+                      <span className="db-th-flex">
+                        <Layers size={14} />
+                        Category
+                      </span>
+                    </th>
+                    <th style={{ width: "80px", textAlign: "right" }}>Detail</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedItems.map((item, idx) => {
+                    const rowNumber = (page - 1) * itemsPerPage + idx + 1;
+                    const resolvedImg = getProductImageUrl(item.image);
+                    return (
+                      <tr
+                        key={`${item.itemCode}-${idx}`}
+                        className="db-row db-row-clickable"
+                        onClick={() => setSelectedItem(item)}
+                      >
+                        <td className="db-cell-num tabular-nums">{rowNumber}</td>
+                        <td className="db-cell-thumb">
+                          {resolvedImg ? (
+                            <img
+                              src={resolvedImg}
+                              alt={item.description}
+                              loading="lazy"
+                              className="db-thumb-img"
+                              onError={(e) => {
+                                const target = e.currentTarget as HTMLElement;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent && !parent.querySelector(".db-thumb-empty")) {
+                                  const fallback = document.createElement("div");
+                                  fallback.className = "db-thumb-empty";
+                                  fallback.innerText = "Spec";
+                                  parent.appendChild(fallback);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="db-thumb-empty" title="Standard Specification Item">
+                              Spec
+                            </div>
+                          )}
+                        </td>
+                        <td className="db-cell-code">
+                          <code className="db-barcode-pill tabular-nums">
+                            <HighlightedText text={item.barcode} queryTokens={queryTokens} />
+                          </code>
+                        </td>
+                        <td className="db-cell-desc">
+                          <div className="db-desc-text">
+                            <HighlightedText text={item.description} queryTokens={queryTokens} />
+                          </div>
+                        </td>
+                        <td className="db-cell-spec">
+                          <span className="db-spec-pill">{item.brand || "Standard Trade"}</span>
+                        </td>
+                        <td className="db-cell-cat">
+                          <span className="db-cat-tag">{item.category}</span>
+                        </td>
+                        <td className="db-cell-action" style={{ textAlign: "right" }}>
+                          <button
+                            type="button"
+                            className="db-row-view-btn"
+                            style={{ minHeight: 44, minWidth: 44 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedItem(item);
+                            }}
+                            title="Open item specifications & photo"
+                          >
+                            <Eye size={13} aria-hidden="true" />
+                            <span>View</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
 
-          {/* Numbered Pagination Bar on Bottom for Performance & Optimization */}
+          {/* Clean Pagination Bar */}
           {totalPages > 1 && (
-            <div className="portal-pagination-bar">
-              <button 
+            <div className="store-pagination-bar">
+              <button
                 type="button"
                 disabled={page === 1}
-                onClick={() => handlePageChange(Math.max(1, page - 1))}
-                className="portal-page-nav-btn"
-                aria-label={isMalay ? "Halaman sebelumnya" : "Previous page"}
+                onClick={() => handlePageChange(page - 1)}
+                className="store-page-nav-btn"
+                style={{ minHeight: 44, minWidth: 44 }}
               >
-                <ChevronLeft size={16} />
-                <span>{isMalay ? "Sebelum" : "Prev"}</span>
+                <ChevronLeft size={16} aria-hidden="true" />
+                <span>Prev</span>
               </button>
 
-              <div className="portal-page-numbers">
-                {paginationRange.map((item, index) => {
-                  if (item === "...") {
-                    return (
-                      <span key={`dots-${index}`} className="portal-page-dots">
-                        ...
-                      </span>
-                    );
-                  }
-                  const pageNum = item as number;
-                  const isCurrent = pageNum === page;
-                  return (
-                    <button
-                      key={pageNum}
-                      type="button"
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`portal-page-num-btn ${isCurrent ? "portal-page-num-active" : ""}`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-              </div>
+              <span className="store-page-status tabular-nums">
+                Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+              </span>
 
-              <button 
+              <button
                 type="button"
                 disabled={page === totalPages}
-                onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-                className="portal-page-nav-btn"
-                aria-label={isMalay ? "Halaman seterusnya" : "Next page"}
+                onClick={() => handlePageChange(page + 1)}
+                className="store-page-nav-btn"
+                style={{ minHeight: 44, minWidth: 44 }}
               >
-                <span>{isMalay ? "Seterusnya" : "Next"}</span>
-                <ChevronRight size={16} />
+                <span>Next</span>
+                <ChevronRight size={16} aria-hidden="true" />
               </button>
             </div>
           )}
         </main>
       </div>
 
-      {/* Floating Order / Checkout Dock on Catalogue View */}
-      {totalCount > 0 && (
-        <aside className="portal-floating-cart-dock" aria-label={isMalay ? "Akses Pantas Senarai Tempahan" : "Quick Access Order Cart"}>
-          <button
-            type="button"
-            onClick={openCheckout}
-            className="portal-cart-dock-btn"
+      {/* =========================================================================
+          NICE & BIG SCREEN PRODUCT POP-UP MENU / MODAL (ZERO CURVES, PURE WHITE)
+         ========================================================================= */}
+      {selectedItem && (
+        <div
+          className="db-modal-overlay"
+          onClick={() => setSelectedItem(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-item-title"
+        >
+          <div
+            className="db-modal-card db-modal-animated"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="dock-left-content">
-              <div className="dock-cart-badge-icon">
-                <ShoppingBag size={18} strokeWidth={2.2} />
-                <span className="dock-pill-number tabular-nums">{totalCount}</span>
+            {/* Modal Top Bar */}
+            <div className="db-modal-topbar">
+              <div className="db-modal-topbar-left">
+                <span className="db-modal-cat-badge">{selectedItem.category}</span>
+                {selectedIndex >= 0 && (
+                  <span className="db-modal-counter tabular-nums">
+                    Product <strong>{selectedIndex + 1}</strong> of <strong>{filteredItems.length.toLocaleString()}</strong>
+                  </span>
+                )}
               </div>
-              <div className="dock-label-group">
-                <span className="dock-label-main">{isMalay ? "Senarai Tempahan" : "Order Cart"}</span>
-                <span className="dock-label-sub tabular-nums">
-                  {isMalay 
-                    ? `${totalCount} dipilih • Siang & Malam` 
-                    : `${totalCount} selected • Day & Night`}
-                </span>
-              </div>
-            </div>
-            <div className="dock-right-action">
-              <span>Checkout</span>
-              <ChevronRight size={16} strokeWidth={2.4} />
-            </div>
-          </button>
-        </aside>
-      )}
 
-      {/* Lightbox / Full Spec & Description Modal */}
-      <CatalogueModal 
-        product={selectedProduct as any}
-        onClose={() => setSelectedProduct(null)}
-      />
+              <div className="db-modal-topbar-actions">
+                <div className="db-modal-nav-group">
+                  <button
+                    type="button"
+                    className="db-modal-nav-btn"
+                    style={{ minHeight: 44, minWidth: 44 }}
+                    disabled={selectedIndex <= 0}
+                    onClick={handlePrevItem}
+                    title="Previous item (Left Arrow)"
+                  >
+                    <ChevronLeft size={16} aria-hidden="true" />
+                    <span>Prev</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="db-modal-nav-btn"
+                    style={{ minHeight: 44, minWidth: 44 }}
+                    disabled={selectedIndex >= filteredItems.length - 1}
+                    onClick={handleNextItem}
+                    title="Next item (Right Arrow)"
+                  >
+                    <span>Next</span>
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  className="db-modal-close-btn"
+                  style={{ minWidth: 44, minHeight: 44 }}
+                  onClick={() => setSelectedItem(null)}
+                  aria-label="Close dialog (Escape)"
+                >
+                  <X size={20} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body: Big Screen Photo + Specs */}
+            <div className="db-modal-body">
+              {/* Left Column: Big Product Photo Frame */}
+              <div className="db-modal-media-col">
+                <div className="db-modal-img-frame">
+                  {selectedItem.image ? (
+                    <img
+                      src={getProductImageUrl(selectedItem.image)}
+                      alt={selectedItem.description}
+                      className="db-modal-img"
+                    />
+                  ) : (
+                    <div className="db-modal-no-img">
+                      <Package size={52} strokeWidth={1.5} className="db-modal-no-img-icon" aria-hidden="true" />
+                      <span className="db-modal-no-img-title">Standard Specification Item</span>
+                      <span className="db-modal-no-img-sub">
+                        Physical inventory available at Bandar Seri Coalfields warehouse
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {selectedItem.image && (
+                  <div className="db-modal-img-caption">
+                    <span>SKL Hardware Master Inventory</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Information & Direct Inquiries */}
+              <div className="db-modal-info-col">
+                <div className="db-modal-sku-row">
+                  <span className="db-modal-sku-label">SKU Code:</span>
+                  <strong className="db-modal-sku-value tabular-nums">
+                    {modalVariant?.itemCode || selectedItem.itemCode}
+                  </strong>
+                  <span className="db-modal-dept-badge">{selectedItem.category}</span>
+                </div>
+
+                <h2 id="modal-item-title" className="db-modal-title">
+                  {selectedItem.description}
+                </h2>
+
+                {/* Multi-Size Variant Selector in Modal */}
+                {selectedItem.variants && selectedItem.variants.length > 1 && (
+                  <div className="db-modal-variants-section">
+                    <div className="db-modal-variants-top">
+                      <span className="db-modal-variants-title tabular-nums">
+                        Available Sizes ({selectedItem.variants.length}):
+                      </span>
+                      <span className="db-modal-variants-active-spec">
+                        Active: <strong>{modalVariant?.spec || selectedItem.spec}</strong>
+                      </span>
+                    </div>
+
+                    <div className="db-modal-variant-chips">
+                      {selectedItem.variants.map((v) => {
+                        const isSelected = (modalVariant?.itemCode || selectedItem.itemCode) === v.itemCode;
+                        return (
+                          <button
+                            key={v.itemCode}
+                            type="button"
+                            className={`db-modal-variant-chip ${isSelected ? "is-active" : ""}`}
+                            style={{ minHeight: 44, minWidth: 44 }}
+                            onClick={() => {
+                              setModalVariant(v);
+                              setCopiedBarcode(false);
+                            }}
+                          >
+                            <span>{v.spec}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Prominent Barcode Box with 1-Click Copy */}
+                <div className="db-modal-barcode-box">
+                  <div className="db-modal-barcode-top">
+                    <span className="db-modal-barcode-label">
+                      <Barcode size={15} aria-hidden="true" />
+                      Barcode / EAN
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyBarcode(modalVariant?.barcode || selectedItem.barcode)}
+                      className="db-modal-copy-btn"
+                      style={{ minHeight: 44, minWidth: 44 }}
+                      title="Copy Barcode to clipboard"
+                    >
+                      {copiedBarcode ? (
+                        <>
+                          <Check size={14} className="text-emerald" aria-hidden="true" />
+                          <span className="text-emerald">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} aria-hidden="true" />
+                          <span>Copy Barcode</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="db-modal-barcode-code tabular-nums">
+                    {modalVariant?.barcode || selectedItem.barcode || "No Barcode Assigned"}
+                  </div>
+                </div>
+
+                {/* Warehouse Specifications Matrix */}
+                <div className="db-modal-specs-grid">
+                  <div className="db-modal-spec-cell">
+                    <span className="db-spec-label">Brand / Manufacturer</span>
+                    <span className="db-spec-val">{selectedItem.brand || "Standard Trade"}</span>
+                  </div>
+                  <div className="db-modal-spec-cell">
+                    <span className="db-spec-label">Selected Specification</span>
+                    <span className="db-spec-val">{modalVariant?.spec || selectedItem.spec || "Standard Jobsite Grade"}</span>
+                  </div>
+                  <div className="db-modal-spec-cell">
+                    <span className="db-spec-label">Category Department</span>
+                    <span className="db-spec-val">{selectedItem.category}</span>
+                  </div>
+                  <div className="db-modal-spec-cell">
+                    <span className="db-spec-label">Depot Facility</span>
+                    <span className="db-spec-val">Bandar Seri Coalfields</span>
+                  </div>
+                </div>
+
+                {/* Application & Technical Highlights */}
+                {selectedItem.application && (
+                  <div className="db-modal-app-box">
+                    <span className="db-spec-label">Contractor Application</span>
+                    <p className="db-modal-app-text">{selectedItem.application}</p>
+                  </div>
+                )}
+
+                {/* Direct Action Buttons */}
+                <div className="db-modal-actions">
+                  <a
+                    href={`https://wa.me/60199144743?text=${encodeURIComponent(
+                      `Hello SKL Hardware, I would like to inquire about:\n*${selectedItem.description}*\nSize / Spec: ${modalVariant?.spec || selectedItem.spec}\nSKU Code: ${modalVariant?.itemCode || selectedItem.itemCode}\nBarcode: ${modalVariant?.barcode || selectedItem.barcode}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="db-modal-btn db-modal-btn-wa"
+                    style={{ minHeight: 44 }}
+                  >
+                    <MessageSquare size={16} aria-hidden="true" />
+                    <span>WhatsApp Inquiry for Pricing</span>
+                  </a>
+
+                  <a
+                    href="tel:+60199144743"
+                    className="db-modal-btn db-modal-btn-call"
+                    style={{ minHeight: 44 }}
+                  >
+                    <Phone size={16} aria-hidden="true" />
+                    <span className="tabular-nums">Call Warehouse (+60 19-914 4743)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

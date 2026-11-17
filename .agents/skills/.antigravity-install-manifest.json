@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-03T08:59:30.696Z",
+  "entries": [
+    "anti-slop-design",
+    "anti-ui-slop",
+    "assay",
+    "brainstorming",
+    "systematic-debugging",
+    "tastegate",
+    "tokenleak",
+    "unslop",
+    "uxkin-research",
+    "what-could-break"
+  ]
+}

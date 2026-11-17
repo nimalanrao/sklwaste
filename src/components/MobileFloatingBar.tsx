@@ -19,7 +19,6 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({
     <nav 
       className="mobile-floating-bar" 
       aria-label="Mobile Quick Action Bar"
-      role="navigation"
     >
       <div className="mobile-floating-bar-inner">
         {/* 1. Call Boss (Day Shift) */}
@@ -30,7 +29,7 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({
           aria-label={`Call Boss ${businessData.phone.bossName}`}
         >
           <div className="mobile-float-icon-wrap icon-boss">
-            <Phone size={18} strokeWidth={2.2} />
+            <Phone size={18} strokeWidth={2} aria-hidden="true" />
           </div>
           <span className="mobile-float-label">
             {isMalay ? "Tuan Kedai" : "Call Boss"}
@@ -41,12 +40,12 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({
         <a 
           href={`tel:${businessData.phone.afterHoursTel}`}
           className="mobile-float-item mobile-float-night"
-          title={`Call Mr. Hari (After-hours / 24/7 on-call)`}
+          title="Call Mr. Hari (After-hours / 24/7 on-call)"
           aria-label="Call Mr. Hari After Hours"
         >
           <div className="mobile-float-icon-wrap icon-night">
-            <Moon size={18} strokeWidth={2.2} />
-            <span className="mobile-float-badge-dot" />
+            <Moon size={18} strokeWidth={2} aria-hidden="true" />
+            <span className="mobile-float-badge-dot" aria-hidden="true" />
           </div>
           <span className="mobile-float-label">
             {isMalay ? "Malam 24/7" : "Night Shift"}
@@ -61,7 +60,7 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({
           aria-label={currentView === "catalogue" ? "Go to Home Page" : "Open Hardware Catalogue"}
         >
           <div className="mobile-float-icon-wrap icon-cat">
-            <Layers size={18} strokeWidth={2.2} />
+            <Layers size={18} strokeWidth={2} aria-hidden="true" />
           </div>
           <span className="mobile-float-label">
             {currentView === "catalogue" ? (isMalay ? "Laman Utama" : "Home") : (isMalay ? "Katalog" : "Catalogue")}
@@ -78,7 +77,7 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({
           aria-label="Get Directions in Google Maps"
         >
           <div className="mobile-float-icon-wrap icon-directions">
-            <Navigation size={18} strokeWidth={2.2} />
+            <Navigation size={18} strokeWidth={2} aria-hidden="true" />
           </div>
           <span className="mobile-float-label">
             {isMalay ? "Arah Jalan" : "Directions"}

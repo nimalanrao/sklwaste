@@ -145,31 +145,24 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
           <button 
             type="button"
             className="apple-modal-close-btn" 
+            style={{ minWidth: 44, minHeight: 44 }}
             onClick={onClose}
             aria-label={isMalay ? "Tutup tetingkap produk" : "Close product details"}
             title={isMalay ? "Tutup (Esc)" : "Close (Esc)"}
           >
-            <X size={18} strokeWidth={2.4} />
+            <X size={18} strokeWidth={2.4} aria-hidden="true" />
           </button>
 
           <div className="apple-modal-layout">
             {/* Left Column: Visual Showcase & Trust Badges */}
             <div className="apple-modal-stage-col">
               {/* Clickable Image Card with Zoom Hint */}
-              <div 
+              <button
+                type="button"
                 className="apple-modal-image-card apple-modal-image-card-clickable"
                 onClick={() => {
                   setIsLightboxOpen(true);
                   setZoomScale(1);
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setIsLightboxOpen(true);
-                    setZoomScale(1);
-                  }
                 }}
                 title={isMalay ? "Klik untuk besarkan imej" : "Click to enlarge image"}
                 aria-label={isMalay ? `Besarkan imej ${product.title}` : `Enlarge image of ${product.title}`}
@@ -188,11 +181,11 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 />
 
                 {/* Floating Apple Zoom Hint Pill */}
-                <div className="apple-modal-zoom-hint">
-                  <ZoomIn size={13} strokeWidth={2.4} />
+                <span className="apple-modal-zoom-hint">
+                  <ZoomIn size={13} strokeWidth={2.4} aria-hidden="true" />
                   <span>{isMalay ? "Besarkan" : "Zoom"}</span>
-                </div>
-              </div>
+                </span>
+              </button>
               
               {/* Apple Product Trust Indicators */}
               <div className="apple-modal-trust-box">
@@ -203,12 +196,12 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 
                 <div className="apple-trust-row">
                   <div className="apple-trust-item">
-                    <CheckCircle2 size={14} className="apple-trust-icon-green" />
+                    <CheckCircle2 size={14} className="apple-trust-icon-green" aria-hidden="true" />
                     <span>{isMalay ? "100% Tulen & Berkualiti" : "100% Genuine & Quality Assured"}</span>
                   </div>
-                  <span className="apple-trust-dot">•</span>
+                  <span className="apple-trust-dot" aria-hidden="true">•</span>
                   <div className="apple-trust-item">
-                    <Truck size={14} className="apple-trust-icon-blue" />
+                    <Truck size={14} className="apple-trust-icon-blue" aria-hidden="true" />
                     <span>{isMalay ? "Penghantaran Siang & Malam" : "Day & Night Site Delivery"}</span>
                   </div>
                 </div>
@@ -221,14 +214,14 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
               <div className="apple-modal-header">
                 <div className="apple-eyebrow-row">
                   <span className="apple-cat-pill">
-                    <Tag size={12} strokeWidth={2.2} />
+                    <Tag size={12} strokeWidth={2.2} aria-hidden="true" />
                     <span>{product.mainCategory}</span>
                   </span>
                   {product.brand && product.brand !== "SKL Hardware" && (
                     <span className="apple-brand-pill">{product.brand}</span>
                   )}
                   {inCartQty > 0 && (
-                    <span className="apple-incart-badge">
+                    <span className="apple-incart-badge tabular-nums">
                       {isMalay ? `${inCartQty} dalam senarai` : `${inCartQty} in cart`}
                     </span>
                   )}
@@ -243,7 +236,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
               <div className="apple-metric-grid">
                 <div className="apple-metric-cell">
                   <div className="apple-metric-header">
-                    <Wrench size={12} className="apple-metric-icon" />
+                    <Wrench size={12} className="apple-metric-icon" aria-hidden="true" />
                     <span className="apple-metric-label">{isMalay ? "Jenama" : "Brand"}</span>
                   </div>
                   <span className="apple-metric-value">{product.brand || "SKL Direct"}</span>
@@ -251,7 +244,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
 
                 <div className="apple-metric-cell">
                   <div className="apple-metric-header">
-                    <Layers size={12} className="apple-metric-icon" />
+                    <Layers size={12} className="apple-metric-icon" aria-hidden="true" />
                     <span className="apple-metric-label">{isMalay ? "Kategori" : "Category"}</span>
                   </div>
                   <span className="apple-metric-value">{product.subCategory || product.mainCategory}</span>
@@ -259,10 +252,10 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
 
                 <div className="apple-metric-cell">
                   <div className="apple-metric-header">
-                    <Package size={12} className="apple-metric-icon" />
-                    <span className="apple-metric-label">{isMalay ? "Unit Ukuran (UOM)" : "Unit of Measure (UOM)"}</span>
+                    <Package size={12} className="apple-metric-icon" aria-hidden="true" />
+                    <span className="apple-metric-label">{isMalay ? "Pembungkusan" : "Packaging"}</span>
                   </div>
-                  <span className="apple-metric-value font-semibold text-blue-600">{(product.unit || "UNIT").toUpperCase()}</span>
+                  <span className="apple-metric-value">{(product.unit || "UNIT").toUpperCase()}</span>
                 </div>
               </div>
 
@@ -270,7 +263,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
               <div className="apple-inset-grouped-container">
                 {product.description && (
                   <div className="apple-inset-row">
-                    <div className="apple-row-icon-squircle apple-squircle-blue">
+                    <div className="apple-row-icon-squircle apple-squircle-blue" aria-hidden="true">
                       <FileText size={15} strokeWidth={2} />
                     </div>
                     <div className="apple-row-content">
@@ -282,7 +275,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
 
                 {product.application && (
                   <div className="apple-inset-row">
-                    <div className="apple-row-icon-squircle apple-squircle-amber">
+                    <div className="apple-row-icon-squircle apple-squircle-amber" aria-hidden="true">
                       <Package size={15} strokeWidth={2} />
                     </div>
                     <div className="apple-row-content">
@@ -293,7 +286,7 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                 )}
 
                 <div className="apple-inset-row apple-row-guarantee">
-                  <div className="apple-row-icon-squircle apple-squircle-green">
+                  <div className="apple-row-icon-squircle apple-squircle-green" aria-hidden="true">
                     <ShieldCheck size={15} strokeWidth={2} />
                   </div>
                   <div className="apple-row-content">
@@ -316,18 +309,20 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                       type="button"
                       onClick={() => setModalQty(prev => Math.max(1, prev - 1))}
                       className="checkout-stepper-btn"
+                      style={{ minWidth: 44, minHeight: 44 }}
                       aria-label={isMalay ? "Kurangkan kuantiti" : "Decrease quantity"}
                     >
-                      <Minus size={13} strokeWidth={2.5} />
+                      <Minus size={13} strokeWidth={2.5} aria-hidden="true" />
                     </button>
                     <span className="checkout-stepper-value tabular-nums">{modalQty}</span>
                     <button 
                       type="button"
                       onClick={() => setModalQty(prev => prev + 1)}
                       className="checkout-stepper-btn"
+                      style={{ minWidth: 44, minHeight: 44 }}
                       aria-label={isMalay ? "Tambah kuantiti" : "Increase quantity"}
                     >
-                      <Plus size={13} strokeWidth={2.5} />
+                      <Plus size={13} strokeWidth={2.5} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -337,15 +332,16 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                     type="button"
                     onClick={handleAddToCart}
                     className={`apple-modal-add-btn ${justAdded ? "btn-just-added" : ""}`}
+                    style={{ minHeight: 44 }}
                   >
                     {justAdded ? (
                       <>
-                        <CheckCircle2 size={17} strokeWidth={2.4} />
-                        <span>{isMalay ? "Dimasukkan ke Senarai!" : "Added to Cart!"}</span>
+                        <CheckCircle2 size={17} strokeWidth={2.4} aria-hidden="true" />
+                        <span>{isMalay ? "Dimasukkan ke Senarai" : "Added to Cart"}</span>
                       </>
                     ) : (
                       <>
-                        <Plus size={17} strokeWidth={2.4} />
+                        <Plus size={17} strokeWidth={2.4} aria-hidden="true" />
                         <span>{isMalay ? "Tambah ke Senarai Pesanan" : "Add to Order Cart"}</span>
                       </>
                     )}
@@ -359,10 +355,11 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                         openCheckout();
                       }}
                       className="apple-modal-view-cart-btn"
+                      style={{ minHeight: 44 }}
                     >
-                      <ShoppingBag size={16} strokeWidth={2.2} />
-                      <span>{isMalay ? `Lihat Senarai (${totalCount})` : `View Cart (${totalCount})`}</span>
-                      <ArrowRight size={14} strokeWidth={2.2} />
+                      <ShoppingBag size={16} strokeWidth={2.2} aria-hidden="true" />
+                      <span className="tabular-nums">{isMalay ? `Lihat Senarai (${totalCount})` : `View Cart (${totalCount})`}</span>
+                      <ArrowRight size={14} strokeWidth={2.2} aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -375,18 +372,20 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   target="_blank"
                   rel="noopener noreferrer"
                   className="apple-btn-whatsapp"
+                  style={{ minHeight: 44 }}
                 >
-                  <MessageCircle size={17} strokeWidth={2.4} />
-                  <span>{isMalay ? "Tanya WhatsApp (019-914 4743)" : "WhatsApp Quote (019-914 4743)"}</span>
+                  <MessageCircle size={17} strokeWidth={2.4} aria-hidden="true" />
+                  <span className="tabular-nums">{isMalay ? "Tanya WhatsApp (019-914 4743)" : "WhatsApp Quote (019-914 4743)"}</span>
                 </a>
 
                 <a 
                   href={`tel:${businessData.phone.tel}`}
                   className="apple-btn-call"
+                  style={{ minHeight: 44 }}
                   title={isMalay ? `Panggil talian ${businessData.phone.display}` : `Call ${businessData.phone.display}`}
                 >
-                  <Phone size={15} strokeWidth={2.2} />
-                  <span>{businessData.phone.display}</span>
+                  <Phone size={15} strokeWidth={2.2} aria-hidden="true" />
+                  <span className="tabular-nums">{businessData.phone.display}</span>
                 </a>
               </div>
             </div>
@@ -420,10 +419,11 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   onClick={handleZoomOut}
                   disabled={zoomScale <= 1}
                   className="apple-lightbox-btn"
+                  style={{ minWidth: 44, minHeight: 44 }}
                   title={isMalay ? "Kecilkan [-]" : "Zoom out [-]"}
                   aria-label={isMalay ? "Kecilkan imej" : "Zoom out image"}
                 >
-                  <ZoomOut size={16} strokeWidth={2.2} />
+                  <ZoomOut size={16} strokeWidth={2.2} aria-hidden="true" />
                 </button>
                 <span className="apple-lightbox-zoom-text tabular-nums">{Math.round(zoomScale * 100)}%</span>
                 <button 
@@ -431,30 +431,33 @@ export const CatalogueModal: React.FC<CatalogueModalProps> = ({ product, onClose
                   onClick={handleZoomIn}
                   disabled={zoomScale >= 2.5}
                   className="apple-lightbox-btn"
+                  style={{ minWidth: 44, minHeight: 44 }}
                   title={isMalay ? "Besarkan [+]" : "Zoom in [+]"}
                   aria-label={isMalay ? "Besarkan imej" : "Zoom in image"}
                 >
-                  <ZoomIn size={16} strokeWidth={2.2} />
+                  <ZoomIn size={16} strokeWidth={2.2} aria-hidden="true" />
                 </button>
                 <button 
                   type="button" 
                   onClick={handleZoomReset}
                   className="apple-lightbox-btn"
+                  style={{ minWidth: 44, minHeight: 44 }}
                   title={isMalay ? "Reset saiz [0]" : "Reset zoom [0]"}
                   aria-label={isMalay ? "Reset saiz imej" : "Reset zoom"}
                 >
-                  <Maximize2 size={15} strokeWidth={2.2} />
+                  <Maximize2 size={15} strokeWidth={2.2} aria-hidden="true" />
                 </button>
               </div>
 
               <button 
                 type="button"
                 onClick={handleCloseLightbox}
-                className="apple-lightbox-close"
+                className="apple-lightbox-close-btn"
+                style={{ minWidth: 44, minHeight: 44 }}
                 aria-label={isMalay ? "Tutup paparan imej" : "Close image viewer"}
                 title={isMalay ? "Tutup (Esc)" : "Close (Esc)"}
               >
-                <X size={20} strokeWidth={2.4} />
+                <X size={20} strokeWidth={2.4} aria-hidden="true" />
               </button>
             </div>
           </header>

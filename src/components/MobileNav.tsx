@@ -8,8 +8,7 @@ import {
   Home, 
   Building2, 
   MapPin, 
-  PhoneCall,
-  Sparkles
+  PhoneCall
 } from "lucide-react";
 import { businessData } from "../data/business";
 import { LanguageToggle } from "./LanguageToggle";
@@ -124,12 +123,12 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     {
       id: "catalogue",
       label: t.nav.catalogue,
-      subtitle: language === "ms" ? "Simen, Pasir Guni, Paip & Alatan" : "Cement, Sand, Pipes & Tools",
+      subtitle: language === "ms" ? "Katalog & Inventori Penuh" : "Store Inventory & Hardware Supplies",
       icon: Layers,
       iconClass: "nav-icon-catalogue",
       view: "catalogue" as const,
       isSpecial: true,
-      badge: language === "ms" ? "Paling Popular" : "Featured",
+      badge: language === "ms" ? "9,974 Item" : "9,974 Items",
       isActive: currentView === "catalogue",
     },
     {
@@ -183,14 +182,15 @@ export const MobileNav: React.FC<MobileNavProps> = ({
 
           <div className="mobile-nav-controls-group">
             <LanguageToggle className="mobile-nav-lang-pill" />
-            <button 
+            <button
+              type="button"
               ref={closeButtonRef}
-              className="mobile-nav-close-circle" 
+              className="mobile-nav-close-circle"
               onClick={() => handleTriggerClose()}
               aria-label={language === "ms" ? "Tutup menu navigasi" : "Close navigation menu"}
               title={language === "ms" ? "Tutup (Esc)" : "Close (Esc)"}
             >
-              <X size={20} strokeWidth={2.4} />
+              <X size={20} strokeWidth={2} aria-hidden="true" />
             </button>
           </div>
         </header>
@@ -198,13 +198,13 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         {/* Live 24/7 Status Badge */}
         <div className="mobile-nav-live-bar">
           <div className="mobile-nav-live-pill">
-            <span className="live-pulse-dot" />
+            <span className="live-pulse-dot" aria-hidden="true" />
             <span className="live-pulse-text">{t.nav.openStatus}</span>
           </div>
         </div>
 
         {/* Navigation Items Hub */}
-        <nav className="mobile-nav-items-grid" aria-label="Pautan Menu Navigasi">
+        <nav className="mobile-nav-items-grid" aria-label={language === "ms" ? "Pautan Menu Navigasi" : "Navigation Menu Links"}>
           {navItems.map((item, index) => {
             const Icon = item.icon;
 
@@ -217,15 +217,14 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                 style={{ animationDelay: `${50 + index * 35}ms` }}
               >
                 <div className={`mobile-nav-icon-box ${item.iconClass}`}>
-                  <Icon size={20} strokeWidth={2.2} />
+                  <Icon size={20} strokeWidth={2} aria-hidden="true" />
                 </div>
 
                 <div className="mobile-nav-card-info">
                   <div className="mobile-nav-card-title-row">
                     <span className="mobile-nav-card-title">{item.label}</span>
                     {item.badge && (
-                      <span className="mobile-nav-card-badge">
-                        <Sparkles size={11} strokeWidth={2.5} />
+                      <span className="mobile-nav-card-badge tabular-nums">
                         {item.badge}
                       </span>
                     )}
@@ -234,7 +233,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                 </div>
 
                 <div className="mobile-nav-card-arrow">
-                  <ChevronRight size={18} strokeWidth={2.4} />
+                  <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
                 </div>
               </a>
             );
@@ -244,23 +243,23 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         {/* Bottom Quick Actions Hub */}
         <footer className="mobile-nav-footer-hub">
           <div className="mobile-nav-actions-stack">
-            <a 
-              href={`tel:${businessData.phone.tel}`} 
+            <a
+              href={`tel:${businessData.phone.tel}`}
               className="mobile-nav-btn-call phone-number"
               title={`Hubungi ${businessData.phone.display}`}
             >
-              <Phone size={17} strokeWidth={2.2} />
-              <span>Call {businessData.phone.display}</span>
+              <Phone size={17} strokeWidth={2} aria-hidden="true" />
+              <span className="tabular-nums">Call {businessData.phone.display}</span>
             </a>
 
-            <a 
-              href={businessData.googleProfile.directionsUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={businessData.googleProfile.directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mobile-nav-btn-directions"
               title="Buka Google Maps"
             >
-              <Navigation size={17} strokeWidth={2.2} />
+              <Navigation size={17} strokeWidth={2} aria-hidden="true" />
               <span>{t.nav.getDirections}</span>
             </a>
           </div>

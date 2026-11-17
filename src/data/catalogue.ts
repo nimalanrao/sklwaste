@@ -1,5 +1,27 @@
-import allProductsRaw from "./all-products.json";
+import allItemsRaw from "./all-items.json";
 
+export interface ProductVariant {
+  itemCode: string;
+  barcode: string;
+  spec: string;
+  description?: string;
+}
+
+export interface DatabaseItem {
+  itemCode: string;
+  barcode: string;
+  description: string;
+  category: string;
+  image?: string;
+  spec?: string;
+  unit?: string;
+  brand?: string;
+  application?: string;
+  features?: string[];
+  variants?: ProductVariant[];
+}
+
+// Backward compatibility types for shopping cart components (kept dormant for later)
 export interface MasterProduct {
   id: string;
   title: string;
@@ -17,18 +39,18 @@ export interface MasterProduct {
 
 export type CatalogueProduct = MasterProduct;
 
-export const masterProducts: MasterProduct[] = allProductsRaw as MasterProduct[];
-export const catalogueProducts: MasterProduct[] = masterProducts;
+export const allDatabaseItems: DatabaseItem[] = allItemsRaw as DatabaseItem[];
 
-// The 7 genuine hardware & building materials categories:
-export const SIDEBAR_CATEGORIES = [
-  "BUILDING MATERIALS",
-  "PIPING & PLUMBING",
-  "TOOLS",
-  "CUTTING TOOLS",
-  "WATERPROOFING & SEALANT",
-  "KITCHEN & BATH",
-  "PAINT"
+export const DATABASE_CATEGORIES = [
+  "Plumbing & Piping",
+  "Tools & Machinery",
+  "Fasteners & Hardware",
+  "Paints & Chemicals",
+  "Electrical & Lighting",
+  "Building Materials",
+  "Bathroom & Kitchen",
+  "Safety, Household & Garden",
+  "General Hardware & Supplies"
 ] as const;
 
-export type MainCategoryType = typeof SIDEBAR_CATEGORIES[number] | "ALL";
+export type DatabaseCategoryType = typeof DATABASE_CATEGORIES[number] | "ALL";

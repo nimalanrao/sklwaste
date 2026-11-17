@@ -1,80 +1,54 @@
 import React from "react";
-import { Star, ExternalLink, ShieldCheck, MapPin } from "lucide-react";
-import { businessData } from "../data/business";
+import {
+  Clock,
+  MapPin,
+  Layers,
+  HardHat,
+  PhoneCall,
+  Store
+} from "lucide-react";
 import { useLanguage } from "../context/useLanguage";
 
 export const ReviewsSummary: React.FC = () => {
   const { t } = useLanguage();
 
+  const getIcon = (id: string) => {
+    switch (id) {
+      case "emergency":
+        return <Clock size={20} strokeWidth={2} aria-hidden="true" />;
+      case "location":
+        return <MapPin size={20} strokeWidth={2} aria-hidden="true" />;
+      case "range":
+        return <Layers size={20} strokeWidth={2} aria-hidden="true" />;
+      case "contractors":
+        return <HardHat size={20} strokeWidth={2} aria-hidden="true" />;
+      case "direct":
+        return <PhoneCall size={20} strokeWidth={2} aria-hidden="true" />;
+      case "walkin":
+      default:
+        return <Store size={20} strokeWidth={2} aria-hidden="true" />;
+    }
+  };
+
   return (
-    <section className="section" aria-labelledby="reputation-title">
+    <section id="why-choose-us" className="section why-choose-section" aria-labelledby="why-choose-title">
       <div className="container">
-        <div className="reviews-card">
-          <div className="reviews-grid">
-            {/* Left: Overall Rating Hero */}
-            <div className="reviews-score-col">
-              <span className="eyebrow" style={{ alignSelf: "flex-start" }}>{t.reviews.eyebrow}</span>
-              <h2 id="reputation-title" className="reviews-title">
-                {t.reviews.title}
-              </h2>
-              <div className="reviews-score-hero">
-                <span className="reviews-huge-num tabular-nums">
-                  {businessData.googleProfile.rating.toFixed(1)}
-                </span>
-                <div className="reviews-stars-wrap">
-                  <div className="reviews-stars-row" aria-label="Rating 4.5 out of 5 stars">
-                    {[1, 2, 3, 4].map((star) => (
-                      <Star key={star} size={22} className="star-icon" fill="currentColor" strokeWidth={0} />
-                    ))}
-                    {/* Half Star representation */}
-                    <div className="half-star-wrap">
-                      <Star size={22} className="star-icon star-faded" fill="currentColor" strokeWidth={0} />
-                      <div className="half-star-inner">
-                        <Star size={22} className="star-icon" fill="currentColor" strokeWidth={0} />
-                      </div>
-                    </div>
-                  </div>
-                  <span className="reviews-out-of">{t.reviews.ratingOutOf}</span>
-                </div>
-              </div>
+        <div className="why-choose-header">
+          <h2 id="why-choose-title" className="section-title">
+            {t.whyChooseUs.title}
+          </h2>
+        </div>
 
-              <p className="reviews-count-text">
-                {t.reviews.countText}
-              </p>
-            </div>
-
-            {/* Right: Verification & Transparency Notice */}
-            <div className="reviews-detail-col">
-              <div className="reputation-verification-box">
-                <div className="verification-badge">
-                  <ShieldCheck size={18} className="verification-icon" />
-                  <span>{t.reviews.badgeTitle}</span>
-                </div>
-                <p className="verification-desc">
-                  {t.reviews.badgeDesc}
-                </p>
-                <div className="verification-place-meta">
-                  <MapPin size={15} />
-                  <span>{t.reviews.placeIdLabel} {businessData.googleProfile.placeId}</span>
-                </div>
+        <div className="why-choose-grid">
+          {t.whyChooseUs.items.map((item) => (
+            <article key={item.id} className="why-feature-card">
+              <div className="why-icon-squircle tone-blue">
+                {getIcon(item.id)}
               </div>
-
-              <div className="reviews-cta-wrap">
-                <a 
-                  href={businessData.googleProfile.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary reviews-google-btn"
-                >
-                  <span>{t.reviews.viewOnGoogle}</span>
-                  <ExternalLink size={16} strokeWidth={2} />
-                </a>
-                <span className="reviews-disclaimer">
-                  {t.reviews.disclaimer}
-                </span>
-              </div>
-            </div>
-          </div>
+              <h3 className="why-feature-title">{item.title}</h3>
+              <p className="why-feature-desc">{item.desc}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>

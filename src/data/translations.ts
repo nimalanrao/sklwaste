@@ -11,12 +11,15 @@ export interface Translations {
     contact: string;
     getDirections: string;
     callStore: string;
+    callNow: string;
     openStatus: string;
   };
   hero: {
     eyebrow: string;
     title: string;
     subtitle: string;
+    exploreCatalogue: string;
+    callUsNow: string;
     getDirections: string;
     callNow: string;
     callBoss: string;
@@ -34,17 +37,65 @@ export interface Translations {
     nightShiftLabel: string;
     nightShiftVal: string;
     scrollCue: string;
+    floatingEmergencyTitle: string;
+    floatingEmergencySub: string;
+    floatingRatingTitle: string;
+    floatingRatingSub: string;
+    floatingLocationTitle: string;
+    floatingLocationSub: string;
+  };
+  stats: {
+    ratingValue: string;
+    ratingLabel: string;
+    reviewsValue: string;
+    reviewsLabel: string;
+    emergencyValue: string;
+    emergencyLabel: string;
+    walkInValue: string;
+    walkInLabel: string;
+  };
+  about: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    body: string;
+    callAction: string;
+    directionsAction: string;
+    photoBadgeTitle: string;
+    photoBadgeSub: string;
+    feature1Title: string;
+    feature1Desc: string;
+    feature2Title: string;
+    feature2Desc: string;
+    feature3Title: string;
+    feature3Desc: string;
+  };
+  catalogueShowcase: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    viewAllBtn: string;
+    enquireBtn: string;
+    browseCategoryBtn: string;
+    group1Title: string;
+    group1Sub: string;
+    group2Title: string;
+    group2Sub: string;
+    group3Title: string;
+    group3Sub: string;
   };
   shiftsSection: {
     eyebrow: string;
     title: string;
     subtitle: string;
+    dayShiftBadge: string;
     dayShiftTitle: string;
     dayShiftHours: string;
     dayShiftName: string;
     dayShiftRole: string;
     dayShiftDesc: string;
     dayShiftAction: string;
+    nightShiftBadge: string;
     nightShiftTitle: string;
     nightShiftHours: string;
     nightShiftName: string;
@@ -53,6 +104,16 @@ export interface Translations {
     nightShiftAction: string;
     whatsappAction: string;
     notice: string;
+  };
+  whyChooseUs: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    items: Array<{
+      id: string;
+      title: string;
+      desc: string;
+    }>;
   };
   quickInfo: {
     typeLabel: string;
@@ -66,20 +127,6 @@ export interface Translations {
     hoursLabel: string;
     hoursVal: string;
     hoursSub: string;
-  };
-  about: {
-    eyebrow: string;
-    title: string;
-    lead: string;
-    body: string;
-    callAction: string;
-    directionsAction: string;
-    feature1Title: string;
-    feature1Desc: string;
-    feature2Title: string;
-    feature2Desc: string;
-    feature3Title: string;
-    feature3Desc: string;
   };
   hardware: {
     eyebrow: string;
@@ -134,6 +181,8 @@ export interface Translations {
     storefrontLabel: string;
     hoursHeader: string;
     hoursNotice: string;
+    lorryAccessTitle: string;
+    lorryAccessDesc: string;
     getDirections: string;
     openInGoogle: string;
     openInWaze: string;
@@ -152,11 +201,14 @@ export interface Translations {
     title: string;
     desc: string;
     phoneCardTitle: string;
+    phoneCardRole: string;
     phoneCardDesc: string;
     phoneCardAction: string;
     afterHoursCardTitle: string;
+    afterHoursCardRole: string;
     afterHoursCardDesc: string;
     afterHoursCardAction: string;
+    whatsappAction: string;
     visitCardTitle: string;
     visitCardDesc: string;
     visitCardTiming: string;
@@ -211,527 +263,525 @@ export const translations: Record<Language, Translations> = {
       contact: "Contact",
       getDirections: "Get Directions",
       callStore: "Call Store",
-      openStatus: "Open 24/7 · Sungai Buloh's Only 24/7 Hardware",
+      callNow: "Call Now",
+      openStatus: "Open 24/7",
     },
     hero: {
-      eyebrow: "24/7 HARDWARE · COALFIELDS",
-      title: "Hardware & Building Materials. Open 24/7.",
-      subtitle: "Cement, sand, bricks, poly pipes & workshop tools on Jalan Kuala Selangor. Open daily until 6 PM + 24/7 emergency site supply.",
+      eyebrow: "SKL Hardware · Bandar Seri Coalfields",
+      title: "Hardware & Building Materials in Bandar Seri Coalfields.",
+      subtitle: "Stocking cement, bricks, Hansen poly pipes, PVC fittings, sealants, and power tools. Daily walk-in counter from 8:00 AM to 6:00 PM, plus 24/7 emergency supply.",
+      exploreCatalogue: "Browse Catalogue",
+      callUsNow: "Call Store",
       getDirections: "Get Directions",
-      callNow: "Call 019-914 4743",
-      callBoss: "Boss: 019-914 4743",
-      callNight: "Night 24/7: 016-615 9365",
-      ratingText: "4.5 Google Rating (9 Reviews)",
+      callNow: "019-914 4743",
+      callBoss: "Day: 019-914 4743",
+      callNight: "Night: 016-615 9365",
+      ratingText: "4.5 Google Rating",
       locationBadge: "Bandar Seri Coalfields",
       hoursLabel: "Hours",
       hoursValue: "Open 24/7",
-      hoursDesc: "Daily 8 AM – 6 PM + 24/7 on-call.",
-      photoCaptionTag: "Store Yard",
-      photoCaptionText: "Authentic store yard",
-      shiftsTitle: "Store Shifts & Direct Contacts",
-      dayShiftLabel: "Day Shift (8 AM – 6 PM)",
+      hoursDesc: "8 AM - 6 PM Daily + 24/7 On-Call",
+      photoCaptionTag: "SKL Hardware",
+      photoCaptionText: "Jalan Kuala Selangor",
+      shiftsTitle: "Direct Contacts",
+      dayShiftLabel: "Day (8 AM - 6 PM)",
       dayShiftVal: "Mr. Saravanan · 019-914 4743",
-      nightShiftLabel: "Night (24/7 On-Call)",
+      nightShiftLabel: "Night (6 PM - 8 AM)",
       nightShiftVal: "Mr. Hari · 016-615 9365",
-      scrollCue: "Store shifts & contacts",
+      scrollCue: "Browse",
+      floatingEmergencyTitle: "24/7 Emergency Supply",
+      floatingEmergencySub: "016-615 9365 (Mr. Hari)",
+      floatingRatingTitle: "4.5 Google Rating",
+      floatingRatingSub: "9 Google Reviews",
+      floatingLocationTitle: "Bandar Seri Coalfields",
+      floatingLocationSub: "Jalan Kuala Selangor",
+    },
+    stats: {
+      ratingValue: "4.5/5",
+      ratingLabel: "Google Rating",
+      reviewsValue: "9",
+      reviewsLabel: "Google Reviews",
+      emergencyValue: "24/7",
+      emergencyLabel: "Emergency Supply",
+      walkInValue: "Daily",
+      walkInLabel: "Walk-In Service",
+    },
+    about: {
+      eyebrow: "About Us",
+      title: "Materials and Hardware for Construction and Repairs.",
+      lead: "SKL Waste Sdn Bhd, trading as SKL Hardware, supplies building materials, plumbing fittings, and tools to contractors and homeowners in Bandar Seri Coalfields.",
+      body: "",
+      callAction: "Call Store",
+      directionsAction: "Get Directions",
+      photoBadgeTitle: "Main Road Yard",
+      photoBadgeSub: "Direct lorry access on Jalan Kuala Selangor",
+      feature1Title: "Building Materials",
+      feature1Desc: "Cement, red bricks, sand, AAC blocks, pavers, and stone aggregates.",
+      feature2Title: "Plumbing & Hardware",
+      feature2Desc: "Hansen poly fittings, HDPE coils, PVC pipes, sealants, paints, and tools.",
+      feature3Title: "24/7 Emergency Supply",
+      feature3Desc: "8:00 AM to 6:00 PM daily walk-in, plus after-hours emergency dispatch.",
+    },
+    catalogueShowcase: {
+      eyebrow: "Product Catalogue",
+      title: "Product Catalogue",
+      subtitle: "Select a category to browse items or search our 9,974-item inventory.",
+      viewAllBtn: "Full Directory (9,974 Items)",
+      enquireBtn: "Enquire",
+      browseCategoryBtn: "View Items",
+      group1Title: "Building Materials",
+      group1Sub: "Masonry, cement, sand & aggregates",
+      group2Title: "Plumbing Supplies",
+      group2Sub: "Hansen poly pipes, fittings & PVC",
+      group3Title: "Hardware & Tools",
+      group3Sub: "Discs, sealants, paints & power tools",
     },
     shiftsSection: {
-      eyebrow: "STORE SHIFTS & CONTACTS",
-      title: "Day Shifts & 24/7 Night Supply",
-      subtitle: "Walk in during the day. Call directly for late-night emergency site supply.",
-      dayShiftTitle: "Normal Store Shifts",
-      dayShiftHours: "8:00 AM – 6:00 PM Daily",
+      eyebrow: "24/7 Emergency Supply",
+      title: "Need Urgent Stock After Hours? Call Direct.",
+      subtitle: "For burst pipes, sudden site shortages, or urgent repairs, call our after-hours line for emergency stock and delivery.",
+      dayShiftBadge: "DAY SHIFT",
+      dayShiftTitle: "Mr. Saravanan",
+      dayShiftHours: "8:00 AM - 6:00 PM Daily",
       dayShiftName: "Mr. Saravanan",
-      dayShiftRole: "Boss / Day Shifts",
-      dayShiftDesc: "Immediate walk-in purchases: cement, sand, bricks, plumbing & workshop tools.",
-      dayShiftAction: "Call 019-914 4743",
-      nightShiftTitle: "After Hours & Night Supply",
-      nightShiftHours: "6:00 PM – 8:00 AM (24/7 On-Call)",
+      dayShiftRole: "Boss / Day Operations",
+      dayShiftDesc: "",
+      dayShiftAction: "Call Day Shift",
+      nightShiftBadge: "NIGHT SHIFT",
+      nightShiftTitle: "Mr. Hari",
+      nightShiftHours: "6:00 PM - 8:00 AM",
       nightShiftName: "Mr. Hari",
       nightShiftRole: "24/7 Emergency Supply",
-      nightShiftDesc: "Call Mr. Hari directly for late-night site deliveries, burst pipes & after-hours pickup.",
-      nightShiftAction: "Call 016-615 9365",
-      whatsappAction: "WhatsApp Mr. Hari",
-      notice: "24/7 emergency site supply on Jalan Kuala Selangor.",
+      nightShiftDesc: "",
+      nightShiftAction: "Call Emergency Team",
+      whatsappAction: "WhatsApp",
+      notice: "",
+    },
+    whyChooseUs: {
+      eyebrow: "Why Choose Us",
+      title: "Hardware Supply for Contractors & Homeowners.",
+      subtitle: "",
+      items: [
+        {
+          id: "emergency",
+          title: "24/7 Emergency Supply",
+          desc: "After-hours dispatch from 6:00 PM to 8:00 AM for urgent site repairs.",
+        },
+        {
+          id: "location",
+          title: "Main Road Yard Access",
+          desc: "Direct access along Jalan Kuala Selangor with lorry turning space.",
+        },
+        {
+          id: "range",
+          title: "9,974 Stocked Items",
+          desc: "Hansen fittings, PVC pipes, cutting discs, sealants, paints, and tools.",
+        },
+        {
+          id: "contractors",
+          title: "Contractor Building Materials",
+          desc: "Ready stock of cement, red bricks, sand, AAC blocks, and aggregates.",
+        },
+        {
+          id: "direct",
+          title: "Direct Line to Store Staff",
+          desc: "Call Mr. Saravanan (Day) or Mr. Hari (Night) directly to check stock.",
+        },
+        {
+          id: "walkin",
+          title: "Daily Counter Service",
+          desc: "Open daily from 8:00 AM to 6:00 PM for counter pickup.",
+        },
+      ],
     },
     quickInfo: {
-      typeLabel: "Store Type",
-      typeVal: "Hardware & Materials",
+      typeLabel: "Store",
+      typeVal: "SKL Hardware",
       typeSub: "Kedai Hardware",
       locationLabel: "Location",
       locationVal: "Bandar Seri Coalfields",
-      locationSub: "Jln Kuala Selangor",
+      locationSub: "Jalan Kuala Selangor",
       phoneLabel: "Phone",
-      phoneSub: "Direct store line",
+      phoneSub: "Direct line",
       hoursLabel: "Hours",
       hoursVal: "Open 24/7",
       hoursSub: "Daily + On-Call",
     },
-    about: {
-      eyebrow: "ABOUT THE STORE",
-      title: "Building materials & hardware on Jalan Kuala Selangor.",
-      lead: "Supplying cement, bricks, Hansen poly pipes, cutting discs, and repair tools to contractors and homeowners in Bandar Seri Coalfields.",
-      body: "",
-      callAction: "Call Store",
-      directionsAction: "Get Directions",
-      feature1Title: "Building Materials",
-      feature1Desc: "Cement bags, red bricks, sand, AAC blocks, pavers & aggregates.",
-      feature2Title: "Plumbing & Tools",
-      feature2Desc: "Hansen poly fittings, cutting discs, sealants, paints & hand tools.",
-      feature3Title: "24/7 Emergency Supply",
-      feature3Desc: "Open 8 AM – 6 PM daily. 24/7 on-call emergency supply after 6 PM.",
-    },
     hardware: {
-      eyebrow: "HARDWARE SUPPLIES & ENQUIRIES",
-      title: "Looking for Hardware Supplies?",
-      desc: "Contact the store to enquire about the products you need. Our team can check in-store stock availability directly before you head over.",
-      bannerTitle: "Need a specific size, part, or fitting?",
-      bannerSub: "Avoid unnecessary trips by confirming item availability via phone. We are ready to assist.",
-      bannerButton: "Call Store: 019-914 4743",
-      categoriesTitle: "Common Hardware Categories",
-      categoriesDesc: "Categories supported by the store. Specific item brands and live inventory can be confirmed via phone enquiry.",
-      categoriesNote: "Store owner can update items anytime",
-      commonSuppliesLabel: "Common Supplies:",
-      enquireAction: "Enquire for",
-      customerNoticeTitle: "Note for customers:",
-      customerNotice: "We are continuously organizing in-store stocks. If you require specialty fittings or larger bulk quantities for building works, please call ahead in advance.",
-      categories: [
-        {
-          id: "tools",
-          title: "Hand Tools & Mechanical Equipment",
-          subtitle: "Everyday & Workshop Tools",
-          description: "Wrenches, pliers, hammers, tape measures, screwdrivers, utility cutters, and basic mechanical gear for home and site work.",
-          commonItems: ["Wrenches & Sockets", "Pliers & Cutters", "Hammers & Mallets", "Measuring Tapes", "Utility Knives"],
-        },
-        {
-          id: "fasteners",
-          title: "Fasteners, Screws & Fixings",
-          subtitle: "Precision Hardware Connections",
-          description: "Extensive selection of bolts, machine screws, wood screws, drywall fixings, wall plugs, nuts, washers, and anchoring hardware.",
-          commonItems: ["Drywall & Wood Screws", "Hex Bolts & Nuts", "Wall Plugs & Anchors", "Washers & Rivets", "Threaded Rods"],
-        },
-        {
-          id: "plumbing",
-          title: "Piping, Hansen & Plumbing Fittings",
-          subtitle: "Hansen Poly, PVC (Class O & D), UPVC & Valving",
-          description: "Complete water supply and drainage range: Hansen poly compression fittings, HDPE coils, Class O (nipis) & Class D/6 (tebal) PVC pipes, UPVC soil & waste, and solvent cement.",
-          commonItems: ["Hansen Poly Fittings (20-32mm)", "PVC Pipes (Class O Nipis & Class D/6 Tebal)", "UPVC Soil & Waste Fittings", "Gam Paip Solvent Cement", "Brass Valves & Taps"],
-        },
-        {
-          id: "electrical",
-          title: "Electrical & Lighting Essentials",
-          subtitle: "Wiring, Switches & Power",
-          description: "Switches, trailing sockets, extension cords, insulation tapes, light bulbs, cable clips, and everyday electrical fittings.",
-          commonItems: ["Extension Sockets", "Insulation Tapes", "LED Bulbs & Tubes", "Wall Switches & Plugs", "Cable Clips"],
-        },
-        {
-          id: "paints-sealants",
-          title: "Paints, Sealants & Adhesives",
-          subtitle: "Surface Protection & Sealing",
-          description: "Silicone sealants, epoxy adhesives, masking tapes, paint rollers, brushes, sandpaper, and general surface protection essentials.",
-          commonItems: ["Silicone & Acrylic Sealants", "Epoxy & Super Glues", "Masking & Duct Tapes", "Paint Brushes & Rollers", "Sandpaper Sheets"],
-        },
-        {
-          id: "building-maintenance",
-          title: "Building & General Maintenance",
-          subtitle: "Repair & Construction Supplies",
-          description: "General hardware materials, wire meshes, safety gear, locks, padlocks, hinges, and essential maintenance supplies.",
-          commonItems: ["Padlocks & Door Latches", "Hinges & Brackets", "Protective Gloves", "Wire Mesh & Ties", "Heavy-Duty Buckets"],
-        },
-      ],
+      eyebrow: "Hardware",
+      title: "Hardware Supplies",
+      desc: "Call to check stock before visiting.",
+      bannerTitle: "Need a specific size or fitting?",
+      bannerSub: "Confirm availability by phone.",
+      bannerButton: "Call 019-914 4743",
+      categoriesTitle: "Categories",
+      categoriesDesc: "",
+      categoriesNote: "",
+      commonSuppliesLabel: "Items:",
+      enquireAction: "Enquire",
+      customerNoticeTitle: "Note:",
+      customerNotice: "Call ahead for bulk site quantities.",
+      categories: [],
     },
     gallery: {
-      eyebrow: "STORE & HARDWARE GALLERY",
-      title: "Supplies & Equipment Visual Showcase",
-      desc: "Explore typical workshop tools, plumbing components, and fasteners stocked for local maintenance. Click any photo to enlarge.",
-      viewPhoto: "View Photo",
-      disclosure: "Photographs depict representative hardware categories, tools, and workshop supplies available through store enquiry.",
-      items: [
-        {
-          id: "gal-1",
-          title: "DongCheng 20V Cordless Brushless Rotary Hammer",
-          category: "Power Tools",
-          alt: "DongCheng 20V cordless brushless rotary hammer kit with battery and case",
-        },
-        {
-          id: "gal-2",
-          title: "Common Red Clay Bricks (Batu Merah)",
-          category: "Bricks & Masonry",
-          alt: "Stack of common red clay bricks for construction and walling",
-        },
-        {
-          id: "gal-3",
-          title: "Portland Cement (50kg Heavy-Duty Bag)",
-          category: "Cement & Aggregates",
-          alt: "Portland cement 50kg bag for structural mortar and concrete mixing",
-        },
-        {
-          id: "gal-4",
-          title: "Milwaukee M18 FUEL Circular Saw (165mm)",
-          category: "Milwaukee Cordless",
-          alt: "Milwaukee M18 FUEL cordless circular saw 165mm with blade",
-        },
-        {
-          id: "gal-5",
-          title: "Milwaukee M18 FUEL Angle Grinder (VSR)",
-          category: "Power Tools & Grinders",
-          alt: "Milwaukee M18 FUEL 100mm variable speed angle grinder",
-        },
-        {
-          id: "gal-6",
-          title: "Precast Concrete Hollow Blocks",
-          category: "Blocks & Walling",
-          alt: "Standard precast concrete hollow blocks for foundation and retaining walls",
-        },
-      ],
+      eyebrow: "Gallery",
+      title: "Product Gallery",
+      desc: "",
+      viewPhoto: "View",
+      disclosure: "",
+      items: [],
     },
     reviews: {
-      eyebrow: "REPUTATION",
-      title: "Google Business Profile Rating",
-      ratingOutOf: "out of 5.0 rating",
-      countText: "Based on 9 customer reviews submitted on Google Maps.",
-      badgeTitle: "Public Listing Data",
-      badgeDesc: "This score is recorded directly from the official Google Business Profile for SKL Waste Sdn Bhd in Bandar Seri Coalfields, Selangor.",
+      eyebrow: "Reviews",
+      title: "4.5 Google Rating",
+      ratingOutOf: "out of 5.0",
+      countText: "9 Google Reviews",
+      badgeTitle: "Google Maps",
+      badgeDesc: "",
       placeIdLabel: "Place ID:",
-      viewOnGoogle: "View Reviews on Google Maps",
-      disclaimer: "We respect authentic customer feedback. Review text and profile details are maintained and verified directly on Google.",
+      viewOnGoogle: "View on Google Maps",
+      disclaimer: "",
     },
     location: {
-      eyebrow: "LOCATION & HOURS",
-      title: "Store Location & Map",
-      desc: "Jalan Kuala Selangor, Bandar Seri Coalfields. Easy lorry access & parking.",
-      storefrontLabel: "Storefront & Hardware Yard",
-      hoursHeader: "Store Hours",
-      hoursNotice: "Open 24/7. Walk-in daily 8:00 AM – 6:00 PM; 24/7 on-call after 6:00 PM.",
-      getDirections: "Google Maps",
-      openInGoogle: "View Google Reviews",
+      eyebrow: "Location",
+      title: "Find Us in Bandar Seri Coalfields.",
+      desc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
+      storefrontLabel: "SKL Waste Sdn Bhd",
+      hoursHeader: "Operating Hours",
+      hoursNotice: "8:00 AM - 6:00 PM Daily · 6:00 PM - 8:00 AM Emergency Supply",
+      lorryAccessTitle: "Lorry Access & Loading",
+      lorryAccessDesc: "Main road frontage along Jalan Kuala Selangor with loading space for pickups and lorries.",
+      getDirections: "Get Directions",
+      openInGoogle: "Open in Google Maps",
       openInWaze: "Waze",
       copyAddress: "Copy Address",
-      addressCopied: "Address Copied!",
+      addressCopied: "Copied",
       callStore: "Call Store",
-      mapFooterText: "Jalan Kuala Selangor, Bandar Seri Coalfields",
-      navigate: "Navigate",
+      mapFooterText: "Bandar Seri Coalfields, 47000 Selangor",
+      navigate: "Get Directions",
       ratingTitle: "Google Rating",
-      ratingReviewsCount: "4.5 Rating · 9 Reviews",
+      ratingReviewsCount: "4.5 / 5 (9 Reviews)",
       landmarkTitle: "Address",
-      landmarkDesc: "Main road frontage along Jalan Kuala Selangor with easy lorry access.",
+      landmarkDesc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
     },
     contact: {
-      eyebrow: "DIRECT CONTACT",
-      title: "Call or Visit Us",
-      desc: "Call Mr. Saravanan during the day, or Mr. Hari for after-hours emergency supply.",
-      phoneCardTitle: "Day Shifts (Boss)",
-      phoneCardDesc: "Direct store purchases & general inquiries.",
+      eyebrow: "Contact",
+      title: "Contact the Store.",
+      desc: "",
+      phoneCardTitle: "Day Enquiries",
+      phoneCardRole: "Boss / Day Operations",
+      phoneCardDesc: "8:00 AM - 6:00 PM",
       phoneCardAction: "Call 019-914 4743",
-      afterHoursCardTitle: "Night Shift (24/7)",
-      afterHoursCardDesc: "Urgent site deliveries & late-night supply.",
+      afterHoursCardTitle: "Emergency Enquiries",
+      afterHoursCardRole: "24/7 Emergency Supply",
+      afterHoursCardDesc: "6:00 PM - 8:00 AM",
       afterHoursCardAction: "Call 016-615 9365",
-      visitCardTitle: "Storefront Location",
-      visitCardDesc: "Directly on Jalan Kuala Selangor.",
-      visitCardTiming: "Open Daily until 6 PM",
+      whatsappAction: "WhatsApp",
+      visitCardTitle: "Store Location",
+      visitCardDesc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
+      visitCardTiming: "8:00 AM - 6:00 PM Daily · 24/7 Emergency",
       visitCardAction: "Get Directions",
     },
     footer: {
-      tagline: "Hardware and building materials store in Bandar Seri Coalfields, Selangor. Open daily until 6 PM with 24/7 emergency site supply.",
+      tagline: "Hardware and building materials supplier in Bandar Seri Coalfields, Selangor.",
       navigationHeading: "Navigation",
       assistanceHeading: "Contact",
       directionsAction: "Get Directions",
-      verifiedHoursText: "Open 24/7 (8 AM – 6 PM Shifts · After 6 PM On-Call)",
+      verifiedHoursText: "8:00 AM - 6:00 PM Daily · 24/7 Emergency",
       copyright: "All rights reserved.",
-      backToTop: "Back to top",
+      backToTop: "Top",
     },
     loading: {
       loadingText: "SKL HARDWARE",
-      subtitle: "Bandar Seri Coalfields, Selangor",
+      subtitle: "Bandar Seri Coalfields",
     },
     catalogue: {
-      badge: "Official Inventory & Trade Supply",
-      title: "Building Materials, Bricks & Pavers",
-      subtitle: "Verified trade catalogue for building contractors, bricklayers, landscapers, and residential renovation projects in Bandar Seri Coalfields & Greater Selangor.",
-      searchPlaceholder: "Search bricks, interlocking pavers, hollow blocks, AAC...",
-      allFilter: "All Products",
-      bricksFilter: "Clay & Sand Bricks",
-      blocksFilter: "Concrete & AAC Blocks",
-      paversFilter: "Interlocking Pavers",
-      ventFilter: "Ventilation Blocks",
-      inStock: "In Stock · Ready for Delivery / Self-Pickup",
-      enquireWhatsapp: "Enquire via WhatsApp",
-      viewSpecs: "View Specifications",
-      specTitle: "Technical Specifications",
-      appTitle: "Recommended Application",
-      unitLabel: "Supply Unit",
-      brandLabel: "Manufacturer / Brand",
-      siteDeliveryNotice: "Lorry delivery available for site orders across Bandar Seri Coalfields, Sungai Buloh, Puncak Alam, and Shah Alam. Contact our logistics line directly.",
-      bulkQuoteAction: "Request Bulk Pallet Quotation",
-      backToHome: "Back to Home",
-      noResults: "No products found matching your search. Please contact us directly for special order items.",
+      badge: "Catalogue",
+      title: "Product Catalogue",
+      subtitle: "Search 9,974 building materials, plumbing fittings, and tools.",
+      searchPlaceholder: "Search cement, bricks, Hansen fittings, tools...",
+      allFilter: "All",
+      bricksFilter: "Bricks",
+      blocksFilter: "Blocks",
+      paversFilter: "Pavers",
+      ventFilter: "Ventilation",
+      inStock: "Ready for Pickup / Delivery",
+      enquireWhatsapp: "WhatsApp",
+      viewSpecs: "Details",
+      specTitle: "Specifications",
+      appTitle: "Application",
+      unitLabel: "Unit",
+      brandLabel: "Brand",
+      siteDeliveryNotice: "Lorry delivery available across Bandar Seri Coalfields and surrounding areas.",
+      bulkQuoteAction: "Request Quote",
+      backToHome: "Back",
+      noResults: "No matching items found. Call us to check stock.",
     },
   },
   ms: {
     nav: {
-      home: "Laman Utama",
+      home: "Utama",
       about: "Tentang Kami",
       catalogue: "Katalog",
-      hardware: "Barangan Hardware",
+      hardware: "Perkakasan",
       gallery: "Galeri",
       location: "Lokasi & Waktu",
       contact: "Hubungi",
       getDirections: "Panduan Arah",
       callStore: "Hubungi Kedai",
-      openStatus: "Buka 24/7 · Satu-Satunya Kedai Hardware 24 Jam di Sungai Buloh",
+      callNow: "Hubungi Sekarang",
+      openStatus: "Buka 24/7",
     },
     hero: {
-      eyebrow: "KEDAI HARDWARE 24 JAM · COALFIELDS",
-      title: "Bahan Binaan & Alatan Hardware. Buka 24 Jam.",
-      subtitle: "Simen, pasir, bata, paip Hansen poly & perkakasan di Jalan Kuala Selangor. Buka setiap hari hingga 6 petang + bekalan kecemasan 24 jam.",
+      eyebrow: "SKL Hardware · Bandar Seri Coalfields",
+      title: "Bahan Binaan & Perkakasan di Bandar Seri Coalfields.",
+      subtitle: "Membekalkan simen, batu bata, paip poly Hansen, penyambung PVC, silikon, dan alatan kuasa. Kaunter walk-in harian 8:00 PG hingga 6:00 PTG, serta bekalan kecemasan 24/7.",
+      exploreCatalogue: "Lihat Katalog",
+      callUsNow: "Hubungi Kedai",
       getDirections: "Panduan Arah",
-      callNow: "Hubungi 019-914 4743",
-      callBoss: "Bos: 019-914 4743",
-      callNight: "Malam 24/7: 016-615 9365",
-      ratingText: "Penilaian 4.5 (9 Ulasan)",
+      callNow: "019-914 4743",
+      callBoss: "Siang: 019-914 4743",
+      callNight: "Malam: 016-615 9365",
+      ratingText: "4.5 Penilaian Google",
       locationBadge: "Bandar Seri Coalfields",
-      hoursLabel: "Waktu Kedai",
-      hoursValue: "Buka 24 Jam",
-      hoursDesc: "Setiap hari 8 PG – 6 PTG + bersedia 24 jam.",
-      photoCaptionTag: "Tapak Kedai",
-      photoCaptionText: "Tapak tulen SKL Waste",
-      shiftsTitle: "Jadual Syif & Hubungi",
-      dayShiftLabel: "Syif Siang (8 PG – 6 PTG)",
-      dayShiftVal: "En. Saravanan · 019-914 4743",
-      nightShiftLabel: "Malam (Bersedia 24/7)",
-      nightShiftVal: "En. Hari · 016-615 9365",
-      scrollCue: "Syif kedai & hubungi terus",
+      hoursLabel: "Waktu",
+      hoursValue: "Buka 24/7",
+      hoursDesc: "8 PG - 6 PTG Setiap Hari + 24/7",
+      photoCaptionTag: "SKL Hardware",
+      photoCaptionText: "Jalan Kuala Selangor",
+      shiftsTitle: "Talian Terus",
+      dayShiftLabel: "Siang (8 PG - 6 PTG)",
+      dayShiftVal: "Mr. Saravanan · 019-914 4743",
+      nightShiftLabel: "Malam (6 PTG - 8 PG)",
+      nightShiftVal: "Mr. Hari · 016-615 9365",
+      scrollCue: "Lihat",
+      floatingEmergencyTitle: "Bekalan Kecemasan 24/7",
+      floatingEmergencySub: "016-615 9365 (Mr. Hari)",
+      floatingRatingTitle: "4.5 Penilaian Google",
+      floatingRatingSub: "9 Ulasan Google",
+      floatingLocationTitle: "Bandar Seri Coalfields",
+      floatingLocationSub: "Jalan Kuala Selangor",
     },
-    shiftsSection: {
-      eyebrow: "JADUAL SYIF & TALIAN TERUS",
-      title: "Syif Siang & Bekalan Malam 24 Jam",
-      subtitle: "Beli terus di kedai waktu siang. Hubungi terus untuk bekalan kecemasan malam.",
-      dayShiftTitle: "Syif Biasa Kedai",
-      dayShiftHours: "8:00 PG – 6:00 PTG Setiap Hari",
-      dayShiftName: "En. Saravanan",
-      dayShiftRole: "Bos / Syif Siang",
-      dayShiftDesc: "Pembelian terus: simen, pasir, batu bata, paip, paver & alatan kerja.",
-      dayShiftAction: "Hubungi 019-914 4743",
-      nightShiftTitle: "Malam & Selepas Waktu Kerja",
-      nightShiftHours: "6:00 PTG – 8:00 PG (Bersedia 24/7)",
-      nightShiftName: "En. Hari",
-      nightShiftRole: "Bekalan Kecemasan 24/7",
-      nightShiftDesc: "Hubungi En. Hari terus untuk pesanan kecemasan tapak, paip pecah & pengambilan malam.",
-      nightShiftAction: "Hubungi 016-615 9365",
-      whatsappAction: "WhatsApp En. Hari",
-      notice: "Bekalan kecemasan 24/7 di Jalan Kuala Selangor.",
-    },
-    quickInfo: {
-      typeLabel: "Jenis Perniagaan",
-      typeVal: "Bahan Binaan & Hardware",
-      typeSub: "Kedai Hardware",
-      locationLabel: "Lokasi",
-      locationVal: "Bandar Seri Coalfields",
-      locationSub: "Jln Kuala Selangor",
-      phoneLabel: "Telefon",
-      phoneSub: "Talian terus",
-      hoursLabel: "Waktu Kedai",
-      hoursVal: "Buka 24 Jam",
-      hoursSub: "Siang + Bersedia Malam",
+    stats: {
+      ratingValue: "4.5/5",
+      ratingLabel: "Penilaian Google",
+      reviewsValue: "9",
+      reviewsLabel: "Ulasan Google",
+      emergencyValue: "24/7",
+      emergencyLabel: "Bekalan Kecemasan",
+      walkInValue: "Setiap Hari",
+      walkInLabel: "Perkhidmatan Walk-In",
     },
     about: {
-      eyebrow: "TENTANG KEDAI",
-      title: "Bahan binaan & hardware di Jalan Kuala Selangor.",
-      lead: "Membekalkan simen, batu bata, penyambung paip Hansen poly, mata pemotong, dan perkakas kepada kontraktor serta pemilik rumah.",
+      eyebrow: "Tentang Kami",
+      title: "Bahan dan Perkakasan untuk Pembinaan dan Pembaikan.",
+      lead: "SKL Waste Sdn Bhd, beroperasi sebagai SKL Hardware, membekalkan bahan binaan, kelengkapan paip, dan alatan kerja kepada kontraktor serta pemilik rumah di Bandar Seri Coalfields.",
       body: "",
       callAction: "Hubungi Kedai",
       directionsAction: "Panduan Arah",
-      feature1Title: "Bahan Binaan & Tapak",
-      feature1Desc: "Simen, bata merah, pasir, blok AAC, paver & batu agregat.",
-      feature2Title: "Paip & Alatan Kerja",
-      feature2Desc: "Penyambung paip Hansen, mata pemotong, silikon, cat & perkakas tangan.",
+      photoBadgeTitle: "Tapak Jalan Utama",
+      photoBadgeSub: "Akses terus lori di Jalan Kuala Selangor",
+      feature1Title: "Bahan Binaan",
+      feature1Desc: "Simen, bata merah, pasir, blok AAC, paver, dan batu baur.",
+      feature2Title: "Kelengkapan Paip & Perkakasan",
+      feature2Desc: "Penyambung poly Hansen, paip HDPE, PVC, silikon, cat, dan alatan.",
       feature3Title: "Bekalan Kecemasan 24/7",
-      feature3Desc: "Buka 8 PG – 6 PTG setiap hari. Bekalan kecemasan 24 jam selepas 6 PTG.",
+      feature3Desc: "Walk-in 8:00 PG hingga 6:00 PTG setiap hari, serta penghantaran kecemasan 24/7.",
     },
-    hardware: {
-      eyebrow: "BEKALAN HARDWARE & PERTANYAAN",
-      title: "Mencari Bekalan Hardware?",
-      desc: "Hubungi kedai kami untuk bertanya tentang barangan yang anda perlukan. Pasukan kami boleh memeriksa stok sebelum anda ke kedai.",
-      bannerTitle: "Memerlukan saiz, bahagian atau penyambung tertentu?",
-      bannerSub: "Elakkan perjalanan sia-sia dengan mengesahkan stok melalui telefon. Kami sedia membantu anda.",
-      bannerButton: "Hubungi Kedai: 019-914 4743",
-      categoriesTitle: "Kategori Barangan Hardware",
-      categoriesDesc: "Kategori yang dibekalkan oleh kedai. Jenama khusus dan kuantiti stok boleh disahkan melalui panggilan telefon.",
-      categoriesNote: "Pemilik kedai boleh mengemaskini bila-bila masa",
-      commonSuppliesLabel: "Contoh Barangan:",
-      enquireAction: "Tanya tentang",
-      customerNoticeTitle: "Nota untuk pelanggan:",
-      customerNotice: "Kami sentiasa menyusun stok kedai. Jika anda memerlukan penyambung khas atau kuantiti pukal untuk binaan, sila hubungi kami terlebih dahulu.",
-      categories: [
-        {
-          id: "tools",
-          title: "Peralatan Tangan & Mekanikal",
-          subtitle: "Peralatan Pertukangan & Bengkel",
-          description: "Sepana, playar, tukul, pita pengukur, pemutar skru, pisau pemotong, dan perkakas asas untuk kerja rumah dan tapak projek.",
-          commonItems: ["Sepana & Soket", "Playar & Pemotong", "Tukul & Penebuk", "Pita Pengukur", "Pisau Pemotong"],
-        },
-        {
-          id: "fasteners",
-          title: "Skru, Nat & Pengikat",
-          subtitle: "Sambungan Hardware Berketepatan",
-          description: "Pelbagai jenis bolt, skru mesin, skru kayu, palam dinding (wall plug), nat, sesendal, dan perkakas penambat.",
-          commonItems: ["Skru Kayu & Drywall", "Bolt Hex & Nat", "Wall Plug & Penambat", "Sesendal (Washer)", "Rod Berbenang"],
-        },
-        {
-          id: "plumbing",
-          title: "Sistem Paip, Hansen & Kelengkapan Paiping",
-          subtitle: "Hansen Poly, Paip PVC (Nipis & Tebal), UPVC & Injap",
-          description: "Rangkaian lengkap bekalan air dan kumbahan: fitting poly Hansen, paip HDPE, paip PVC Class O (nipis) & Class D/6 (tebal), fitting saliran UPVC, dan gam paip simen pelarut.",
-          commonItems: ["Fitting Poly Hansen (20-32mm)", "Paip PVC (Class O Nipis & Class D/6 Tebal)", "Fitting UPVC Saliran Kumbahan", "Gam Paip Simen Pelarut", "Injap Bebola & Kepala Paip Tembaga"],
-        },
-        {
-          id: "electrical",
-          title: "Barangan Elektrik & Lampu",
-          subtitle: "Pendawaian, Suis & Kuasa",
-          description: "Suis dinding, soket sambungan (extension), pita penebat, mentol lampu, klip kabel, dan aksesori elektrik harian.",
-          commonItems: ["Soket Sambungan", "Pita Penebat Elektrik", "Mentol LED & Lampu", "Suis & Palam Dinding", "Klip Kabel"],
-        },
-        {
-          id: "paints-sealants",
-          title: "Cat, Gam & Pelekat Kalis Air",
-          subtitle: "Perlindungan Permukaan & Pengedap",
-          description: "Silikon pengedap, gam epoksi, pita pelekat kertas, penggelek cat, berus cat, kertas pasir, dan pelindung permukaan.",
-          commonItems: ["Silikon Pengedap Kalis Air", "Gam Epoksi & Gam Kuat", "Pita Pelekat & Duct Tape", "Berus & Penggelek Cat", "Kertas Pasir"],
-        },
-        {
-          id: "building-maintenance",
-          title: "Bahan Binaan & Penyelenggaraan",
-          subtitle: "Bekalan Pembaikan & Pembinaan",
-          description: "Bahan perkakasan am, dawai jaring, sarung tangan keselamatan, kunci mangga, engsel pintu, dan baldi tugas berat.",
-          commonItems: ["Kunci Mangga & Selak Pintu", "Engsel & Pendakap", "Sarung Tangan Keselamatan", "Jaring Dawai & Pengikat", "Baldi Tugas Berat"],
-        },
-      ],
+    catalogueShowcase: {
+      eyebrow: "Katalog Produk",
+      title: "Katalog Produk",
+      subtitle: "Pilih kategori atau cari dalam inventori penuh 9,974 item kami.",
+      viewAllBtn: "Direktori Penuh (9,974 Item)",
+      enquireBtn: "Tanya",
+      browseCategoryBtn: "Lihat Produk",
+      group1Title: "Bahan Binaan",
+      group1Sub: "Bata, simen, pasir & batu baur",
+      group2Title: "Bekalan Paip",
+      group2Sub: "Paip poly Hansen, penyambung & PVC",
+      group3Title: "Perkakasan & Alatan",
+      group3Sub: "Mata pemotong, silikon, cat & alatan kuasa",
     },
-    gallery: {
-      eyebrow: "GALERI KEDAI & HARDWARE",
-      title: "Pameran Visual Barangan & Peralatan",
-      desc: "Lihat peralatan bengkel, komponen paip, dan pengikat yang dibekalkan untuk penyelenggaraan tempatan. Klik untuk besarkan gambar.",
-      viewPhoto: "Lihat Gambar",
-      disclosure: "Gambar menunjukkan kategori barangan hardware dan peralatan bengkel yang boleh ditanya di kedai kami.",
+    shiftsSection: {
+      eyebrow: "Bekalan Kecemasan 24/7",
+      title: "Perlukan Stok Kecemasan Luar Waktu? Hubungi Terus.",
+      subtitle: "Untuk paip pecah, kekurangan bahan di tapak, atau pembaikan segera, hubungi talian luar waktu kami untuk bekalan dan penghantaran.",
+      dayShiftBadge: "SYIF SIANG",
+      dayShiftTitle: "Mr. Saravanan",
+      dayShiftHours: "8:00 PG - 6:00 PTG Setiap Hari",
+      dayShiftName: "Mr. Saravanan",
+      dayShiftRole: "Bos / Operasi Siang",
+      dayShiftDesc: "",
+      dayShiftAction: "Hubungi Syif Siang",
+      nightShiftBadge: "SYIF MALAM",
+      nightShiftTitle: "Mr. Hari",
+      nightShiftHours: "6:00 PTG - 8:00 PG",
+      nightShiftName: "Mr. Hari",
+      nightShiftRole: "Bekalan Kecemasan 24/7",
+      nightShiftDesc: "",
+      nightShiftAction: "Hubungi Pasukan Kecemasan",
+      whatsappAction: "WhatsApp",
+      notice: "",
+    },
+    whyChooseUs: {
+      eyebrow: "Mengapa Pilih Kami",
+      title: "Bekalan Perkakasan untuk Kontraktor & Pemilik Rumah.",
+      subtitle: "",
       items: [
         {
-          id: "gal-1",
-          title: "DongCheng 20V Cordless Brushless Rotary Hammer",
-          category: "Alatan Kuasa",
-          alt: "Set DongCheng 20V rotary hammer tanpa wayar bersama bateri dan kotak simpanan",
+          id: "emergency",
+          title: "Bekalan Kecemasan 24/7",
+          desc: "Bantuan luar waktu kerja 6:00 PTG hingga 8:00 PG untuk kecemasan tapak.",
         },
         {
-          id: "gal-2",
-          title: "Batu Merah Tanah Liat Biasa",
-          category: "Batu Bata & Binaan",
-          alt: "Susunan batu merah tanah liat untuk kerja binaan dinding",
+          id: "location",
+          title: "Akses Tapak Jalan Utama",
+          desc: "Akses terus di Jalan Kuala Selangor dengan ruang masuk lori yang luas.",
         },
         {
-          id: "gal-3",
-          title: "Simen Portland (Beg 50kg)",
-          category: "Simen & Pasir",
-          alt: "Beg simen Portland 50kg untuk bancuhan konkrit dan kerja lepa",
+          id: "range",
+          title: "9,974 Item Berstok",
+          desc: "Penyambung Hansen, paip PVC, mata pemotong, silikon, cat, dan alatan.",
         },
         {
-          id: "gal-4",
-          title: "Milwaukee M18 FUEL Gergaji Bulat (165mm)",
-          category: "Gergaji Tanpa Wayar",
-          alt: "Milwaukee M18 FUEL gergaji bulat tanpa wayar 165mm",
+          id: "contractors",
+          title: "Bahan Binaan untuk Kontraktor",
+          desc: "Stok sedia simen, bata merah, pasir, blok AAC, dan batu baur.",
         },
         {
-          id: "gal-5",
-          title: "Milwaukee M18 FUEL Pengisar Sudut (VSR)",
-          category: "Alatan Pengisar",
-          alt: "Milwaukee M18 FUEL pengisar sudut 100mm pelbagai kelajuan",
+          id: "direct",
+          title: "Talian Terus Staf Kedai",
+          desc: "Hubungi terus En. Saravanan (Siang) atau En. Hari (Malam) untuk semakan stok.",
         },
         {
-          id: "gal-6",
-          title: "Batu Blok Konkrit Berongga",
-          category: "Blok & Dinding",
-          alt: "Batu blok konkrit berongga piawai untuk binaan dinding dan tapak",
+          id: "walkin",
+          title: "Kaunter Walk-In Harian",
+          desc: "Dibuka setiap hari 8:00 PG hingga 6:00 PTG untuk pengambilan di kaunter.",
         },
       ],
     },
+    quickInfo: {
+      typeLabel: "Kedai",
+      typeVal: "SKL Hardware",
+      typeSub: "Kedai Hardware",
+      locationLabel: "Lokasi",
+      locationVal: "Bandar Seri Coalfields",
+      locationSub: "Jalan Kuala Selangor",
+      phoneLabel: "Telefon",
+      phoneSub: "Talian terus",
+      hoursLabel: "Waktu",
+      hoursVal: "Buka 24/7",
+      hoursSub: "Siang + Malam",
+    },
+    hardware: {
+      eyebrow: "Perkakasan",
+      title: "Bekalan Perkakasan",
+      desc: "",
+      bannerTitle: "",
+      bannerSub: "",
+      bannerButton: "",
+      categoriesTitle: "",
+      categoriesDesc: "",
+      categoriesNote: "",
+      commonSuppliesLabel: "",
+      enquireAction: "",
+      customerNoticeTitle: "",
+      customerNotice: "",
+      categories: [],
+    },
+    gallery: {
+      eyebrow: "Galeri",
+      title: "Galeri Produk",
+      desc: "",
+      viewPhoto: "Lihat",
+      disclosure: "",
+      items: [],
+    },
     reviews: {
-      eyebrow: "REPUTASI",
-      title: "Penarafan Profil Google Business",
-      ratingOutOf: "daripada 5.0 bintang",
-      countText: "Berdasarkan 9 ulasan pelanggan di Google Maps.",
-      badgeTitle: "Data Penyenaraian Awam",
-      badgeDesc: "Markah ini direkodkan secara langsung daripada Profil Google Business rasmi SKL Waste Sdn Bhd di Bandar Seri Coalfields, Selangor.",
-      placeIdLabel: "ID Tempat:",
-      viewOnGoogle: "Lihat Ulasan di Google Maps",
-      disclaimer: "Kami menghargai maklum balas tulen pelanggan. Maklumat ulasan dan profil diuruskan terus di Google.",
+      eyebrow: "Ulasan",
+      title: "4.5 Penilaian Google",
+      ratingOutOf: "daripada 5.0",
+      countText: "9 Ulasan Google",
+      badgeTitle: "Google Maps",
+      badgeDesc: "",
+      placeIdLabel: "ID:",
+      viewOnGoogle: "Lihat di Google Maps",
+      disclaimer: "",
     },
     location: {
-      eyebrow: "LOKASI & WAKTU",
-      title: "Lokasi Kedai & Peta",
-      desc: "Jalan Kuala Selangor, Bandar Seri Coalfields. Akses lori & tempat letak kereta.",
-      storefrontLabel: "Kedai Hardware & Tapak",
+      eyebrow: "Lokasi",
+      title: "Temui Kami di Bandar Seri Coalfields.",
+      desc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
+      storefrontLabel: "SKL Waste Sdn Bhd",
       hoursHeader: "Waktu Operasi",
-      hoursNotice: "Buka 24/7 · Syif siang 8:00 PG – 6:00 PTG, bersedia 24 jam selepas 6:00 PTG",
-      getDirections: "Google Maps",
-      openInGoogle: "Ulasan Google",
+      hoursNotice: "8:00 PG - 6:00 PTG Setiap Hari · 6:00 PTG - 8:00 PG Kecemasan",
+      lorryAccessTitle: "Akses Lori & Ruang Memunggah",
+      lorryAccessDesc: "Tepi jalan utama Jalan Kuala Selangor dengan ruang pemuatan untuk pikap dan lori.",
+      getDirections: "Panduan Arah",
+      openInGoogle: "Buka di Google Maps",
       openInWaze: "Waze",
       copyAddress: "Salin Alamat",
-      addressCopied: "Alamat Disalin!",
+      addressCopied: "Disalin",
       callStore: "Hubungi Kedai",
-      mapFooterText: "Jalan Kuala Selangor, Bandar Seri Coalfields",
-      navigate: "Pandu Sekarang",
+      mapFooterText: "Bandar Seri Coalfields, 47000 Selangor",
+      navigate: "Panduan Arah",
       ratingTitle: "Penarafan Google",
-      ratingReviewsCount: "Penarafan 4.5 · 9 Ulasan",
+      ratingReviewsCount: "4.5 / 5 (9 Ulasan)",
       landmarkTitle: "Alamat",
-      landmarkDesc: "Tepi jalan utama Jalan Kuala Selangor dengan akses lori mudah.",
+      landmarkDesc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
     },
     contact: {
-      eyebrow: "HUBUNGI TERUS",
-      title: "Hubungi atau Kunjungi Kami",
-      desc: "Hubungi En. Saravanan waktu siang, atau En. Hari selepas 6 petang untuk bekalan kecemasan.",
-      phoneCardTitle: "Syif Siang (Bos)",
-      phoneCardDesc: "Pembelian terus di kedai & semakan stok.",
+      eyebrow: "Hubungi",
+      title: "Hubungi Kedai Kami.",
+      desc: "",
+      phoneCardTitle: "Pertanyaan Waktu Siang",
+      phoneCardRole: "Bos / Operasi Siang",
+      phoneCardDesc: "8:00 PG - 6:00 PTG",
       phoneCardAction: "Hubungi 019-914 4743",
-      afterHoursCardTitle: "Syif Malam (24/7)",
-      afterHoursCardDesc: "Pesanan kecemasan tapak & bekalan malam.",
+      afterHoursCardTitle: "Pertanyaan Kecemasan",
+      afterHoursCardRole: "Bekalan Kecemasan 24/7",
+      afterHoursCardDesc: "6:00 PTG - 8:00 PG",
       afterHoursCardAction: "Hubungi 016-615 9365",
+      whatsappAction: "WhatsApp",
       visitCardTitle: "Lokasi Kedai",
-      visitCardDesc: "Terus di Jalan Kuala Selangor.",
-      visitCardTiming: "Buka Setiap Hari hingga 6 PTG",
+      visitCardDesc: "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.",
+      visitCardTiming: "8:00 PG - 6:00 PTG Setiap Hari · 24/7 Kecemasan",
       visitCardAction: "Panduan Arah",
     },
     footer: {
-      tagline: "Kedai bahan binaan dan hardware di Bandar Seri Coalfields, Selangor. Buka setiap hari hingga 6 petang dengan bekalan kecemasan 24 jam.",
+      tagline: "Pembekal perkakasan dan bahan binaan di Bandar Seri Coalfields, Selangor.",
       navigationHeading: "Navigasi",
       assistanceHeading: "Hubungi",
       directionsAction: "Panduan Arah",
-      verifiedHoursText: "Buka 24/7 (Syif Siang 8 PG – 6 PTG · Selepas 6 PTG Bersedia)",
+      verifiedHoursText: "8:00 PG - 6:00 PTG Setiap Hari · 24/7 Kecemasan",
       copyright: "Hak cipta terpelihara.",
-      backToTop: "Kembali ke atas",
+      backToTop: "Atas",
     },
     loading: {
       loadingText: "SKL HARDWARE",
-      subtitle: "Bandar Seri Coalfields, Selangor",
+      subtitle: "Bandar Seri Coalfields",
     },
     catalogue: {
-      badge: "Inventori Rasmi & Bekalan Kontraktor",
-      title: "Bahan Binaan, Batu Bata & Paver",
-      subtitle: "Katalog barangan binaan tulen untuk kontraktor, tukang rumah, landskap, dan ubah suai kediaman di Bandar Seri Coalfields & seluruh Selangor.",
-      searchPlaceholder: "Cari batu merah, batu pasir, uni paver, hollow block...",
-      allFilter: "Semua Barangan",
-      bricksFilter: "Batu Bata & Batu Pasir",
-      blocksFilter: "Blok Konkrit & AAC",
-      paversFilter: "Batu Paver Lantai",
-      ventFilter: "Batu Angin (Ventilation)",
-      inStock: "Ada Stok · Sedia untuk Ambil / Hantar",
-      enquireWhatsapp: "Tanya Melalui WhatsApp",
-      viewSpecs: "Lihat Spesifikasi",
-      specTitle: "Spesifikasi Teknikal",
-      appTitle: "Kegunaan Disyorkan",
-      unitLabel: "Unit Bekalan",
-      brandLabel: "Pengilang / Jenama",
-      siteDeliveryNotice: "Penghantaran lori disediakan untuk pesanan ke tapak projek di Bandar Seri Coalfields, Sungai Buloh, Puncak Alam, dan Shah Alam. Hubungi talian logistik kami.",
-      bulkQuoteAction: "Dapatkan Sebut Harga Pukal",
-      backToHome: "Kembali ke Laman Utama",
-      noResults: "Tiada barangan ditemui untuk carian anda. Sila hubungi kami untuk tempahan khas.",
+      badge: "Katalog",
+      title: "Katalog Produk",
+      subtitle: "Cari 9,974 bahan binaan, kelengkapan paip, dan alatan.",
+      searchPlaceholder: "Cari simen, bata, penyambung Hansen, alatan...",
+      allFilter: "Semua",
+      bricksFilter: "Bata",
+      blocksFilter: "Blok",
+      paversFilter: "Paver",
+      ventFilter: "Lubang Angin",
+      inStock: "Sedia untuk Ambil / Hantar",
+      enquireWhatsapp: "WhatsApp",
+      viewSpecs: "Butiran",
+      specTitle: "Spesifikasi",
+      appTitle: "Kegunaan",
+      unitLabel: "Unit",
+      brandLabel: "Jenama",
+      siteDeliveryNotice: "Penghantaran lori disediakan di sekitar Bandar Seri Coalfields.",
+      bulkQuoteAction: "Minta Sebut Harga",
+      backToHome: "Kembali",
+      noResults: "Tiada barangan ditemui. Hubungi kami untuk semakan stok.",
     },
   },
 };

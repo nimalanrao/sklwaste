@@ -1,5 +1,5 @@
 import React from "react";
-import { Wrench, MapPin, Phone, Clock, ArrowUpRight } from "lucide-react";
+import { Star, MessageSquareQuote, ShieldAlert, Store } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
 
@@ -7,70 +7,74 @@ export const QuickInfo: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="quick-info-section" aria-label="Key Store Information">
+    <section className="stats-strip-section" aria-label="Trust and Business Statistics">
       <div className="container">
-        <div className="quick-info-grid">
-          {/* 1. Business Category */}
-          <div className="quick-info-item scroll-reveal">
-            <div className="quick-info-icon-wrap quick-info-icon-green">
-              <Wrench size={20} strokeWidth={1.8} />
-            </div>
-            <div className="quick-info-body">
-              <span className="quick-info-label">{t.quickInfo.typeLabel}</span>
-              <span className="quick-info-val">{t.quickInfo.typeVal}</span>
-              <span className="quick-info-sub">{t.quickInfo.typeSub}</span>
-            </div>
-          </div>
-
-          {/* 2. Location */}
-          <a 
+        <div className="stats-strip-card">
+          {/* 1. 4.5/5 Google Rating */}
+          <a
             href={businessData.googleProfile.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="quick-info-item quick-info-link scroll-reveal reveal-delay-1"
-            title="Open address in Google Maps"
+            className="stat-item"
           >
-            <div className="quick-info-icon-wrap quick-info-icon-blue">
-              <MapPin size={20} strokeWidth={1.8} />
+            <div className="stat-icon-wrap stat-blue" aria-hidden="true">
+              <Star size={20} strokeWidth={2} aria-hidden="true" />
             </div>
-            <div className="quick-info-body">
-              <span className="quick-info-label">{t.quickInfo.locationLabel}</span>
-              <span className="quick-info-val">{t.quickInfo.locationVal}</span>
-              <span className="quick-info-sub">{t.quickInfo.locationSub}</span>
+            <div className="stat-body">
+              <span className="stat-figure tabular-nums">{t.stats.ratingValue}</span>
+              <span className="stat-label tabular-nums">{t.stats.ratingLabel}</span>
             </div>
-            <ArrowUpRight size={15} className="quick-info-arrow" />
           </a>
 
-          {/* 3. Phone */}
-          <a 
-            href={`tel:${businessData.phone.tel}`}
-            className="quick-info-item quick-info-link scroll-reveal reveal-delay-2"
-            title={`Call ${businessData.phone.display}`}
+          <div className="stat-divider" aria-hidden="true" />
+
+          {/* 2. 9 Google Reviews */}
+          <a
+            href={businessData.googleProfile.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="stat-item"
           >
-            <div className="quick-info-icon-wrap quick-info-icon-green">
-              <Phone size={20} strokeWidth={1.8} />
+            <div className="stat-icon-wrap stat-green" aria-hidden="true">
+              <MessageSquareQuote size={20} strokeWidth={2} aria-hidden="true" />
             </div>
-            <div className="quick-info-body">
-              <span className="quick-info-label">{t.quickInfo.phoneLabel}</span>
-              <span className="quick-info-val phone-number">{businessData.phone.display}</span>
-              <span className="quick-info-sub">{t.quickInfo.phoneSub}</span>
+            <div className="stat-body">
+              <span className="stat-figure tabular-nums">{t.stats.reviewsValue}</span>
+              <span className="stat-label tabular-nums">{t.stats.reviewsLabel}</span>
             </div>
-            <ArrowUpRight size={15} className="quick-info-arrow" />
           </a>
 
-          {/* 4. Closing Time */}
-          <div className="quick-info-item scroll-reveal reveal-delay-3">
-            <div className="quick-info-icon-wrap quick-info-icon-blue">
-              <Clock size={20} strokeWidth={1.8} />
+          <div className="stat-divider" aria-hidden="true" />
+
+          {/* 3. 24/7 Emergency Supply */}
+          <a
+            href={`tel:${businessData.phone.afterHoursTel}`}
+            className="stat-item"
+          >
+            <div className="stat-icon-wrap stat-blue" aria-hidden="true">
+              <ShieldAlert size={20} strokeWidth={2} aria-hidden="true" />
             </div>
-            <div className="quick-info-body">
-              <span className="quick-info-label">{t.quickInfo.hoursLabel}</span>
-              <div className="quick-info-status-row">
-                <span className="quick-info-val">{t.quickInfo.hoursVal}</span>
-              </div>
-              <span className="quick-info-sub">{t.quickInfo.hoursSub}</span>
+            <div className="stat-body">
+              <span className="stat-figure tabular-nums">{t.stats.emergencyValue}</span>
+              <span className="stat-label tabular-nums">{t.stats.emergencyLabel}</span>
             </div>
-          </div>
+          </a>
+
+          <div className="stat-divider" aria-hidden="true" />
+
+          {/* 4. Daily Walk-In Service */}
+          <a
+            href="#location"
+            className="stat-item"
+          >
+            <div className="stat-icon-wrap stat-green" aria-hidden="true">
+              <Store size={20} strokeWidth={2} aria-hidden="true" />
+            </div>
+            <div className="stat-body">
+              <span className="stat-figure tabular-nums">{t.stats.walkInValue}</span>
+              <span className="stat-label tabular-nums">{t.stats.walkInLabel}</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>

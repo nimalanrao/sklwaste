@@ -44,15 +44,19 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     if (!isVisible) return;
 
     if (progress >= 100) {
+      let hideTimer: ReturnType<typeof setTimeout> | undefined;
       const timer = setTimeout(() => {
         setIsFadingOut(true);
-        setTimeout(() => {
+        hideTimer = setTimeout(() => {
           setIsVisible(false);
           onComplete?.();
         }, 400); // 400ms fade transition
       }, 300);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        if (hideTimer) clearTimeout(hideTimer);
+      };
     }
   }, [progress, isVisible, onComplete]);
 
@@ -63,6 +67,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       className={`loading-screen ${isFadingOut ? "loading-fade-out" : ""}`}
       aria-label="Loading SKL Waste Hardware website"
       role="status"
+      aria-live="polite"
     >
       <div className="loading-content">
         {/* Brand Logo with Apple-inspired Subtle Scale */}
@@ -82,14 +87,21 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         </div>
 
         {/* Dual Brand Color Progress Track (Green & Blue) */}
-        <div className="loading-progress-container">
+        <div
+          className="loading-progress-container"
+          role="progressbar"
+          aria-label="Loading progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+        >
           <div 
             className="loading-progress-bar"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        <span className="loading-percentage tabular-nums">{Math.round(progress)}%</span>
+        <span className="loading-percentage tabular-nums" aria-hidden="true">{Math.round(progress)}%</span>
       </div>
     </div>
   );

@@ -1,111 +1,73 @@
 import React from "react";
-import { Phone, Star, MapPin, Navigation, ArrowDown } from "lucide-react";
+import { Phone, ArrowRight } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
+import { assetUrl } from "../utils/asset";
 
-export const Hero: React.FC = () => {
-  const { t, language } = useLanguage();
-  const isMalay = language === "ms";
+interface HeroProps {
+  onExploreCatalogue?: () => void;
+}
+
+export const Hero: React.FC<HeroProps> = ({ onExploreCatalogue }) => {
+  const { t } = useLanguage();
+
+  const handleExploreClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (onExploreCatalogue) {
+      onExploreCatalogue();
+    }
+  };
 
   return (
-    <section id="hero" className="hero-section hero-section-ambient" aria-labelledby="hero-title">
-      {/* Authentic Store Yard Background with Clean White Opacity Wash */}
-      <div className="hero-bg-layer" aria-hidden="true">
-        <div className="hero-bg-image" />
-        <div className="hero-bg-wash" />
-      </div>
-
+    <section id="hero" className="hero-section" aria-labelledby="hero-title">
       <div className="container hero-container">
-        <div className="hero-content-center">
-          {/* Eyebrow Pill with Animated "ONLY" Highlight */}
-          <div className="hero-badge-wrap">
-            <span className="hero-status-pill">
-              <span className="hero-status-dot" aria-hidden="true" />
-              {(() => {
-                const parts = t.hero.eyebrow.split(/(ONLY|Only|SATU-SATUNYA|Satu-satunya)/);
-                if (parts.length <= 1) return <span>{t.hero.eyebrow}</span>;
-                return parts.map((part, idx) => {
-                  if (/^(ONLY|Only|SATU-SATUNYA|Satu-satunya)$/i.test(part)) {
-                    return (
-                      <span key={idx} className="hero-pill-highlight">
-                        <span>{part}</span>
-                      </span>
-                    );
-                  }
-                  return <span key={idx}>{part}</span>;
-                });
-              })()}
-            </span>
-          </div>
+        <div className="hero-split-layout">
+          {/* Left Column: Clean Headline, Supporting Text & Two CTAs */}
+          <div className="hero-copy-col">
+            <h1 id="hero-title" className="hero-display-title">
+              {t.hero.title}
+            </h1>
 
-          {/* Main Headline: Bold, Optical Sizing, High Contrast */}
-          <h1 id="hero-title" className="hero-title">
-            {t.hero.title}
-          </h1>
+            <p className="hero-supporting-text">
+              {t.hero.subtitle}
+            </p>
 
-          {/* Concise, Concrete Subtitle — Zero AI fluff */}
-          <p className="hero-subtitle">
-            {t.hero.subtitle}
-          </p>
+            <div className="hero-cta-group">
+              <a
+                href="#catalogue-showcase"
+                onClick={handleExploreClick}
+                className="btn btn-primary btn-lg hero-primary-cta"
+              >
+                <span>{t.hero.exploreCatalogue}</span>
+                <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+              </a>
 
-          {/* Tactile Direct Contact Actions */}
-          <div className="hero-action-buttons">
-            <a 
-              href={`tel:${businessData.phone.tel}`} 
-              className="btn btn-primary hero-btn-day phone-number"
-              title={`Call ${businessData.phone.bossName}`}
-            >
-              <Phone size={15} strokeWidth={2.2} />
-              <span>{t.hero.callBoss}</span>
-            </a>
-
-            <a 
-              href={`tel:${businessData.phone.afterHoursTel}`} 
-              className="btn btn-secondary hero-btn-night phone-number"
-              title={`Contact ${businessData.phone.afterHoursName} after 6:00 PM`}
-            >
-              <Phone size={15} strokeWidth={2.2} className="night-btn-icon" />
-              <span>{t.hero.callNight}</span>
-            </a>
-          </div>
-
-          {/* Clean Trust & Location Badges */}
-          <div className="hero-trust-row">
-            <a 
-              href={businessData.googleProfile.mapsUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="hero-trust-chip chip-rating"
-              title="View reviews on Google Maps"
-            >
-              <Star size={14} className="star-icon" fill="currentColor" strokeWidth={0} />
-              <strong>4.5</strong>
-              <span>{isMalay ? "Ulasan Google (9 Ulasan)" : "Google Rating (9 Reviews)"}</span>
-            </a>
-
-            <div className="hero-trust-chip chip-location">
-              <MapPin size={13} strokeWidth={2} />
-              <span>{t.hero.locationBadge}</span>
+              <a
+                href={`tel:${businessData.phone.tel}`}
+                className="btn btn-secondary btn-lg hero-secondary-cta phone-number"
+                title={`Call ${businessData.phone.bossName} (${businessData.phone.display})`}
+              >
+                <Phone size={18} strokeWidth={2} aria-hidden="true" />
+                <span>{t.hero.callUsNow}</span>
+              </a>
             </div>
-
-            <a 
-              href={businessData.googleProfile.directionsUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="hero-trust-chip chip-directions"
-              title="Get driving directions"
-            >
-              <Navigation size={13} strokeWidth={2} />
-              <span>{t.hero.getDirections}</span>
-            </a>
           </div>
 
-          {/* Scroll Cue Link */}
-          <div className="hero-scroll-cue">
-            <a href="#shifts" className="hero-scroll-link">
-              <span>{t.hero.scrollCue}</span>
-              <ArrowDown size={13} className="hero-scroll-arrow" />
-            </a>
+          {/* Right Column: Hardware Photography & Caption Bar */}
+          <div className="hero-visual-col">
+            <div className="hero-showcase-frame">
+              <div className="hero-main-photo-card">
+                <img
+                  src={assetUrl("/hero-yard.jpg")}
+                  alt="SKL Waste Sdn Bhd (SKL Hardware) building materials yard in Bandar Seri Coalfields"
+                  className="hero-main-photo"
+                />
+                <div className="hero-photo-caption-bar">
+                  <span>Bandar Seri Coalfields, Jalan Kuala Selangor</span>
+                  <span className="tabular-nums">8:00 AM - 6:00 PM Daily · 24/7 On-Call</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

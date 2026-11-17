@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapPin, Navigation, Copy, Check, Phone, ExternalLink, Clock, Star } from "lucide-react";
+import { MapPin, Navigation, Copy, Check, Truck, Clock } from "lucide-react";
 import { businessData } from "../data/business";
 import { useLanguage } from "../context/useLanguage";
 
@@ -22,32 +22,24 @@ export const LocationSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const { t } = useLanguage();
 
+  const fullAddress = "Bandar Seri Coalfields, Jalan Kuala Selangor, 47000 Selangor, Malaysia.";
+
   const handleCopyAddress = async () => {
-    const addressText = `${businessData.fullName}, ${businessData.address.full}`;
+    const addressText = `${businessData.fullName}, ${fullAddress}`;
     try {
       await navigator.clipboard.writeText(addressText);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = addressText;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  const wazeUrl = "https://www.waze.com/ul?q=SKL+Waste+Sdn+Bhd+Bandar+Seri+Coalfields&navigate=yes";
-
   return (
-    <section id="location" className="section section-alt location-section" aria-labelledby="location-title">
+    <section id="location" className="section location-section" aria-labelledby="location-title">
       <div className="container">
-        {/* Section Header */}
-        <div className="section-header scroll-reveal">
-          <span className="eyebrow">{t.location.eyebrow}</span>
+        <div className="location-header-centered">
           <h2 id="location-title" className="section-title">
             {t.location.title}
           </h2>
@@ -56,164 +48,80 @@ export const LocationSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Ultra-Clean Unified 2-Column Location Card */}
-        <div className="location-unified-card scroll-reveal">
-          {/* Left Column: Essential Store Info & Direct Actions */}
+        <div className="location-unified-card">
+          {/* Left: Details & Get Directions */}
           <div className="location-info-panel">
-            {/* Store Header & Inline Rating Badge */}
-            <div className="location-store-header">
-              <div>
-                <span className="location-store-badge">{businessData.subtitle}</span>
-                <h3 className="location-store-name">{businessData.fullName}</h3>
-              </div>
-              <a 
-                href={businessData.googleProfile.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="location-rating-chip"
-                title="View reviews on Google Maps"
-              >
-                <div className="location-rating-stars">
-                  <Star size={13} fill="currentColor" strokeWidth={0} />
-                  <span className="location-rating-num">{businessData.googleProfile.rating.toFixed(1)}</span>
-                </div>
-                <span className="location-rating-reviews">({businessData.googleProfile.reviewCount} Google reviews)</span>
-                <ExternalLink size={12} className="location-rating-external" />
-              </a>
-            </div>
-
-            {/* Essential Information Items */}
             <div className="location-details-list">
-              {/* Address */}
               <div className="location-detail-item">
                 <div className="location-detail-icon">
-                  <MapPin size={18} strokeWidth={2} />
+                  <MapPin size={18} strokeWidth={2} aria-hidden="true" />
                 </div>
                 <div className="location-detail-body">
-                  <strong className="location-detail-title">{t.location.landmarkTitle}</strong>
-                  <p className="location-detail-text">
-                    {businessData.address.full}
-                  </p>
-                  <span className="location-detail-subtext">
-                    {t.location.landmarkDesc}
-                  </span>
+                  <span className="location-detail-label">{t.location.landmarkTitle}</span>
+                  <address className="location-address-text">
+                    {fullAddress}
+                  </address>
                 </div>
               </div>
 
-              {/* Hours */}
               <div className="location-detail-item">
-                <div className="location-detail-icon icon-green">
-                  <Clock size={18} strokeWidth={2} />
+                <div className="location-detail-icon">
+                  <Truck size={18} strokeWidth={2} aria-hidden="true" />
                 </div>
                 <div className="location-detail-body">
-                  <div className="location-hours-row">
-                    <strong className="location-detail-title">{t.location.hoursHeader}</strong>
-                    <span className="badge-open-sm">Open 24/7</span>
-                  </div>
-                  <p className="location-detail-text">
-                    8:00 AM – 6:00 PM walk-in shifts daily with Mr. Saravanan (Boss).
+                  <span className="location-detail-label">{t.location.lorryAccessTitle}</span>
+                  <p className="location-access-text">
+                    {t.location.lorryAccessDesc}
                   </p>
-                  <span className="location-detail-subtext">
-                    After 6:00 PM: 24/7 on-call emergency supply with Mr. Hari.
-                  </span>
                 </div>
               </div>
 
-              {/* Phones */}
               <div className="location-detail-item">
-                <div className="location-detail-icon icon-blue">
-                  <Phone size={18} strokeWidth={2} />
+                <div className="location-detail-icon">
+                  <Clock size={18} strokeWidth={2} aria-hidden="true" />
                 </div>
                 <div className="location-detail-body">
-                  <strong className="location-detail-title">Direct Enquiries</strong>
-                  <p className="location-detail-text">
-                    Day: <a href={`tel:${businessData.phone.tel}`} className="location-phone-link">{businessData.phone.display}</a> · Night: <a href={`tel:${businessData.phone.afterHoursTel}`} className="location-phone-link">{businessData.phone.afterHoursDisplay}</a>
+                  <span className="location-detail-label">{t.location.hoursHeader}</span>
+                  <p className="location-access-text">
+                    {t.location.hoursNotice}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons: 2x2 Clean Grid */}
             <div className="location-actions-grid">
-              <a 
+              <a
                 href={businessData.googleProfile.directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary location-action-btn"
-                title="Get driving directions via Google Maps"
               >
-                <Navigation size={16} strokeWidth={2} />
-                <span>Google Maps</span>
+                <Navigation size={16} strokeWidth={2} aria-hidden="true" />
+                <span>{t.location.getDirections}</span>
               </a>
 
-              <a 
-                href={wazeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-waze location-action-btn"
-                title="Open navigation in Waze"
-              >
-                <WazeIcon size={16} />
-                <span>Waze</span>
-              </a>
-
-              <button 
+              <button
                 type="button"
                 onClick={handleCopyAddress}
-                className={`btn btn-secondary location-action-btn ${copied ? "btn-copied" : ""}`}
-                aria-label="Copy address to clipboard"
+                className="btn btn-secondary location-action-btn"
               >
-                {copied ? (
-                  <>
-                    <Check size={16} strokeWidth={2.5} className="check-success-icon" />
-                    <span>{t.location.addressCopied}</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} strokeWidth={2} />
-                    <span>{t.location.copyAddress}</span>
-                  </>
-                )}
+                {copied ? <Check size={16} strokeWidth={2} aria-hidden="true" /> : <Copy size={16} strokeWidth={2} aria-hidden="true" />}
+                <span>{copied ? t.location.addressCopied : t.location.copyAddress}</span>
               </button>
-
-              <a 
-                href={`tel:${businessData.phone.tel}`}
-                className="btn btn-secondary location-action-btn phone-number"
-                title="Call store directly"
-              >
-                <Phone size={16} strokeWidth={2} />
-                <span>{t.location.callStore}</span>
-              </a>
             </div>
           </div>
 
-          {/* Right Column: Live Interactive Map */}
+          {/* Right: Embedded Google Map */}
           <div className="location-map-panel">
-            <iframe
-              title="SKL Waste Sdn Bhd Kedai Hardware Location Map"
-              src="https://maps.google.com/maps?q=SKL+Waste+Sdn+Bhd+Bandar+Seri+Coalfields+Jln+Kuala+Selangor+47000+Selangor&t=&z=15&ie=UTF8&iwloc=&output=embed"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen={false}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="location-map-embed"
-            />
-            <div className="location-map-overlay-bar">
-              <div className="location-map-pin-info">
-                <MapPin size={14} className="location-map-pin-icon" />
-                <span>Jalan Kuala Selangor, Bandar Seri Coalfields</span>
-              </div>
-              <a 
-                href={businessData.googleProfile.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="location-map-overlay-link"
-              >
-                <span>Navigate</span>
-                <Navigation size={12} strokeWidth={2} />
-              </a>
+            <div className="location-map-canvas">
+              <iframe
+                title="SKL Waste Sdn Bhd (SKL Hardware) Location Map"
+                src="https://maps.google.com/maps?q=SKL+Waste+Sdn+Bhd+Bandar+Seri+Coalfields+Jalan+Kuala+Selangor+47000+Selangor+Malaysia&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                className="google-map-iframe"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </div>
           </div>
         </div>

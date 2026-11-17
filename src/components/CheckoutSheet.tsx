@@ -247,16 +247,17 @@ _Sent via SKL Waste Web Order System_`
             type="button" 
             onClick={goBack} 
             className="kiosk-header-back-btn"
+            style={{ minWidth: 44, minHeight: 44 }}
             title={currentStep > 1 ? (isMalay ? "Kembali ke langkah sebelumnya" : "Back to previous step") : (isMalay ? "Tutup kiosk" : "Close kiosk")}
           >
             {currentStep > 1 ? (
               <>
-                <ArrowLeft size={18} strokeWidth={2.4} />
+                <ArrowLeft size={18} strokeWidth={2.4} aria-hidden="true" />
                 <span className="kiosk-back-label">{isMalay ? "Undur" : "Back"}</span>
               </>
             ) : (
               <>
-                <X size={18} strokeWidth={2.4} />
+                <X size={18} strokeWidth={2.4} aria-hidden="true" />
                 <span className="kiosk-back-label">{isMalay ? "Batal" : "Cancel"}</span>
               </>
             )}
@@ -268,8 +269,9 @@ _Sent via SKL Waste Web Order System_`
               type="button" 
               onClick={() => setCurrentStep(1)} 
               className={`kiosk-step-pill ${currentStep === 1 ? "is-active" : currentStep > 1 ? "is-done" : ""}`}
+              style={{ minHeight: 44 }}
             >
-              <span className="kiosk-step-num">1</span>
+              <span className="kiosk-step-num tabular-nums">1</span>
               <span className="kiosk-step-name">{isMalay ? "Pesanan" : "Items"}</span>
             </button>
 
@@ -280,8 +282,9 @@ _Sent via SKL Waste Web Order System_`
               onClick={() => items.length > 0 && setCurrentStep(2)} 
               disabled={items.length === 0}
               className={`kiosk-step-pill ${currentStep === 2 ? "is-active" : currentStep > 2 ? "is-done" : ""}`}
+              style={{ minHeight: 44 }}
             >
-              <span className="kiosk-step-num">2</span>
+              <span className="kiosk-step-num tabular-nums">2</span>
               <span className="kiosk-step-name">{isMalay ? "Info Tapak" : "Site Info"}</span>
             </button>
 
@@ -292,8 +295,9 @@ _Sent via SKL Waste Web Order System_`
               onClick={() => items.length > 0 && setCurrentStep(3)} 
               disabled={items.length === 0}
               className={`kiosk-step-pill ${currentStep === 3 ? "is-active" : currentStep > 3 ? "is-done" : ""}`}
+              style={{ minHeight: 44 }}
             >
-              <span className="kiosk-step-num">3</span>
+              <span className="kiosk-step-num tabular-nums">3</span>
               <span className="kiosk-step-name">{isMalay ? "Waktu" : "Timing"}</span>
             </button>
 
@@ -304,8 +308,9 @@ _Sent via SKL Waste Web Order System_`
               onClick={() => items.length > 0 && setCurrentStep(4)} 
               disabled={items.length === 0}
               className={`kiosk-step-pill ${currentStep === 4 ? "is-active" : currentStep > 4 ? "is-done" : ""}`}
+              style={{ minHeight: 44 }}
             >
-              <span className="kiosk-step-num">4</span>
+              <span className="kiosk-step-num tabular-nums">4</span>
               <span className="kiosk-step-name">{isMalay ? "Bayaran" : "Payment"}</span>
             </button>
 
@@ -316,8 +321,9 @@ _Sent via SKL Waste Web Order System_`
               onClick={() => items.length > 0 && setCurrentStep(5)} 
               disabled={items.length === 0}
               className={`kiosk-step-pill ${currentStep === 5 ? "is-active" : ""}`}
+              style={{ minHeight: 44 }}
             >
-              <span className="kiosk-step-num">5</span>
+              <span className="kiosk-step-num tabular-nums">5</span>
               <span className="kiosk-step-name">{isMalay ? "Hantar" : "Send"}</span>
             </button>
           </nav>
@@ -331,9 +337,10 @@ _Sent via SKL Waste Web Order System_`
                 type="button"
                 onClick={clearCart}
                 className="kiosk-clear-all-btn"
+                style={{ minHeight: 44, minWidth: 44 }}
                 title={isMalay ? "Kosongkan semua" : "Clear all"}
               >
-                <RotateCcw size={14} />
+                <RotateCcw size={14} aria-hidden="true" />
                 <span>{isMalay ? "Kosongkan" : "Clear"}</span>
               </button>
             )}
@@ -342,10 +349,11 @@ _Sent via SKL Waste Web Order System_`
               type="button" 
               onClick={handleKioskClose}
               className="kiosk-close-btn"
+              style={{ minWidth: 44, minHeight: 44 }}
               aria-label={isMalay ? "Tutup checkout" : "Close checkout"}
               title={isMalay ? "Tutup (Esc)" : "Close (Esc)"}
             >
-              <X size={20} strokeWidth={2.2} />
+              <X size={20} strokeWidth={2.2} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -359,7 +367,7 @@ _Sent via SKL Waste Web Order System_`
           {items.length === 0 ? (
             /* Empty State */
             <div className="kiosk-empty-box">
-              <div className="kiosk-empty-icon-circle">
+              <div className="kiosk-empty-icon-circle" aria-hidden="true">
                 <ShoppingBag size={42} strokeWidth={1.8} />
               </div>
               <h2 className="kiosk-empty-title">
@@ -374,9 +382,10 @@ _Sent via SKL Waste Web Order System_`
                 type="button" 
                 onClick={handleKioskClose} 
                 className="kiosk-btn-browse"
+                style={{ minHeight: 44 }}
               >
                 <span>{isMalay ? "Lihat Katalog Produk" : "Browse Product Catalogue"}</span>
-                <ArrowRight size={18} strokeWidth={2.2} />
+                <ArrowRight size={18} strokeWidth={2.2} aria-hidden="true" />
               </button>
             </div>
           ) : (
@@ -388,8 +397,8 @@ _Sent via SKL Waste Web Order System_`
                 <section className="kiosk-step-pane" aria-labelledby="kiosk-step-1-title">
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
-                      <ClipboardCheck size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">
+                      <ClipboardCheck size={20} strokeWidth={2.4} aria-hidden="true" />
+                      <span className="kiosk-pane-step-tag tabular-nums">
                         {isMalay ? "Langkah 1 / 5" : "Step 1 of 5"}
                       </span>
                     </div>
@@ -408,7 +417,7 @@ _Sent via SKL Waste Web Order System_`
                       const uomBadge = (item.unit || "UNIT").toUpperCase();
 
                       return (
-                        <article key={item.id} className="kiosk-item-row">
+                        <article key={item.id} className="kiosk-item-row" style={{ flexWrap: "wrap" }}>
                           <div className="kiosk-item-thumb">
                             <img 
                               src={assetUrl(item.localImage)} 
@@ -424,7 +433,7 @@ _Sent via SKL Waste Web Order System_`
 
                           <div className="kiosk-item-meta">
                             <div className="kiosk-item-tags">
-                              <span className="kiosk-uom-tag">UOM: {uomBadge}</span>
+                              <span className="kiosk-uom-tag">{uomBadge}</span>
                               <span className="kiosk-cat-tag">{item.category}</span>
                             </div>
                             <h2 className="kiosk-item-title">{item.title}</h2>
@@ -436,9 +445,10 @@ _Sent via SKL Waste Web Order System_`
                                 type="button" 
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                 className="kiosk-stepper-btn"
+                                style={{ minWidth: 44, minHeight: 44 }}
                                 aria-label={isMalay ? `Kurangkan ${item.title}` : `Decrease ${item.title}`}
                               >
-                                <Minus size={15} strokeWidth={2.8} />
+                                <Minus size={15} strokeWidth={2.8} aria-hidden="true" />
                               </button>
 
                               <div className="kiosk-stepper-count">
@@ -450,9 +460,10 @@ _Sent via SKL Waste Web Order System_`
                                 type="button" 
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                 className="kiosk-stepper-btn"
+                                style={{ minWidth: 44, minHeight: 44 }}
                                 aria-label={isMalay ? `Tambah ${item.title}` : `Increase ${item.title}`}
                               >
-                                <Plus size={15} strokeWidth={2.8} />
+                                <Plus size={15} strokeWidth={2.8} aria-hidden="true" />
                               </button>
                             </div>
 
@@ -460,10 +471,11 @@ _Sent via SKL Waste Web Order System_`
                               type="button" 
                               onClick={() => removeFromCart(item.id)}
                               className="kiosk-item-del-btn"
+                              style={{ minWidth: 44, minHeight: 44 }}
                               title={isMalay ? "Padam barangan" : "Remove item"}
                               aria-label={isMalay ? `Padam ${item.title}` : `Remove ${item.title}`}
                             >
-                              <Trash2 size={16} strokeWidth={2.2} />
+                              <Trash2 size={16} strokeWidth={2.2} aria-hidden="true" />
                             </button>
                           </div>
                         </article>
@@ -480,8 +492,8 @@ _Sent via SKL Waste Web Order System_`
                 <section className="kiosk-step-pane" aria-labelledby="kiosk-step-2-title">
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
-                      <User size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">
+                      <User size={20} strokeWidth={2.4} aria-hidden="true" />
+                      <span className="kiosk-pane-step-tag tabular-nums">
                         {isMalay ? "Langkah 2 / 5" : "Step 2 of 5"}
                       </span>
                     </div>
@@ -498,7 +510,7 @@ _Sent via SKL Waste Web Order System_`
                   <div className="kiosk-card-section">
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-name" className="kiosk-field-label">
-                        <User size={16} strokeWidth={2.2} />
+                        <User size={16} strokeWidth={2.2} aria-hidden="true" />
                         <span>{isMalay ? "Nama / Nama Syarikat" : "Your Name / Company Name"}</span>
                       </label>
                       <input 
@@ -508,13 +520,14 @@ _Sent via SKL Waste Web Order System_`
                         onChange={(e) => setCustomerName(e.target.value)}
                         placeholder={isMalay ? "Cth: En. Ahmad / Mega Bina Enterprise" : "e.g. Mr. David / Bina Jaya Enterprise"}
                         className="kiosk-input-large"
+                        style={{ minHeight: 44 }}
                         autoFocus
                       />
                     </div>
 
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-location" className="kiosk-field-label">
-                        <MapPin size={16} strokeWidth={2.2} />
+                        <MapPin size={16} strokeWidth={2.2} aria-hidden="true" />
                         <span>{isMalay ? "Lokasi Tapak Binaan / Alamat" : "Job Site Location / Delivery Address"}</span>
                       </label>
                       <input 
@@ -524,6 +537,7 @@ _Sent via SKL Waste Web Order System_`
                         onChange={(e) => setDeliveryLocation(e.target.value)}
                         placeholder={isMalay ? "Cth: Bandar Seri Coalfields / Puncak Alam" : "e.g. Bandar Seri Coalfields / Puncak Alam"}
                         className="kiosk-input-large"
+                        style={{ minHeight: 44 }}
                       />
 
                       {/* Rewarding 1-tap fast location chips */}
@@ -537,6 +551,7 @@ _Sent via SKL Waste Web Order System_`
                             type="button"
                             onClick={() => setDeliveryLocation(loc)}
                             className={`kiosk-chip-btn ${deliveryLocation === loc ? "is-selected" : ""}`}
+                            style={{ minHeight: 44 }}
                           >
                             {loc}
                           </button>
@@ -546,7 +561,7 @@ _Sent via SKL Waste Web Order System_`
 
                     <div className="kiosk-field-block">
                       <label htmlFor="kiosk-notes" className="kiosk-field-label">
-                        <FileText size={16} strokeWidth={2.2} />
+                        <FileText size={16} strokeWidth={2.2} aria-hidden="true" />
                         <span>{isMalay ? "Catatan Tambahan (Pilihan)" : "Additional Notes (Optional)"}</span>
                       </label>
                       <input 
@@ -556,6 +571,7 @@ _Sent via SKL Waste Web Order System_`
                         onChange={(e) => setCustomerNotes(e.target.value)}
                         placeholder={isMalay ? "Cth: Lori tipper masuk ikut pintu belakang / hubungi mandur" : "e.g. Tipper lorry enter back gate / call site supervisor"}
                         className="kiosk-input-large"
+                        style={{ minHeight: 44 }}
                       />
                     </div>
                   </div>
@@ -569,8 +585,8 @@ _Sent via SKL Waste Web Order System_`
                 <section className="kiosk-step-pane" aria-labelledby="kiosk-step-3-title">
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
-                      <Truck size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">
+                      <Truck size={20} strokeWidth={2.4} aria-hidden="true" />
+                      <span className="kiosk-pane-step-tag tabular-nums">
                         {isMalay ? "Langkah 3 / 5" : "Step 3 of 5"}
                       </span>
                     </div>
@@ -586,86 +602,76 @@ _Sent via SKL Waste Web Order System_`
 
                   <div className="kiosk-grid-choices">
                     {/* Day Transport Card */}
-                    <div 
+                    <button
+                      type="button"
                       className={`kiosk-choice-card ${transportMode === "day" ? "is-chosen" : ""}`}
+                      style={{ textAlign: "left", width: "100%" }}
                       onClick={() => setTransportMode("day")}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setTransportMode("day");
-                        }
-                      }}
+                      aria-pressed={transportMode === "day"}
                     >
                       <div className="kiosk-choice-top">
-                        <div className="kiosk-choice-icon-wrap day-icon-theme">
+                        <div className="kiosk-choice-icon-wrap day-icon-theme" aria-hidden="true">
                           <Sun size={26} strokeWidth={2.2} />
                         </div>
-                        <span className={`kiosk-radio-circle ${transportMode === "day" ? "is-checked" : ""}`}>
+                        <span className={`kiosk-radio-circle ${transportMode === "day" ? "is-checked" : ""}`} aria-hidden="true">
                           {transportMode === "day" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                         </span>
                       </div>
 
                       <div className="kiosk-choice-body">
                         <div className="kiosk-choice-header-row">
-                          <h2 className="kiosk-choice-name">Day Transport</h2>
+                          <span className="kiosk-choice-name">Day Transport</span>
                           <span className="kiosk-choice-pill">
                             {isMalay ? "Syif Siang" : "Day Shift"}
                           </span>
                         </div>
                         <span className="kiosk-choice-time">
                           <Clock size={13} strokeWidth={2.4} aria-hidden="true" />
-                          <span>8:00 AM – 6:00 PM</span>
+                          <span className="tabular-nums">8:00 AM - 6:00 PM</span>
                         </span>
-                        <p className="kiosk-choice-sub">
+                        <span className="kiosk-choice-sub">
                           {isMalay 
                             ? "Waktu penghantaran harian biasa." 
                             : "Standard daytime site delivery schedule."}
-                        </p>
+                        </span>
                       </div>
-                    </div>
+                    </button>
 
                     {/* Night Transport Card */}
-                    <div 
+                    <button
+                      type="button"
                       className={`kiosk-choice-card ${transportMode === "night" ? "is-chosen" : ""}`}
+                      style={{ textAlign: "left", width: "100%" }}
                       onClick={() => setTransportMode("night")}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setTransportMode("night");
-                        }
-                      }}
+                      aria-pressed={transportMode === "night"}
                     >
                       <div className="kiosk-choice-top">
-                        <div className="kiosk-choice-icon-wrap night-icon-theme">
+                        <div className="kiosk-choice-icon-wrap night-icon-theme" aria-hidden="true">
                           <Moon size={26} strokeWidth={2.2} />
                         </div>
-                        <span className={`kiosk-radio-circle ${transportMode === "night" ? "is-checked" : ""}`}>
+                        <span className={`kiosk-radio-circle ${transportMode === "night" ? "is-checked" : ""}`} aria-hidden="true">
                           {transportMode === "night" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                         </span>
                       </div>
 
                       <div className="kiosk-choice-body">
                         <div className="kiosk-choice-header-row">
-                          <h2 className="kiosk-choice-name">Night Transport</h2>
-                          <span className="kiosk-choice-pill night-pill">
+                          <span className="kiosk-choice-name">Night Transport</span>
+                          <span className="kiosk-choice-pill night-pill tabular-nums">
                             {isMalay ? "24 Jam On-Call" : "24/7 On-Call"}
                           </span>
                         </div>
                         <span className="kiosk-choice-time">
                           <Moon size={13} strokeWidth={2.4} aria-hidden="true" />
-                          <span>6:00 PM – 8:00 AM</span>
+                          <span className="tabular-nums">6:00 PM - 8:00 AM</span>
                         </span>
-                        <p className="kiosk-choice-sub">
+                        <span className="kiosk-choice-sub">
                           {isMalay 
                             ? "Penghantaran kecemasan malam tanpa jem." 
                             : "Urgent night delivery without traffic congestion."}
-                        </p>
+                        </span>
                       </div>
-                    </div>
+                    </button>
                   </div>
                 </section>
               )}
@@ -677,8 +683,8 @@ _Sent via SKL Waste Web Order System_`
                 <section className="kiosk-step-pane" aria-labelledby="kiosk-step-4-title">
                   <header className="kiosk-pane-banner">
                     <div className="kiosk-pane-badge">
-                      <CreditCard size={20} strokeWidth={2.4} />
-                      <span className="kiosk-pane-step-tag">
+                      <CreditCard size={20} strokeWidth={2.4} aria-hidden="true" />
+                      <span className="kiosk-pane-step-tag tabular-nums">
                         {isMalay ? "Langkah 4 / 5" : "Step 4 of 5"}
                       </span>
                     </div>
@@ -694,24 +700,19 @@ _Sent via SKL Waste Web Order System_`
 
                   <div className="kiosk-payment-list">
                     {/* Cash */}
-                    <div 
+                    <button
+                      type="button"
                       className={`kiosk-pay-row ${paymentMethod === "cash" ? "is-chosen" : ""}`}
+                      style={{ textAlign: "left", width: "100%" }}
                       onClick={() => setPaymentMethod("cash")}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setPaymentMethod("cash");
-                        }
-                      }}
+                      aria-pressed={paymentMethod === "cash"}
                     >
-                      <div className="kiosk-pay-icon pay-cash-theme">
+                      <div className="kiosk-pay-icon pay-cash-theme" aria-hidden="true">
                         <Banknote size={24} strokeWidth={2.2} />
                       </div>
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
-                          <h2 className="kiosk-pay-title">{isMalay ? "Tunai (COD)" : "Cash on Delivery (COD)"}</h2>
+                          <span className="kiosk-pay-title">{isMalay ? "Tunai (COD)" : "Cash on Delivery (COD)"}</span>
                           <span className="kiosk-pay-badge">{isMalay ? "Paling Lazim" : "Most Common"}</span>
                         </div>
                         <span className="kiosk-pay-desc">
@@ -720,30 +721,25 @@ _Sent via SKL Waste Web Order System_`
                             : "Pay cash directly to the driver upon delivery to site."}
                         </span>
                       </div>
-                      <span className={`kiosk-radio-circle ${paymentMethod === "cash" ? "is-checked" : ""}`}>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "cash" ? "is-checked" : ""}`} aria-hidden="true">
                         {paymentMethod === "cash" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                       </span>
-                    </div>
+                    </button>
 
                     {/* Bank Transfer */}
-                    <div 
+                    <button
+                      type="button"
                       className={`kiosk-pay-row ${paymentMethod === "transfer" ? "is-chosen" : ""}`}
+                      style={{ textAlign: "left", width: "100%" }}
                       onClick={() => setPaymentMethod("transfer")}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setPaymentMethod("transfer");
-                        }
-                      }}
+                      aria-pressed={paymentMethod === "transfer"}
                     >
-                      <div className="kiosk-pay-icon pay-bank-theme">
+                      <div className="kiosk-pay-icon pay-bank-theme" aria-hidden="true">
                         <Building2 size={24} strokeWidth={2.2} />
                       </div>
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
-                          <h2 className="kiosk-pay-title">{isMalay ? "Pindahan Bank (Online Transfer)" : "Online Bank Transfer"}</h2>
+                          <span className="kiosk-pay-title">{isMalay ? "Pindahan Bank (Online Transfer)" : "Online Bank Transfer"}</span>
                           <span className="kiosk-pay-badge">{isMalay ? "Syarikat" : "Direct Transfer"}</span>
                         </div>
                         <span className="kiosk-pay-desc">
@@ -752,30 +748,25 @@ _Sent via SKL Waste Web Order System_`
                             : "Transfer online and share payment slip directly via WhatsApp."}
                         </span>
                       </div>
-                      <span className={`kiosk-radio-circle ${paymentMethod === "transfer" ? "is-checked" : ""}`}>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "transfer" ? "is-checked" : ""}`} aria-hidden="true">
                         {paymentMethod === "transfer" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                       </span>
-                    </div>
+                    </button>
 
                     {/* DuitNow QR */}
-                    <div 
+                    <button
+                      type="button"
                       className={`kiosk-pay-row ${paymentMethod === "qr" ? "is-chosen" : ""}`}
+                      style={{ textAlign: "left", width: "100%" }}
                       onClick={() => setPaymentMethod("qr")}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setPaymentMethod("qr");
-                        }
-                      }}
+                      aria-pressed={paymentMethod === "qr"}
                     >
-                      <div className="kiosk-pay-icon pay-qr-theme">
+                      <div className="kiosk-pay-icon pay-qr-theme" aria-hidden="true">
                         <QrCode size={24} strokeWidth={2.2} />
                       </div>
                       <div className="kiosk-pay-info">
                         <div className="kiosk-pay-head">
-                          <h2 className="kiosk-pay-title">DuitNow QR</h2>
+                          <span className="kiosk-pay-title">DuitNow QR</span>
                           <span className="kiosk-pay-badge">{isMalay ? "Pantas" : "Instant QR"}</span>
                         </div>
                         <span className="kiosk-pay-desc">
@@ -784,10 +775,10 @@ _Sent via SKL Waste Web Order System_`
                             : "Scan QR code via MAE, TNG eWallet, or any Malaysian banking app."}
                         </span>
                       </div>
-                      <span className={`kiosk-radio-circle ${paymentMethod === "qr" ? "is-checked" : ""}`}>
+                      <span className={`kiosk-radio-circle ${paymentMethod === "qr" ? "is-checked" : ""}`} aria-hidden="true">
                         {paymentMethod === "qr" && <CheckCircle2 size={20} strokeWidth={2.5} />}
                       </span>
-                    </div>
+                    </button>
                   </div>
                 </section>
               )}
@@ -798,11 +789,11 @@ _Sent via SKL Waste Web Order System_`
               {currentStep === 5 && (
                 <section className="kiosk-step-pane" aria-labelledby="kiosk-step-5-title">
                   <header className="kiosk-pane-banner kiosk-banner-celebration">
-                    <div className="kiosk-celebrate-badge">
+                    <div className="kiosk-celebrate-badge" aria-hidden="true">
                       <Sparkles size={22} strokeWidth={2.4} />
                     </div>
                     <h1 id="kiosk-step-5-title" className="kiosk-pane-heading">
-                      {isMalay ? "Pesanan Sedia Dihantar!" : "Order Ready to Send!"}
+                      {isMalay ? "Pesanan Sedia Dihantar" : "Order Ready to Send"}
                     </h1>
                     <p className="kiosk-pane-caption">
                       {isMalay 
@@ -859,7 +850,7 @@ _Sent via SKL Waste Web Order System_`
                     <div className="kiosk-receipt-items-list">
                       <div className="kiosk-receipt-divider" />
                       <span className="kiosk-receipt-table-header">
-                        {isMalay ? "Senarai Barangan & UOM:" : "Order Items & UOM Summary:"}
+                        {isMalay ? "Senarai Barangan:" : "Order Items Summary:"}
                       </span>
                       <ul className="kiosk-receipt-ul">
                         {items.map((it) => (
@@ -880,28 +871,30 @@ _Sent via SKL Waste Web Order System_`
                       type="button" 
                       onClick={handleCheckoutSaravanan}
                       className="kiosk-primary-whatsapp-btn"
+                      style={{ minHeight: 44 }}
                       title={isMalay ? "Hantar Tempahan ke WhatsApp Saravanan" : "Send Order to WhatsApp Saravanan"}
                     >
-                      <MessageCircle size={22} strokeWidth={2.4} />
+                      <MessageCircle size={22} strokeWidth={2.4} aria-hidden="true" />
                       <div className="kiosk-wa-btn-labels">
                         <span className="kiosk-wa-main-title">
                           {isMalay ? "Hantar Tempahan ke WhatsApp" : "Send Order via WhatsApp"}
                         </span>
-                        <span className="kiosk-wa-sub-title">
+                        <span className="kiosk-wa-sub-title tabular-nums">
                           {isMalay ? "Saravanan (019-914 4743) • Respon Segera" : "Mr. Saravanan (019-914 4743) • Fast Response"}
                         </span>
                       </div>
-                      <ArrowRight size={20} strokeWidth={2.4} className="kiosk-wa-arrow" />
+                      <ArrowRight size={20} strokeWidth={2.4} className="kiosk-wa-arrow" aria-hidden="true" />
                     </button>
 
                     <button 
                       type="button" 
                       onClick={handleCheckoutHari}
                       className="kiosk-secondary-whatsapp-btn"
+                      style={{ minHeight: 44 }}
                       title={isMalay ? "Hantar ke Syif Malam Hari" : "Send to Night Shift Mr. Hari"}
                     >
-                      <Moon size={16} strokeWidth={2.2} />
-                      <span>
+                      <Moon size={16} strokeWidth={2.2} aria-hidden="true" />
+                      <span className="tabular-nums">
                         {isMalay ? "Hantar ke En. Hari (Syif Malam: 016-615 9365)" : "Send to Mr. Hari (Night Shift: 016-615 9365)"}
                       </span>
                     </button>
@@ -934,6 +927,7 @@ _Sent via SKL Waste Web Order System_`
                   type="button" 
                   onClick={goNext}
                   className="kiosk-btn-next-action"
+                  style={{ minHeight: 44 }}
                 >
                   <span>
                     {currentStep === 1 && (isMalay ? "Maklumat Tapak" : "Site Info")}
@@ -941,15 +935,16 @@ _Sent via SKL Waste Web Order System_`
                     {currentStep === 3 && (isMalay ? "Kaedah Bayaran" : "Payment Method")}
                     {currentStep === 4 && (isMalay ? "Semak & Hantar" : "Review & Send")}
                   </span>
-                  <ChevronRight size={18} strokeWidth={2.6} />
+                  <ChevronRight size={18} strokeWidth={2.6} aria-hidden="true" />
                 </button>
               ) : (
                 <button 
                   type="button" 
                   onClick={handleCheckoutSaravanan}
                   className="kiosk-btn-next-action is-whatsapp"
+                  style={{ minHeight: 44 }}
                 >
-                  <Send size={18} strokeWidth={2.4} />
+                  <Send size={18} strokeWidth={2.4} aria-hidden="true" />
                   <span>{isMalay ? "Hantar Sekarang" : "Send Now"}</span>
                 </button>
               )}
